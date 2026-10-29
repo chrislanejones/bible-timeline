@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#23211e">
+<title>Bible Atlas · Samuel to Nehemiah</title>
+<style>
+:root {
+  --color-paper: oklch(17% .009 75);
+  --color-surface: oklch(20% .009 75);
+  --color-raised: oklch(24% .012 75);
+  --color-ink: oklch(93% .014 80);
+  --color-muted: oklch(71% .016 80);
+  --color-faint: oklch(59% .016 80);
+  --color-line: oklch(34% .012 75);
+  --color-grid: oklch(27% .009 75);
+  --color-accent: oklch(80% .095 80);
+  --color-accent-dim: oklch(35% .032 80);
+  --color-best: oklch(65% .15 252);
+  --color-good: oklch(72% .12 252);
+  --color-mostly-good: oklch(81% .075 252);
+  --color-mixed: oklch(73% .11 70);
+  --color-mostly-bad: oklch(75% .11 25);
+  --color-bad: oklch(66% .145 25);
+  --color-worst: oklch(52% .145 25);
+  --color-prophet: oklch(72% .08 168);
+  --color-neutral: oklch(71% .025 80);
+  --color-exile: oklch(24% .022 25);
+  --color-return: oklch(24% .025 168);
+  --color-transparent: transparent;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-md: 18px;
+  --text-display: 34px;
+  --radius-control: 999px;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --dur-short: 160ms;
+}
+</style>
+<style>
+/* Interactive timeline: warm dark surfaces, blue/red king ratings, restrained gold events.
+ * Native SVG rendering keeps the page standalone and available offline. */
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow-x: clip; background: var(--color-paper); color: var(--color-ink); }
+body { font: var(--text-base)/1.5 var(--font-body); font-variant-numeric: tabular-nums; }
+button, input { font: inherit; }
+button { cursor: pointer; white-space: nowrap; }
+button, input, a { -webkit-tap-highlight-color: var(--color-transparent); }
+button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
+button { color: var(--color-muted); border: 0; background: var(--color-transparent); }
+button:hover { color: var(--color-ink); }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: .35; cursor: default; transform: none; }
+button[hidden], [hidden] { display: none !important; }
+svg { display: block; }
+h1, h2, p { margin: 0; }
+h1, h2 { font-style: normal; overflow-wrap: anywhere; }
+a { color: var(--color-accent); text-decoration-color: var(--color-line); text-underline-offset: 4px; }
+a:hover { text-decoration-color: var(--color-accent); }
+.masthead { padding: 16px 32px; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--color-line); }
+.identity { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.brand-mark { width: 34px; height: 40px; color: var(--color-accent); flex: none; }
+h1 { font: 400 var(--text-display)/1.16 var(--font-display); letter-spacing: -.025em; }
+.subtitle { color: var(--color-muted); font-size: var(--text-sm); margin-top: 5px; }
+.edition { color: var(--color-faint); font-size: var(--text-sm); text-align: right; flex: none; }
+.edition strong { display: block; color: var(--color-accent); font-weight: 500; letter-spacing: .15em; font-size: var(--text-xs); }
+.toolbar { min-height: 70px; padding: 12px 32px; display: flex; align-items: center; gap: 20px; border-block: 1px solid var(--color-line); }
+.eras { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.eras button { padding: 9px 15px; border-radius: var(--radius-control); font-size: var(--text-sm); transition: background-color var(--dur-short) var(--ease-out); }
+.eras button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-paper); }
+.search-box { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--color-line); border-radius: var(--radius-control); min-width: 190px; width: 245px; }
+.search-box svg { width: 15px; height: 15px; color: var(--color-faint); flex: none; }
+.search-box input { width: 100%; min-width: 0; border: 0; background: var(--color-transparent); color: var(--color-ink); outline-offset: 6px; font-size: var(--text-sm); }
+.search-box input::placeholder { color: var(--color-faint); }
+.search-box:focus-within { border-color: var(--color-accent); }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 292px; min-height: calc(100dvh - 72px); }
+.timeline-panel { min-width: 0; display: flex; flex-direction: column; }
+.chart-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 28px 10px 32px; }
+.view-label { font-size: var(--text-sm); color: var(--color-muted); }
+.view-label strong { font-weight: 500; color: var(--color-ink); }
+.view-actions { display: flex; align-items: center; gap: 10px; }
+.icon-button { width: 30px; height: 30px; border: 1px solid var(--color-line); border-radius: 50%; display: grid; place-items: center; font-size: 18px; }
+.reset { font-size: var(--text-sm); padding: 6px; }
+.layers { position: relative; font-size: var(--text-sm); }
+.layers summary { color: var(--color-muted); cursor: pointer; padding: 6px 10px; list-style: none; white-space: nowrap; }
+.layers summary::-webkit-details-marker { display: none; }
+.layers summary::after { content: '⌄'; margin-left: 7px; }
+.layer-menu { position: absolute; right: 0; top: 36px; background: var(--color-raised); padding: 12px 16px; z-index: 5; border: 1px solid var(--color-line); border-radius: 12px; width: 192px; }
+.layer-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 0; color: var(--color-ink); cursor: pointer; }
+.layer-menu input { accent-color: var(--color-accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 15px; padding: 0 32px 10px; font-size: var(--text-xs); color: var(--color-muted); }
+.legend span { display: flex; gap: 6px; align-items: center; }
+.legend i { width: 7px; height: 7px; display: inline-block; border-radius: 50%; background: var(--mark-color); }
+.legend .best { --mark-color: var(--color-best); }
+.legend .good { --mark-color: var(--color-good); }
+.legend .mostly-good { --mark-color: var(--color-mostly-good); }
+.legend .mixed { --mark-color: var(--color-mixed); }
+.legend .mostly-bad { --mark-color: var(--color-mostly-bad); }
+.legend .bad { --mark-color: var(--color-bad); }
+.legend .worst { --mark-color: var(--color-worst); }
+.legend .prophet { --mark-color: var(--color-prophet); margin-left: 10px; }
+.legend .event { --mark-color: var(--color-accent); }
+.chart-wrap { position: relative; flex: 1; min-height: 540px; margin: 0 12px 0 16px; }
+#chart { width: 100%; touch-action: pan-y; cursor: grab; }
+#chart.dragging { cursor: grabbing; }
+#chart text { font-family: var(--font-body); }
+#chart .axis-label { fill: var(--color-faint); font-size: var(--text-xs); }
+#chart .era-label { fill: var(--color-muted); font-size: var(--text-xs); letter-spacing: .08em; }
+#chart .lane-title { fill: var(--color-ink); font-size: var(--text-sm); font-weight: 500; }
+#chart .lane-subtitle { fill: var(--color-faint); font-size: 10px; }
+#chart .person-label { fill: var(--color-muted); font-size: var(--text-xs); pointer-events: none; }
+#chart .event-label { fill: var(--color-accent); font-size: var(--text-xs); pointer-events: none; }
+#chart .event-year { fill: var(--color-faint); font-size: 10px; pointer-events: none; }
+#chart .mark { cursor: pointer; }
+#chart .mark:focus-visible { outline: none; }
+#chart .mark:focus-visible .track, #chart .mark:hover .track { stroke: var(--color-ink); stroke-width: 2; }
+#chart .mark:focus-visible .event-dot, #chart .mark:hover .event-dot { stroke: var(--color-ink); stroke-width: 2; }
+#chart .mark .hit { fill: var(--color-transparent); }
+#overview [role="slider"]:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+#chart .selection-ring { pointer-events: none; stroke: var(--color-ink); fill: var(--color-transparent); stroke-width: 1.5; }
+.overview-wrap { padding: 8px 32px 12px; border-top: 1px solid var(--color-line); background: var(--color-surface); position: sticky; bottom: 0; z-index: 3; }
+.overview-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: var(--color-faint); font-size: var(--text-xs); margin: 3px 0 8px; }
+.overview-top strong { color: var(--color-muted); font-weight: 400; }
+#overview { width: 100%; height: 92px; touch-action: none; }
+.overview-selection { fill: var(--color-accent-dim); fill-opacity: .2; stroke: var(--color-accent); cursor: grab; }
+.overview-handle { fill: var(--color-accent); cursor: ew-resize; }
+.navigator-resizer { display: flex; justify-content: center; width: 100%; height: 14px; padding: 5px; cursor: ns-resize; touch-action: none; }
+.navigator-resizer span { display: block; width: 34px; height: 3px; border-radius: 3px; background: var(--color-line); }
+.navigator-resizer:hover span, .navigator-resizer:focus-visible span { background: var(--color-accent); }
+.periods, .shortcut-help { position: relative; }
+.periods summary, .shortcut-help summary { list-style: none; cursor: pointer; white-space: nowrap; font-size: var(--text-sm); padding: 6px; }
+.periods summary::-webkit-details-marker, .shortcut-help summary::-webkit-details-marker { display: none; }
+.periods summary::after { content: '⌄'; margin-left: 6px; }
+.period-menu, .shortcut-menu { position: absolute; right: 0; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 12px; padding: 10px; z-index: 5; width: 205px; }
+.period-menu { top: 35px; flex-direction: column; align-items: stretch; }
+.period-menu button { text-align: left; }
+.shortcut-menu { bottom: 35px; width: min(310px, calc(100vw - 40px)); padding: 14px 16px; }
+.shortcut-menu div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: var(--text-xs); color: var(--color-muted); }
+kbd { font-family: var(--font-body); font-size: 11px; padding: 1px 5px; border: 1px solid var(--color-line); border-radius: 4px; color: var(--color-muted); }
+.chart-footer { padding: 12px 32px 18px; border-top: 1px solid var(--color-line); color: var(--color-faint); font-size: var(--text-xs); display: flex; justify-content: space-between; gap: 16px; }
+.sidebar { border-left: 1px solid var(--color-line); background: var(--color-surface); display: flex; flex-direction: column; min-width: 0; }
+.detail { padding: 26px 24px 23px; }
+.detail-category { color: var(--color-accent); font-size: var(--text-xs); letter-spacing: .08em; display: flex; justify-content: space-between; gap: 8px; }
+.detail h2 { font: 400 29px/1.13 var(--font-display); margin: 14px 0 10px; letter-spacing: -.025em; }
+.detail-date { font-size: var(--text-sm); color: var(--color-muted); }
+.detail-note { color: var(--color-muted); line-height: 1.7; margin-top: 18px; font-size: var(--text-base); }
+.rating { margin-top: 16px; display: flex; align-items: center; gap: 8px; color: var(--color-ink); font-size: var(--text-sm); }
+.rating i { width: 8px; height: 8px; border-radius: 50%; background: var(--rating-color); }
+.scripture { margin-top: 18px; display: inline-flex; gap: 7px; align-items: center; font-size: var(--text-sm); }
+.detail-navigation { display: flex; align-items: center; justify-content: space-between; margin-top: 25px; border-top: 1px solid var(--color-line); padding-top: 14px; }
+.detail-navigation button { font-size: var(--text-sm); padding: 6px 0; }
+.detail-navigation span { color: var(--color-faint); font-size: var(--text-xs); }
+.story-head { padding: 18px 24px 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-top: 1px solid var(--color-line); }
+.story-head h2 { font-size: var(--text-base); font-weight: 500; }
+.story-head span { color: var(--color-faint); font-size: var(--text-xs); }
+.story-list { overflow-y: auto; height: 320px; flex: 1; min-height: 180px; padding: 0 14px 16px; scrollbar-width: thin; scrollbar-color: var(--color-line) var(--color-surface); }
+.story-item { width: 100%; text-align: left; padding: 11px 10px; border-radius: 8px; display: grid; grid-template-columns: 39px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.story-item:hover { background: var(--color-raised); }
+.story-item[aria-current="true"] { background: var(--color-raised); color: var(--color-ink); }
+.story-item .year { color: var(--color-faint); font-size: var(--text-xs); }
+.story-item .name { font-size: var(--text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.story-item[aria-current="true"] .year { color: var(--color-accent); }
+.empty { color: var(--color-muted); padding: 16px 10px; line-height: 1.6; }
+.tooltip { position: fixed; z-index: 10; background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); border-radius: 10px; padding: 12px 15px; max-width: min(285px, calc(100% - 20px)); pointer-events: none; font-size: var(--text-sm); }
+.tooltip strong { display: block; font-weight: 600; }
+.tooltip span { color: var(--color-muted); }
+.methodology { border-top: 1px solid var(--color-line); padding: 14px 32px; font-size: var(--text-xs); color: var(--color-faint); }
+.methodology summary { cursor: pointer; width: fit-content; color: var(--color-muted); }
+.methodology p { max-width: 100ch; padding: 10px 0; line-height: 1.7; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (min-width: 1600px) { .workspace { grid-template-columns: minmax(0, 1fr) 330px; } .detail { padding: 30px; } }
+@media (max-width: 1100px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { border-left: 0; border-top: 1px solid var(--color-line); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .story-head { border-top: 0; grid-column: 2; grid-row: 1; padding-bottom: 0; align-self: start; }
+  .detail { grid-row: 1 / 3; }
+  .story-list { grid-column: 2; grid-row: 2; height: 260px; margin-top: 16px; }
+  .chart-wrap { flex: none; }
+  .toolbar { flex-wrap: wrap; gap: 12px; }
+  .search-box { width: 210px; }
+}
+@media (max-width: 650px) {
+  .masthead { padding: 16px 18px; flex-wrap: wrap; gap: 12px; }
+  .identity { gap: 11px; }
+  .brand-mark { width: 25px; height: 32px; }
+  h1 { font-size: 26px; }
+  .edition { display: none; }
+  .subtitle { max-width: 260px; font-size: 11px; }
+  .toolbar { padding: 12px 18px; gap: 12px; }
+  .eras { gap: 3px; }
+  .eras button { padding: 8px 9px; font-size: 11px; }
+  .search-box { width: 100%; margin-left: 0; }
+  .chart-toolbar { padding: 15px 18px 10px; flex-wrap: wrap; gap: 8px; }
+  .view-actions { gap: 7px; }
+  .view-label { font-size: 11px; }
+  .legend { padding: 0 18px 12px; gap: 6px 12px; font-size: 10px; }
+  .legend .prophet { margin-left: 0; }
+  .chart-wrap { margin: 0 8px; }
+  .overview-wrap { padding: 5px 18px 10px; }
+  .overview-top { font-size: 10px; flex-wrap: wrap; gap: 3px; }
+  .chart-footer { padding: 12px 18px; font-size: 10px; flex-wrap: wrap; gap: 8px; }
+  .chart-footer .desktop-hint { display: none; }
+  .sidebar { display: flex; }
+  .detail { padding: 24px; }
+  .story-head { border-top: 1px solid var(--color-line); padding-bottom: 12px; }
+  .story-list { height: 240px; flex: none; margin-top: 0; }
+  .methodology { padding: 14px 18px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <h1>Samuel to Nehemiah</h1>
+  <label class="search-box"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="m12 12 5 5" stroke="currentColor" stroke-width="1.5"/></svg><span class="sr-only">Find a person or event</span><input id="q" type="search" placeholder="Find a person or event…" autocomplete="off"></label>
+</header>
+<main class="workspace">
+  <section class="timeline-panel" aria-label="Interactive Bible timeline">
+    <div class="chart-toolbar">
+      <div class="view-label"><strong id="visible-range">1100–420 BC</strong><span id="view-name"> · The whole story</span></div>
+      <div class="view-actions">
+        <details class="periods"><summary>Jump to era</summary><div class="period-menu eras" aria-label="Timeline periods">
+          <button class="range" data-range="full" aria-pressed="true">The whole story</button>
+          <button class="range" data-range="united" aria-pressed="false">United kingdom</button>
+          <button class="range" data-range="divided" aria-pressed="false">Divided kingdom</button>
+          <button class="range" data-range="exile" aria-pressed="false">Exile & return</button>
+        </div></details>
+        <details class="layers"><summary>Layers</summary><div class="layer-menu" id="layer-menu"></div></details>
+        <button class="icon-button" id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+        <button class="icon-button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+        <button class="reset" id="reset" title="Show the whole story">Reset ↗</button>
+      </div>
+    </div>
+    <div class="legend" aria-label="King ratings from faithful to unfaithful">
+      <span class="best"><i></i>Best</span><span class="good"><i></i>Good</span><span class="mostly-good"><i></i>Mostly good</span><span class="mixed"><i></i>Mixed</span><span class="mostly-bad"><i></i>Mostly bad</span><span class="bad"><i></i>Bad</span><span class="worst"><i></i>Worst</span><span class="prophet"><i></i>Prophets</span><span class="event"><i></i>Events</span>
+    </div>
+    <div class="chart-wrap" id="chart-wrap"><svg id="chart" aria-label="Timeline of biblical events, kings, prophets, and restoration leaders"><title>Samuel to Nehemiah, 1100 to 420 BC</title></svg></div>
+    <div class="overview-wrap">
+      <button class="navigator-resizer" id="navigator-resizer" aria-label="Resize timeline overview. Use up and down arrows when focused." title="Drag up or down to resize the overview"><span></span></button>
+      <div class="overview-top"><strong id="navigator-range">Timeline navigator · 1100–420 BC</strong><span>Drag edges to zoom · Drag middle to pan</span></div>
+      <svg id="overview" aria-label="Resizable timeline navigator"><title>Drag the selected window or its edges to navigate</title></svg>
+      <div class="sr-only"><label>Start year BC <input id="start-year" type="number" min="450" max="1100" value="1100"></label><label>End year BC <input id="end-year" type="number" min="420" max="1070" value="420"></label></div>
+    </div>
+    <div class="chart-footer"><span id="chart-count"></span><details class="shortcut-help"><summary>Keyboard shortcuts <kbd>?</kbd></summary><div class="shortcut-menu">
+        <div><span>Zoom in / out</span><span><kbd>+</kbd> <kbd>−</kbd></span></div>
+        <div><span>Pan earlier / later</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
+        <div><span>Pan farther</span><span><kbd>Shift</kbd> + arrow</span></div>
+        <div><span>Previous / next event</span><span><kbd>[</kbd> <kbd>]</kbd></span></div>
+        <div><span>Fit the whole story</span><kbd>F</kbd></div>
+        <div><span>Search</span><kbd>/</kbd></div>
+        <div><span>Close menus / tooltip</span><kbd>Esc</kbd></div>
+      </div></details><span>Earlier ← &nbsp; BC &nbsp; → Later</span></div>
+  </section>
+  <aside class="sidebar" aria-label="Selected story and event browser">
+    <section class="detail" id="detail" aria-live="polite"></section>
+    <div class="story-head"><h2 id="story-heading">Explore the story</h2><span id="result-count"></span></div>
+    <div class="story-list" id="story-list" aria-labelledby="story-heading"></div>
+  </aside>
+</main>
+<details class="methodology"><summary>A note on dates & king ratings</summary><p>Dates are approximate BC dates, following a conventional chronology of the monarchy. Early stories are positioned illustratively; co-regencies are simplified. Ezra’s return is shown at the traditional date of 458 BC, and Nehemiah’s at 445 BC. Joel and Obadiah have disputed dates. Prophet tracks indicate approximate activity, not lifespans. “Major” and “minor” refer to book length, not importance. King colors summarize the biblical assessment, with mixed reigns and repentance explained in the notes. A faithful rating does not imply a flawless life.</p><p>Chronology references: <a href="https://www.esv.org/resources/esv-global-study-bible/chart-00-ot-timeline/" target="_blank" rel="noopener noreferrer">ESV Old Testament timeline</a> · <a href="https://www.americanbible.org/engage/bible-resources/articles/ezra/" target="_blank" rel="noopener noreferrer">American Bible Society: Ezra</a>. Select any story for its Scripture reference.</p></details>
+<div class="tooltip" id="tip" hidden></div>
+<noscript><p class="detail-note">Enable JavaScript to explore this interactive timeline.</p></noscript>
+<script>
+const kings = [
+  ["Saul", "united", 1050, 1010, -1, "First king. Rejected after Amalek. Dies on Gilboa.", "1 Sam 9–31"],
+  ["David", "united", 1010, 970, 2, "Jerusalem, the covenant, and real failure with Bathsheba. The verdict of Kings is still faithful.", "2 Sam; 1 Kgs 2"],
+  ["Solomon", "united", 970, 930, 0, "Temple and wisdom, then foreign wives and high places. The tear is announced in his lifetime.", "1 Kgs 1–11"],
+  ["Jeroboam I", "israel", 930, 909, -2, "Golden calves at Dan and Bethel. Every later northern king is measured against this.", "1 Kgs 12–14"],
+  ["Nadab", "israel", 909, 908, -1, "Killed by Baasha in his second year.", "1 Kgs 15:25–31"],
+  ["Baasha", "israel", 908, 886, -1, "Wipes out Jeroboam’s house, then walks in the same sins.", "1 Kgs 15:27–16:7"],
+  ["Elah", "israel", 886, 885, -1, "Assassinated while drunk in Tirzah.", "1 Kgs 16:8–14"],
+  ["Zimri", "israel", 885, 884.98, -2, "Seven days. Burns the palace down on himself.", "1 Kgs 16:15–20"],
+  ["Omri", "israel", 885, 874, -2, "Builds Samaria. Stronger than those before him, and worse.", "1 Kgs 16:21–28"],
+  ["Ahab", "israel", 874, 853, -2, "Jezebel, Baal, Naboth, Carmel. Dies at Ramoth-gilead.", "1 Kgs 16:29–22:40"],
+  ["Ahaziah", "israel", 853, 852, -1, "Inquires of Baal-zebub and dies, as Elijah said.", "2 Kgs 1"],
+  ["Joram", "israel", 852, 841, -1, "Puts away the Baal pillar, keeps the calves. Killed by Jehu.", "2 Kgs 3; 9"],
+  ["Jehu", "israel", 841, 814, -0.5, "Ends Ahab’s house and Baal. Does not turn from the calves.", "2 Kgs 9–10"],
+  ["Jehoahaz", "israel", 814, 798, -1, "Aram reduces Israel to fifty horsemen.", "2 Kgs 13:1–9"],
+  ["Jehoash", "israel", 798, 782, -1, "Elisha’s last king. Strikes Aram, humiliates Amaziah.", "2 Kgs 13–14"],
+  ["Jeroboam II", "israel", 782, 753, -1, "Long, rich reign. Amos and Hosea preach into the prosperity.", "2 Kgs 14:23–29"],
+  ["Zechariah", "israel", 753, 752.5, -1, "Six months. End of Jehu’s line.", "2 Kgs 15:8–12"],
+  ["Shallum", "israel", 752.5, 752.42, -1, "One month.", "2 Kgs 15:13–15"],
+  ["Menahem", "israel", 752, 742, -1, "Buys off Tiglath-pileser III.", "2 Kgs 15:14–22"],
+  ["Pekahiah", "israel", 742, 740, -1, "Killed by Pekah.", "2 Kgs 15:23–26"],
+  ["Pekah", "israel", 740, 732, -1, "Allies with Aram against Ahaz. Assyria strips the north.", "2 Kgs 15:27–31"],
+  ["Hoshea", "israel", 732, 722, -1, "Last king. Samaria falls to Assyria.", "2 Kgs 17"],
+  ["Rehoboam", "judah", 930, 913, -1, "Rejects the elders. The north walks. Shishak loots the temple.", "1 Kgs 12; 14"],
+  ["Abijah", "judah", 913, 910, -1, "Wars with Jeroboam. The reign is still called evil.", "1 Kgs 15:1–8"],
+  ["Asa", "judah", 910, 869, 1, "Removes idols and deposes Maacah. The high places remain. Later relies on Aram.", "1 Kgs 15:9–24"],
+  ["Jehoshaphat", "judah", 869, 848, 1, "Faithful, and too close to Ahab. The alliance plants Athaliah in Jerusalem.", "1 Kgs 22:41–50"],
+  ["Jehoram", "judah", 848, 841, -1, "Marries Athaliah. Kills his brothers.", "2 Kgs 8:16–24"],
+  ["Ahaziah", "judah", 841, 840.9, -1, "One year. Dies in Jehu’s purge.", "2 Kgs 8:25–9:29"],
+  ["Athaliah", "judah", 841, 835, -2, "Seizes the throne and tries to kill the Davidic line.", "2 Kgs 11"],
+  ["Joash", "judah", 835, 796, 0, "Repairs the temple under Jehoiada, then turns and kills Zechariah.", "2 Kgs 12"],
+  ["Amaziah", "judah", 796, 767, 0, "Starts well, provokes Israel, and is crushed.", "2 Kgs 14:1–20"],
+  ["Uzziah", "judah", 767, 740, 1, "Long strength, until he burns incense in the temple and is struck with leprosy.", "2 Kgs 15:1–7"],
+  ["Jotham", "judah", 740, 735, 1, "Does what is right. The high places remain.", "2 Kgs 15:32–38"],
+  ["Ahaz", "judah", 735, 715, -2, "Child sacrifice. A Damascene altar in the temple. Calls on Assyria.", "2 Kgs 16"],
+  ["Hezekiah", "judah", 715, 686, 2, "Cleanses the temple. Trusts through Sennacherib’s siege in 701.", "2 Kgs 18–20"],
+  ["Manasseh", "judah", 686, 642, -2, "Lowest point of Judah. Chronicles records a late repentance in Assyrian chains.", "2 Kgs 21; 2 Chr 33"],
+  ["Amon", "judah", 642, 640, -2, "Walks in Manasseh’s sins. Killed by his servants.", "2 Kgs 21:19–26"],
+  ["Josiah", "judah", 640, 609, 2, "The book of the law is found in 622. Dies at Megiddo against Neco.", "2 Kgs 22–23"],
+  ["Jehoahaz", "judah", 609, 608.75, -1, "Three months. Neco takes him to Egypt.", "2 Kgs 23:31–34"],
+  ["Jehoiakim", "judah", 609, 598, -2, "Burns Jeremiah’s scroll. Babylon takes the land in his days.", "2 Kgs 23:36–24:6"],
+  ["Jehoiachin", "judah", 598, 597.25, -1, "Three months. Surrendered in 597 with Ezekiel’s company.", "2 Kgs 24:8–17"],
+  ["Zedekiah", "judah", 597, 586, -1, "Last king. The city falls, the temple burns, his eyes are put out.", "2 Kgs 24:18–25:21"]
+].map(([name, kingdom, start, end, rating, note, ref]) => ({ name, kingdom, start, end, rating, note, ref }));
+
+const prophets = [
+  ["Isaiah", "major", 740, 681, "Judah", "Uzziah’s death through Hezekiah. Call, Immanuel, the servant, Sennacherib.", "Isa 1:1; 6"],
+  ["Jeremiah", "major", 627, 580, "Judah, then Egypt", "Called in Josiah’s 13th year. Lowered into Malchiah’s cistern about 588 and pulled out by Ebed-melech.", "Jer 1; 38"],
+  ["Ezekiel", "major", 593, 571, "Babylon", "Taken in 597. The glory leaves the temple.", "Ezek 1:1–3"],
+  ["Daniel", "major", 605, 530, "Babylon, then Persia", "Taken in the first deportation. Serves through Cyrus.", "Dan 1"],
+  ["Jonah", "minor", 780, 760, "Israel → Nineveh", "Active under Jeroboam II. Sent east, runs west.", "Jonah 1"],
+  ["Amos", "minor", 760, 750, "Israel", "Shepherd from Tekoa. Preaches at Bethel in the fat years.", "Amos 1:1"],
+  ["Hosea", "minor", 755, 715, "Israel", "Last writing prophet to the north. Watches Samaria fall.", "Hos 1:1"],
+  ["Joel", "minor", 830, 820, "Judah", "Date unsettled — often placed under Joash, or after the exile.", "Joel 1–2"],
+  ["Micah", "minor", 735, 700, "Judah", "Contemporary of Isaiah. Bethlehem, and what the Lord requires.", "Mic 1:1; 5:2"],
+  ["Nahum", "minor", 650, 620, "Against Nineveh", "After Thebes (663), before Nineveh falls (612).", "Nah 1:1"],
+  ["Zephaniah", "minor", 635, 622, "Judah", "In Josiah’s reign, likely before the reform.", "Zeph 1:1"],
+  ["Habakkuk", "minor", 612, 605, "Judah", "Watches Babylon rise. The righteous shall live by faith.", "Hab 1–2"],
+  ["Obadiah", "minor", 586, 584, "Against Edom", "Edom gloated over the fall. Date disputed; placed at the exile.", "Obad 1"],
+  ["Haggai", "minor", 520, 519.6, "Returned Judah", "Four oracles. Get up and build the house.", "Hag 1:1"],
+  ["Zechariah", "minor", 520, 480, "Returned Judah", "Night visions with Haggai, then later oracles.", "Zech 1:1"],
+  ["Malachi", "minor", 440, 420, "Returned Judah", "After the temple, into the fatigue. Elijah will come.", "Mal 4:5"]
+].map(([name, group, start, end, where, note, ref]) => ({ name, group, start, end, where, note, ref }));
+
+const RATINGS = {
+  '2': { color: 'best', label: 'Best / faithful' },
+  '1': { color: 'good', label: 'Good' },
+  '0.5': { color: 'mostly-good', label: 'Mostly good' },
+  '0': { color: 'mixed', label: 'Mixed' },
+  '-0.5': { color: 'mostly-bad', label: 'Mostly bad' },
+  '-1': { color: 'bad', label: 'Bad' },
+  '-2': { color: 'worst', label: 'Worst' }
+};
+const RANGES = { full: [1100, 420], united: [1100, 920], divided: [940, 580], exile: [630, 420] };
+const events = [
+  [1080, 'Samuel is called', 'God calls the young Samuel at Shiloh. He becomes a prophet and the last great judge, guiding Israel into the age of kings.', '1 Sam 3', 'Calling', true, true],
+  [1070, 'The ark is captured', 'The Philistines capture the ark. Eli and his sons die. The ark later returns to Israel, but Shiloh’s old order has ended.', '1 Sam 4–6', 'Conflict', false, true],
+  [1050, 'Saul becomes king', 'Israel asks Samuel for a king. Samuel anoints Saul, and Israel’s tribes enter a new era of monarchy.', '1 Sam 8–11', 'Kingship', true, true],
+  [1025, 'David is anointed', 'After Saul’s rejection, Samuel goes to Bethlehem and anoints Jesse’s youngest son. David will wait years before taking the throne.', '1 Sam 16', 'Kingship', false, true],
+  [1020, 'David & Goliath', 'David confronts the Philistine champion with a sling and a stone. His victory brings him into Saul’s court and the public eye.', '1 Sam 17', 'Deliverance', false, true],
+  [1010, 'David becomes king', 'Saul and Jonathan die on Mount Gilboa. David is anointed king of Judah at Hebron, before later ruling all Israel.', '1 Sam 31; 2 Sam 2', 'Kingship', false, true],
+  [1003, 'Jerusalem becomes the capital', 'David captures Jerusalem and makes it his capital. The city becomes the political and spiritual center of his kingdom.', '2 Sam 5:1–10', 'Kingdom', true, true],
+  [1000, 'The ark comes to Jerusalem', 'David brings the ark into Jerusalem with celebration. The city of David becomes the home of the ark of the covenant.', '2 Sam 6', 'Worship', false, true],
+  [990, 'The covenant with David', 'Through Nathan, God promises David an enduring royal house. This covenant becomes a central hope through the divided kingdom and exile.', '2 Sam 7', 'Covenant', false, true],
+  [980, 'Nathan confronts David', 'After David takes Bathsheba and arranges Uriah’s death, Nathan exposes his sin. David confesses, but his household faces lasting consequences.', '2 Sam 11–12', 'Prophetic warning', false, true],
+  [975, 'Absalom’s rebellion', 'David’s son Absalom wins the people’s loyalty and claims the throne. David flees Jerusalem, and the rebellion ends with Absalom’s death.', '2 Sam 15–18', 'Conflict', false, true],
+  [970, 'Solomon becomes king', 'Solomon succeeds David. His reign brings wisdom, international trade, and the construction of the temple, followed by a turn toward other gods.', '1 Kgs 1–3; 11', 'Kingship', false, true],
+  [966, 'The temple foundations', 'In the fourth year of his reign, Solomon begins building the temple in Jerusalem with materials and craftsmen supplied in part by Hiram of Tyre.', '1 Kgs 5–6', 'Worship', false, false],
+  [959, 'The first temple is completed', 'Solomon finishes the temple after seven years of construction. Its dedication places the ark in the inner sanctuary and gathers Israel in worship.', '1 Kgs 6:37–38; 8', 'Worship', true, true],
+  [930, 'The kingdom divides', 'After Solomon’s death, Rehoboam refuses to ease the people’s burden. Ten tribes follow Jeroboam in the north; the Davidic dynasty continues in Judah. Two kingdoms now share one history.', '1 Kgs 12', 'Turning point', true, true],
+  [925, 'Shishak raids Jerusalem', 'Egypt’s king Shishak attacks Judah and takes treasures from the temple and royal palace during Rehoboam’s reign.', '1 Kgs 14:25–28; 2 Chr 12', 'Conflict', false, false],
+  [860, 'Elijah at Mount Carmel', 'Elijah challenges the prophets of Baal. Fire consumes the offering, and the people acknowledge the Lord. The drought then ends.', '1 Kgs 18', 'Deliverance', true, true],
+  [848, 'Elisha succeeds Elijah', 'Elijah is taken up in a whirlwind. Elisha receives his mantle and continues a prophetic ministry of miracles and warnings in Israel.', '2 Kgs 2', 'Prophets', false, true],
+  [841, 'Jehu overthrows Ahab’s house', 'Jehu kills Joram and ends Ahab’s dynasty. Jezebel dies, Baal’s temple is destroyed, and Judah is also shaken by the coup.', '2 Kgs 9–10', 'Turning point', false, false],
+  [835, 'Joash is crowned', 'The priest Jehoiada reveals the young Joash, preserved from Athaliah’s purge. Athaliah is overthrown, and the Davidic line returns to Judah’s throne.', '2 Kgs 11', 'Kingship', false, false],
+  [780, 'Jonah goes to Nineveh', 'Jonah flees his calling, is rescued from the sea, and finally preaches in Nineveh. The city repents, challenging Jonah’s expectations of mercy.', 'Jonah 1–4', 'Prophets', false, true],
+  [760, 'Amos calls for justice', 'During northern Israel’s prosperity, Amos warns that religious ceremony cannot replace righteousness and care for the vulnerable.', 'Amos 2; 5', 'Prophetic warning', false, true],
+  [740, 'Isaiah’s vision', 'In the year King Uzziah dies, Isaiah sees the Lord in the temple. He is commissioned to speak to a people facing judgment and future restoration.', 'Isa 6', 'Calling', false, false],
+  [722, 'Samaria falls', 'Assyria captures the northern capital and deports many Israelites. The kingdom of Israel ends; Judah continues in the south.', '2 Kgs 17', 'Exile', true, false],
+  [701, 'Jerusalem is delivered', 'Sennacherib’s Assyrian army threatens Jerusalem. Hezekiah prays, Isaiah brings a promise of deliverance, and the city survives.', '2 Kgs 18–19; Isa 36–37', 'Deliverance', false, false],
+  [622, 'The book of the Law is found', 'During temple repairs, Hilkiah finds the book of the Law. Josiah hears it, renews the covenant, and carries out sweeping religious reforms.', '2 Kgs 22–23', 'Covenant', false, false],
+  [609, 'Josiah dies at Megiddo', 'Josiah is killed confronting Pharaoh Neco. Judah’s brief period of reform gives way to unstable rulers and pressure from Egypt and Babylon.', '2 Kgs 23:29–30; 2 Chr 35', 'Conflict', false, false],
+  [605, 'Daniel is taken to Babylon', 'Daniel and other young men from Judah are brought to Babylon and trained for royal service. Daniel remains faithful in a foreign court.', 'Dan 1', 'Exile', false, true],
+  [597, 'Jerusalem’s deportation', 'Jehoiachin surrenders to Babylon. The royal household, officials, and skilled workers are deported, with Ezekiel among the exiles.', '2 Kgs 24:10–17; Ezek 1:1–3', 'Exile', false, false],
+  [593, 'Ezekiel’s vision in exile', 'Beside the Chebar canal in Babylon, Ezekiel sees the glory of God and receives his prophetic calling among the deported people.', 'Ezek 1–3', 'Calling', false, false],
+  [588, 'Jeremiah in the cistern', 'Officials lower Jeremiah into a muddy cistern during Jerusalem’s siege. Ebed-melech appeals to the king and rescues him with ropes and cloth padding.', 'Jer 38:6–13', 'Prophets', false, true],
+  [586, 'Jerusalem & the temple fall', 'Babylon breaches Jerusalem’s walls, burns the temple, and deports more of Judah’s people. Zedekiah is captured and blinded. The monarchy ends.', '2 Kgs 25', 'Turning point', true, false],
+  [539, 'Babylon falls to Persia', 'Cyrus conquers Babylon. Persian rule opens the way for Judah’s exiles to return and rebuild their worship and community.', 'Dan 5; Ezra 1', 'Turning point', false, false],
+  [538, 'Cyrus permits the return', 'Cyrus authorizes the exiles to return to Jerusalem and rebuild the temple. Temple vessels are restored, and families prepare to go home.', 'Ezra 1', 'Restoration', true, false],
+  [537, 'The exiles return', 'A returning community, associated with Zerubbabel and Jeshua, settles in Judah. Worship resumes at the altar before the temple is rebuilt.', 'Ezra 2–3', 'Restoration', false, true],
+  [536, 'A new temple foundation', 'The returned community lays the temple foundation. Celebration and tears mingle, as older people remember the first temple.', 'Ezra 3:8–13', 'Worship', false, true],
+  [520, 'Haggai & Zechariah urge rebuilding', 'The prophets encourage Zerubbabel, Jeshua, and the people to resume work on the temple after years of opposition and delay.', 'Hag 1–2; Zech 1; Ezra 5', 'Prophets', false, false],
+  [516, 'The second temple is completed', 'The rebuilt temple is finished in the sixth year of Darius. The community dedicates it and celebrates Passover.', 'Ezra 6:13–22', 'Restoration', true, false],
+  [480, 'Esther becomes queen', 'Esther is chosen as queen of Persia. Mordecai uncovers a plot against the king, setting up the later rescue of their people.', 'Esth 2', 'Diaspora', false, true],
+  [473, 'Esther saves her people', 'Esther risks her life to confront Haman’s plan. The Jews are permitted to defend themselves, and Purim commemorates their deliverance.', 'Esth 4–9', 'Deliverance', false, true],
+  [458, 'Ezra returns to Jerusalem', 'Ezra the priest and scribe leads a further return from Babylon. He teaches the Law and calls the community to renewed faithfulness.', 'Ezra 7–10', 'Restoration', true, false],
+  [445, 'Nehemiah rebuilds the walls', 'Nehemiah leaves the Persian court to rebuild Jerusalem’s defenses. Despite opposition, the wall is completed in 52 days.', 'Neh 1–6', 'Restoration', true, false],
+  [445, 'Ezra reads the Law', 'The people gather at the Water Gate. Ezra reads the Law, the Levites explain it, and the community celebrates the Feast of Booths and renews its covenant.', 'Neh 8–10', 'Covenant', false, true],
+  [432, 'Nehemiah renews the reforms', 'After returning to the Persian court, Nehemiah comes back to Jerusalem and addresses temple neglect, Sabbath trading, and broken commitments.', 'Neh 13', 'Restoration', false, true]
+].map(([year, name, note, ref, category, major, approximate], i) => ({ id: 'event-' + i, year, name, note, ref, category, major, approximate, kind: 'event' }));
+const leaders = [
+  ['Samuel', 'samuel', 1100, 1010, 'Prophet & judge', 'Samuel hears God’s call at Shiloh, leads Israel as a judge, and anoints Saul and David. His placement is approximate, representing the transition to monarchy.', '1 Sam 1–25'],
+  ['Nathan', 'voices', 1000, 970, 'Prophet · Judah', 'Nathan announces the covenant with David, confronts his sin over Bathsheba and Uriah, and supports Solomon’s succession.', '2 Sam 7; 12; 1 Kgs 1'],
+  ['Elijah', 'voices', 870, 848, 'Prophet · Israel', 'Challenges Baal worship in Ahab’s reign, confronts injustice over Naboth’s vineyard, and passes his mantle to Elisha.', '1 Kgs 17–2 Kgs 2'],
+  ['Elisha', 'voices', 848, 798, 'Prophet · Israel', 'Receives Elijah’s mantle. His ministry includes Naaman’s healing, the relief of Samaria’s siege, and Jehu’s anointing.', '2 Kgs 2–13'],
+  ['Zerubbabel', 'restoration', 538, 515, 'Governor · returned Judah', 'Leads the returning community with Jeshua the high priest. Under Haggai and Zechariah’s encouragement, he oversees the rebuilding of the temple.', 'Ezra 2–6; Hag 1–2'],
+  ['Esther', 'restoration', 480, 473, 'Queen · Persia', 'A Jewish queen in Persia who risks her life to prevent the destruction of her people. Her story takes place among the Jews who remain outside Judah.', 'Esth 2–9'],
+  ['Ezra', 'restoration', 458, 440, 'Priest & scribe', 'Returns to Jerusalem in the traditional chronology of 458 BC. Teaches the Law and leads covenant renewal with Nehemiah. The end of his activity is approximate.', 'Ezra 7–10; Neh 8'],
+  ['Nehemiah', 'restoration', 445, 430, 'Governor · Judah', 'A cupbearer to Artaxerxes who becomes governor of Judah, rebuilds Jerusalem’s walls, and works with Ezra to restore the community. Later returns to carry out further reforms.', 'Neh 1–13']
+].map(([name, lane, start, end, category, note, ref], i) => ({ id: 'leader-' + i, name, lane, start, end, category, note, ref, kind: 'leader' }));
+kings.forEach((d, i) => { d.id = 'king-' + i; d.kind = 'king'; d.lane = d.kingdom; });
+prophets.forEach((d, i) => { d.id = 'prophet-' + i; d.kind = 'prophet'; d.lane = d.group; d.category = (d.group === 'major' ? 'Major' : 'Minor') + ' prophet · ' + d.where; });
+const people = [...kings, ...prophets, ...leaders];
+const allItems = [...events, ...people];
+const lanes = [
+  { id: 'samuel', name: 'Samuel', sub: 'Judge & prophet', height: 54 },
+  { id: 'united', name: 'United kingdom', sub: 'Saul · David · Solomon', height: 70 },
+  { id: 'israel', name: 'Israel', sub: 'The northern kingdom', height: 72 },
+  { id: 'judah', name: 'Judah', sub: 'The southern kingdom', height: 72 },
+  { id: 'voices', name: 'Prophetic voices', sub: 'Nathan · Elijah · Elisha', height: 53 },
+  { id: 'major', name: 'Major prophets', sub: 'Longer prophetic books', height: 86 },
+  { id: 'minor', name: 'Minor prophets', sub: 'Shorter prophetic books', height: 105 },
+  { id: 'restoration', name: 'Restoration', sub: 'Return & rebuilding', height: 86 }
+];
+const shown = new Set(lanes.map(d => d.id));
+let showEvents = true, query = '', domain = RANGES.full.slice(), selected = events.find(d => d.year === 930);
+let geometry, drag = null, brushDrag = null, navigatorResize = null, touchGesture = null, hoverTimer, frame;
+const svg = document.getElementById('chart'), wrap = document.getElementById('chart-wrap');
+const tip = document.getElementById('tip'), overview = document.getElementById('overview');
+const colors = name => 'var(--color-' + name + ')';
+const matches = d => !query || [d.name, d.note, d.ref, d.category, d.where, d.kingdom].filter(Boolean).join(' ').toLowerCase().includes(query);
+const visibleItems = () => allItems.filter(d => d.kind === 'event' ? showEvents : shown.has(d.lane));
+const yearOf = d => d.year ?? d.start;
+const dateText = d => d.kind === 'event' ? (d.approximate ? 'c. ' : '') + Math.round(d.year) + ' BC' : 'c. ' + Math.round(d.start) + '–' + Math.round(d.end) + ' BC';
+const colorOf = d => d.kind === 'king' ? RATINGS[String(d.rating)].color : d.lane === 'samuel' ? 'neutral' : d.lane === 'restoration' ? 'prophet' : d.lane === 'major' || d.lane === 'voices' ? 'accent' : 'prophet';
+function el(tag, attrs, parent = svg, content) {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+  if (content !== undefined) node.textContent = content;
+  parent.appendChild(node); return node;
+}
+function bounded(a, b) {
+  let span = Math.max(30, Math.min(680, a - b));
+  a = Math.max(420 + span, Math.min(1100, a));
+  return [a, a - span];
+}
+function setDomain(a, b) {
+  domain = bounded(a, b); hideTip(); schedulePaint();
+}
+function schedulePaint() { if (!frame) frame = requestAnimationFrame(() => { frame = null; paint(); }); }
+function activate(d, reveal = false) {
+  selected = d; hideTip(); renderDetail(); renderList(); updateSelection();
+  if (reveal && (yearOf(d) > domain[0] || yearOf(d) < domain[1])) {
+    const span = Math.max(120, Math.min(250, domain[0] - domain[1]));
+    setDomain(yearOf(d) + span * .5, yearOf(d) - span * .5);
+  }
+}
+function renderDetail() {
+  const panel = document.getElementById('detail'); panel.replaceChildren();
+  const make = (tag, cls, value, parent = panel) => { const n = document.createElement(tag); n.className = cls; n.textContent = value; parent.append(n); return n; };
+  const category = selected.kind === 'king' ? (selected.kingdom === 'united' ? 'UNITED KINGDOM' : selected.kingdom === 'israel' ? 'ISRAEL · NORTH' : 'JUDAH · SOUTH') : (selected.category || 'Prophet').toUpperCase();
+  make('div', 'detail-category', category);
+  make('h2', '', selected.name);
+  make('p', 'detail-date', dateText(selected));
+  if (selected.kind === 'king') {
+    const rating = make('div', 'rating', ''); rating.style.setProperty('--rating-color', colors(colorOf(selected)));
+    make('i', '', '', rating); make('span', '', RATINGS[String(selected.rating)].label, rating);
+  }
+  make('p', 'detail-note', selected.note);
+  const link = make('a', 'scripture', selected.ref + ' ↗');
+  link.href = 'https://www.biblegateway.com/passage/?search=' + encodeURIComponent(selected.ref) + '&version=ESV';
+  link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', 'Read ' + selected.ref + ' in the Bible');
+  const sequence = selected.kind === 'event' ? events : people.filter(d => d.lane === selected.lane);
+  const index = sequence.indexOf(selected), nav = make('div', 'detail-navigation', '');
+  const prev = make('button', '', '← Previous', nav); prev.disabled = index <= 0; prev.addEventListener('click', () => activate(sequence[index - 1], true));
+  make('span', '', (index + 1) + ' / ' + sequence.length, nav);
+  const next = make('button', '', 'Next →', nav); next.disabled = index >= sequence.length - 1; next.addEventListener('click', () => activate(sequence[index + 1], true));
+}
+function renderList() {
+  const list = document.getElementById('story-list'), scroll = list.scrollTop;
+  list.replaceChildren();
+  const data = query ? visibleItems().filter(matches).sort((a, b) => yearOf(b) - yearOf(a)) : (showEvents ? events : people.filter(d => shown.has(d.lane)).sort((a,b) => b.start - a.start));
+  document.getElementById('story-heading').textContent = query ? 'Search results' : showEvents ? 'Explore the story' : 'Explore the people';
+  document.getElementById('result-count').textContent = data.length + (query ? ' found' : showEvents ? ' events' : ' people');
+  data.forEach(d => {
+    const button = document.createElement('button'); button.className = 'story-item'; button.dataset.itemId = d.id;
+    button.setAttribute('aria-current', String(selected.id === d.id)); button.title = d.name + ' · ' + dateText(d);
+    const year = document.createElement('span'); year.className = 'year'; year.textContent = Math.round(yearOf(d));
+    const name = document.createElement('span'); name.className = 'name'; name.textContent = d.name;
+    button.append(year, name); button.addEventListener('click', () => activate(d, true)); list.append(button);
+  });
+  if (!data.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = 'No matches. Try a name, a place, or a Scripture reference. You can also turn on more layers.'; list.append(p); }
+  list.scrollTop = scroll;
+}
+function showTip(d, clientX, clientY) {
+  tip.replaceChildren();
+  const title = document.createElement('strong'); title.textContent = d.name;
+  const meta = document.createElement('span'); meta.textContent = dateText(d) + (d.kind === 'king' ? ' · ' + RATINGS[String(d.rating)].label : '');
+  tip.append(title, meta); tip.hidden = false;
+  tip.style.left = Math.max(10, Math.min(innerWidth - tip.offsetWidth - 10, clientX + 14)) + 'px';
+  tip.style.top = Math.max(10, Math.min(innerHeight - tip.offsetHeight - 10, clientY + 14)) + 'px';
+}
+function hideTip() { clearTimeout(hoverTimer); tip.hidden = true; }
+function interactive(node, d) {
+  node.classList.add('mark'); node.dataset.itemId = d.id;
+  node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
+  node.setAttribute('aria-label', d.name + ', ' + dateText(d) + (d.kind === 'king' ? ', ' + RATINGS[String(d.rating)].label : '') + '. Select to read.');
+  node.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') { clearTimeout(hoverTimer); hoverTimer = setTimeout(() => showTip(d, e.clientX, e.clientY), 600); } });
+  node.addEventListener('pointerleave', hideTip);
+  node.addEventListener('focus', () => { const r = node.getBoundingClientRect(); showTip(d, r.x, r.y); });
+  node.addEventListener('blur', hideTip);
+  node.addEventListener('click', () => { if (!suppressClick) activate(d); });
+  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(d); } });
+}
+function updateSelection() {
+  svg.querySelectorAll('.selection-ring').forEach(d => d.remove());
+  const mark = svg.querySelector('[data-item-id="' + selected.id + '"]');
+  svg.querySelectorAll('.mark').forEach(n => n.setAttribute('aria-pressed', String(n === mark)));
+  if (!mark) return;
+  const dot = mark.querySelector('.event-dot'), track = mark.querySelector('.track');
+  if (dot) el('circle', { class: 'selection-ring', cx: dot.getAttribute('cx'), cy: dot.getAttribute('cy'), r: 8 }, mark);
+  else if (track) el('rect', { class: 'selection-ring', x: +track.getAttribute('x') - 3, y: +track.getAttribute('y') - 3, width: +track.getAttribute('width') + 6, height: +track.getAttribute('height') + 6, rx: 8 }, mark);
+}
+function paint() {
+  const width = wrap.clientWidth, small = width < 620, left = small ? 87 : 133, right = small ? 13 : 26;
+  const plotW = Math.max(80, width - left - right), span = domain[0] - domain[1];
+  const x = y => left + (domain[0] - y) / span * plotW;
+  const active = lanes.filter(d => shown.has(d.id));
+  const laneTotal = active.reduce((s, d) => s + d.height, 0);
+  const extra = innerWidth > 1100 ? Math.max(0, innerHeight - 355 - laneTotal) / Math.max(1, active.length) : 0;
+  const eventH = showEvents ? (small ? 118 : 132) : 16;
+  let y = 71 + eventH;
+  const laneY = {}; active.forEach(d => { laneY[d.id] = y; y += d.height + extra; });
+  const height = Math.max(320, y + 24);
+  geometry = { width, left, right, plotW, height, x, laneY };
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('height', height); svg.replaceChildren();
+  wrap.style.minHeight = height + 'px';
+  el('title', {}, svg, 'Biblical history from Samuel to Nehemiah. Use era buttons or the overview to explore, and select a person or event to read.');
+  const defs = el('defs', {}), clip = el('clipPath', { id: 'plot-clip' }, defs);
+  el('rect', { x: left - 5, y: 0, width: plotW + 10, height }, clip);
+  const g = el('g', { 'clip-path': 'url(#plot-clip)' });
+  const periods = [[1100, 1050, 'Judges'], [1050, 930, 'United kingdom'], [930, 586, 'Divided kingdom'], [586, 538, 'Exile'], [538, 420, 'Restoration']];
+  periods.forEach(([a, b, title]) => {
+    const start = Math.max(left, x(a)), end = Math.min(width - right, x(b));
+    if (end <= start) return;
+    el('line', { x1: start, x2: end - 4, y1: 15, y2: 15, stroke: colors(a === 586 ? 'bad' : a === 538 ? 'prophet' : 'line'), 'stroke-width': 2 }, g);
+    if (end - start > title.length * 6 + 12) el('text', { x: start + 4, y: 34, class: 'era-label' }, g, title.toUpperCase());
+  });
+  const desired = Math.max(3, Math.floor(plotW / 64)), rough = span / desired;
+  const step = [5, 10, 20, 25, 50, 100, 200].find(d => d >= rough) || 200;
+  for (let yr = Math.ceil(domain[1] / step) * step; yr <= domain[0]; yr += step) {
+    const px = x(yr); el('line', { x1: px, x2: px, y1: 68, y2: height - 12, stroke: colors('grid'), 'stroke-dasharray': '2 5' }, g);
+    el('text', { x: px, y: 59, class: 'axis-label', 'text-anchor': 'middle' }, svg, yr);
+  }
+  el('text', { x: 13, y: 59, class: 'axis-label' }, svg, 'YEAR BC');
+  if (showEvents) {
+    el('text', { x: 13, y: 103, class: 'lane-title' }, svg, 'Key events');
+    if (!small) el('text', { x: 13, y: 119, class: 'lane-subtitle' }, svg, 'Select a moment');
+    const occupied = [[], [], []], baseline = 71 + eventH - 17;
+    const inView = events.filter(d => d.year <= domain[0] && d.year >= domain[1]);
+    const labelPriority = d => d.id === selected.id ? 100 : d.major && d.year === 445 ? 95 : d.major && d.year === 458 ? 90 : d.major && d.year === 1080 ? 85 : d.major ? 80 : 0;
+    const labelData = inView.filter(d => matches(d)).sort((a, b) => labelPriority(b) - labelPriority(a) || b.year - a.year);
+    const labels = new Map();
+    labelData.forEach(d => {
+      if (!d.major && !query && span > 320) return;
+      const px = x(d.year), maxChars = small ? 21 : 27;
+      const label = d.name.length > maxChars ? d.name.slice(0, maxChars - 1) + '…' : d.name;
+      const labelW = Math.min(plotW, label.length * 5.7 + 8), tx = Math.max(left + 2, Math.min(px - 1, width - right - labelW));
+      const row = occupied.findIndex(r => r.every(([a, b]) => tx + labelW + 8 < a || tx > b + 8));
+      if (row < 0) return; occupied[row].push([tx, tx + labelW]); labels.set(d.id, { tx, row, label });
+    });
+    inView.forEach(d => {
+      const px = x(d.year), item = el('g', { opacity: matches(d) ? 1 : .12 }, g);
+      const label = labels.get(d.id), cy = label ? 93 + label.row * 31 : baseline;
+      if (label) {
+        el('line', { x1: px, x2: px, y1: cy + 8, y2: height - 12, stroke: colors('accent'), opacity: d.id === selected.id ? .35 : .1, 'stroke-dasharray': '2 5' }, item);
+        el('text', { x: label.tx + 9, y: cy + 4, class: 'event-label' }, item, label.label);
+        el('text', { x: label.tx + 9, y: cy + 18, class: 'event-year' }, item, (d.approximate ? 'c. ' : '') + d.year);
+        if (Math.abs(label.tx - px) > 8) el('line', { x1: px, x2: label.tx + 4, y1: cy, y2: cy, stroke: colors('accent'), opacity: .5 }, item);
+      }
+      el('circle', { cx: px, cy, r: 4, fill: colors('paper'), stroke: colors('accent'), 'stroke-width': 1.4, class: 'event-dot' }, item);
+      el('circle', { cx: px, cy, r: 11, class: 'hit' }, item); interactive(item, d);
+    });
+  }
+  active.forEach(lane => {
+    const top = laneY[lane.id], h = lane.height + extra;
+    el('line', { x1: 12, x2: width - right, y1: top, y2: top, stroke: colors('grid') });
+    const title = small ? ({ united: 'United', voices: 'Prophets', major: 'Major', minor: 'Minor', restoration: 'Restoration' }[lane.id] || lane.name) : lane.name;
+    el('text', { x: 13, y: top + 27, class: 'lane-title' }, svg, title);
+    if (!small) el('text', { x: 13, y: top + 43, class: 'lane-subtitle' }, svg, lane.sub);
+    if (lane.id === 'israel' && domain[1] < 722) {
+      const xx = Math.max(left, x(722)), w = width - right - xx;
+      if (w > 0) { el('rect', { x: xx, y: top + 10, width: w, height: h - 20, rx: 6, fill: colors('exile') }, g); if (w > 150) el('text', { x: xx + 12, y: top + 39, class: 'person-label' }, g, 'Assyrian exile'); }
+    }
+    if (lane.id === 'judah') {
+      const xx = Math.max(left, x(586)), end = Math.min(width - right, x(538));
+      if (end > xx) { el('rect', { x: xx, y: top + 10, width: end - xx, height: h - 20, rx: 6, fill: colors('exile') }, g); if (end - xx > 45) el('text', { x: xx + 8, y: top + 37, class: 'person-label' }, g, 'Exile'); }
+      const rx = Math.max(left, x(538)); if (rx < width - right) { el('rect', { x: rx, y: top + 10, width: width - right - rx, height: h - 20, rx: 6, fill: colors('return') }, g); if (width - right - rx > 90) el('text', { x: rx + 10, y: top + 39, class: 'person-label' }, g, 'Returned Judah'); }
+    }
+    const data = people.filter(d => d.lane === lane.id && d.start >= domain[1] && d.end <= domain[0]).sort((a,b) => b.start - a.start);
+    const stacked = ['major', 'minor', 'restoration', 'voices'].includes(lane.id), rows = [];
+    const labelOccupied = [];
+    let shortOrdinal = 0;
+    data.forEach(d => {
+      const start = Math.max(left, x(d.start)), end = Math.min(width - right, x(d.end));
+      const rawW = Math.max(2.8, end - start), isMatch = matches(d);
+      let row = 0;
+      if (stacked) { while (rows[row] !== undefined && start < rows[row] + Math.min(62, d.name.length * 5.5 + 12)) row++; rows[row] = end; }
+      // Stacked rows preserve overlaps without drawing one prophet over another.
+      const rowCount = stacked ? (lane.id === 'minor' ? 4 : lane.id === 'major' || lane.id === 'restoration' ? 3 : 2) : 1;
+      row = Math.min(row, rowCount - 1);
+      const rowSpace = (h - 19) / rowCount;
+      const tinyKing = d.kind === 'king' && rawW < 5;
+      const yy = top + (stacked ? 20 + row * rowSpace : tinyKing ? 5 + (shortOrdinal++ % 2) * 13 : 31), thick = stacked ? 5 : tinyKing ? 5 : 10;
+      if (tinyKing) el('line', { x1: start + rawW/2, x2: start + rawW/2, y1: yy + thick, y2: top + 37, stroke: colors(colorOf(d)), opacity: .4 }, g);
+      const item = el('g', { opacity: isMatch ? 1 : .13 }, g);
+      const track = el('rect', { x: start, y: yy, width: rawW, height: thick, rx: thick / 2, fill: colors(colorOf(d)), class: 'track' }, item);
+      const hitW = Math.max(11, rawW); el('rect', { x: start - (hitW - rawW) / 2, y: yy - 10, width: hitW, height: 26, class: 'hit' }, item);
+      interactive(item, d);
+      if (!isMatch) return;
+      const textW = d.name.length * 5.8, preferred = ['David', 'Solomon', 'Ahab', 'Jehu', 'Jeroboam II', 'Asa', 'Hezekiah', 'Manasseh', 'Josiah'].includes(d.name);
+      let labelX = start + 1;
+      if (stacked || lane.id === 'samuel' || rawW > textW + 4 || (preferred && span > 300) || query) {
+        if (labelX + textW > width - right) labelX = Math.max(left, width - right - textW);
+        const collision = labelOccupied.some(d => d.row === row && labelX < d.end + 6 && labelX + textW > d.start - 6);
+        if (!collision) {
+          el('text', { x: labelX, y: stacked ? yy - 5 : yy + 27, class: 'person-label' }, item, d.name);
+          labelOccupied.push({ row, start: labelX, end: labelX + textW });
+        }
+      }
+    });
+  });
+  if (domain[0] > 930 && domain[1] < 930) el('line', { x1: x(930), x2: x(930), y1: 71 + eventH, y2: height - 12, stroke: colors('accent'), 'stroke-dasharray': '3 5', opacity: .28 }, g);
+  updateSelection(); paintOverview();
+  document.getElementById('visible-range').textContent = Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC';
+  let range = 'Custom view';
+  document.querySelectorAll('.range').forEach(b => {
+    const values = RANGES[b.dataset.range], on = values.every((v,i) => Math.abs(v - domain[i]) < 1);
+    b.setAttribute('aria-pressed', String(on)); if (on) range = b.textContent;
+  });
+  document.getElementById('view-name').textContent = ' · ' + range;
+  document.getElementById('zoom-out').disabled = span >= 679;
+  document.getElementById('zoom-in').disabled = span <= 30.1;
+  document.getElementById('start-year').value = Math.round(domain[0]);
+  document.getElementById('end-year').value = Math.round(domain[1]);
+  const count = visibleItems().filter(d => matches(d) && (d.kind === 'event' ? d.year <= domain[0] && d.year >= domain[1] : d.start >= domain[1] && d.end <= domain[0])).length;
+  document.getElementById('chart-count').textContent = count + ' people & events in view';
+}
+function paintOverview() {
+  const w = overview.clientWidth, h = overview.clientHeight, padding = 10;
+  const x = year => padding + (1100 - year) / 680 * (w - padding * 2);
+  overview.setAttribute('viewBox', `0 0 ${w} ${h}`); overview.replaceChildren();
+  el('title', {}, overview, 'Drag the selected window to pan. Drag either edge to zoom. Drag the grip above to resize this navigator.');
+  const plotTop = 23, plotBottom = h - 9, rowH = (plotBottom - plotTop) / 3;
+  for (let yr = 1100; yr >= 420; yr -= w < 600 ? 200 : 100) {
+    el('text', { x: x(yr), y: 12, 'text-anchor': 'middle', fill: colors('faint'), 'font-size': 10 }, overview, yr);
+    el('line', { x1: x(yr), x2: x(yr), y1: 19, y2: plotBottom, stroke: colors('grid') }, overview);
+  }
+  ['united', 'israel', 'judah'].forEach((lane, row) => {
+    kings.filter(d => d.lane === lane).forEach(d => el('rect', { x: x(d.start), y: plotTop + row * rowH + rowH * .25, width: Math.max(1, x(d.end) - x(d.start)), height: Math.max(3, rowH * .28), rx: 2, fill: colors(colorOf(d)), opacity: .7 }, overview));
+  });
+  events.filter(d => d.major).forEach(d => el('line', { x1: x(d.year), x2: x(d.year), y1: plotTop, y2: plotBottom, stroke: colors('accent'), opacity: .17 }, overview));
+  const a = x(domain[0]), b = x(domain[1]);
+  el('rect', { x: padding, y: 18, width: Math.max(0, a - padding), height: h - 19, fill: colors('paper'), opacity: .65 }, overview);
+  el('rect', { x: b, y: 18, width: Math.max(0, w - padding - b), height: h - 19, fill: colors('paper'), opacity: .65 }, overview);
+  el('rect', { x: a, y: 18, width: Math.max(1, b-a), height: h - 19, rx: 5, class: 'overview-selection', 'data-brush': 'window' }, overview);
+  [a, b].forEach((xx, i) => {
+    const mode = i ? 'end' : 'start', handle = el('g', { 'data-brush': mode, role: 'slider', tabindex: 0, 'aria-label': (i ? 'End' : 'Start') + ' year BC', 'aria-valuemin': i ? 420 : Math.ceil(domain[1]+30), 'aria-valuemax': i ? Math.floor(domain[0]-30) : 1100, 'aria-valuenow': Math.round(domain[i]) }, overview);
+    el('rect', { x: xx - 9, y: 16, width: 18, height: h - 17, fill: colors('transparent'), cursor: 'ew-resize' }, handle);
+    el('rect', { x: xx - 4, y: 18, width: 8, height: h - 19, rx: 4, class: 'overview-handle' }, handle);
+    el('line', { x1: xx - 1, x2: xx - 1, y1: h/2 - 4, y2: h/2 + 10, stroke: colors('paper'), 'pointer-events': 'none' }, handle);
+    el('line', { x1: xx + 1, x2: xx + 1, y1: h/2 - 4, y2: h/2 + 10, stroke: colors('paper'), 'pointer-events': 'none' }, handle);
+  });
+  document.getElementById('navigator-range').textContent = 'Timeline navigator · ' + Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC';
+}
+function zoom(factor, fraction = .5) {
+  const span = domain[0] - domain[1], next = Math.min(680, Math.max(30, span * factor));
+  const focus = domain[0] - fraction * span;
+  setDomain(focus + fraction * next, focus - (1 - fraction) * next);
+}
+let suppressClick = false;
+svg.addEventListener('pointerdown', e => {
+  if (e.button !== 0 || e.pointerType === 'touch' || !geometry) return;
+  drag = { x: e.clientX, domain: domain.slice(), moved: false };
+});
+window.addEventListener('pointermove', e => {
+  if (navigatorResize) {
+    overview.style.height = Math.max(60, Math.min(230, navigatorResize.height + navigatorResize.y - e.clientY)) + 'px';
+    paintOverview();
+  }
+  if (drag) {
+    const shift = (e.clientX - drag.x) / geometry.plotW * (drag.domain[0] - drag.domain[1]);
+    if (Math.abs(e.clientX - drag.x) > 4) { drag.moved = true; hideTip(); svg.classList.add('dragging'); setDomain(drag.domain[0] + shift, drag.domain[1] + shift); }
+  }
+  if (brushDrag) {
+    const shift = (e.clientX - brushDrag.x) / (overview.clientWidth - 20) * 680;
+    const [a, b] = brushDrag.domain;
+    if (brushDrag.mode === 'start') setDomain(Math.max(b + 30, Math.min(1100, a - shift)), b);
+    else if (brushDrag.mode === 'end') setDomain(a, Math.min(a - 30, Math.max(420, b - shift)));
+    else setDomain(a - shift, b - shift);
+  }
+});
+function finishPointer() {
+  if (drag?.moved) { suppressClick = true; setTimeout(() => { suppressClick = false; }, 0); }
+  drag = null; brushDrag = null; navigatorResize = null; svg.classList.remove('dragging');
+}
+window.addEventListener('pointerup', finishPointer);
+window.addEventListener('pointercancel', finishPointer);
+svg.addEventListener('wheel', e => {
+  if (!geometry) return; e.preventDefault();
+  const fraction = Math.max(0, Math.min(1, (e.clientX - svg.getBoundingClientRect().left - geometry.left) / geometry.plotW));
+  zoom(e.deltaY > 0 ? 1.13 : 1 / 1.13, fraction);
+}, { passive: false });
+svg.addEventListener('touchstart', e => {
+  if (e.touches.length !== 2) return;
+  const [a,b] = e.touches;
+  touchGesture = { distance: Math.abs(a.clientX - b.clientX), domain: domain.slice(), midpoint: (a.clientX + b.clientX) / 2 };
+}, { passive: true });
+svg.addEventListener('touchmove', e => {
+  if (!touchGesture || e.touches.length !== 2) return; e.preventDefault();
+  const [a,b] = e.touches, distance = Math.max(10, Math.abs(a.clientX - b.clientX));
+  const span = touchGesture.domain[0] - touchGesture.domain[1];
+  const next = Math.max(30, Math.min(680, span * touchGesture.distance / distance));
+  const fraction = Math.max(0, Math.min(1, (touchGesture.midpoint - svg.getBoundingClientRect().left - geometry.left) / geometry.plotW));
+  const shift = ((a.clientX + b.clientX) / 2 - touchGesture.midpoint) / geometry.plotW * next;
+  const focus = touchGesture.domain[0] - span * fraction;
+  setDomain(focus + fraction * next + shift, focus - (1-fraction) * next + shift);
+}, { passive: false });
+svg.addEventListener('touchend', () => { touchGesture = null; });
+overview.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  e.preventDefault(); const mode = e.target.closest('[data-brush]')?.dataset.brush;
+  if (!mode) {
+    const year = 1100 - (e.clientX - overview.getBoundingClientRect().left - 10) / (overview.clientWidth - 20) * 680;
+    const span = domain[0] - domain[1]; domain = bounded(year + span / 2, year - span / 2); schedulePaint();
+  }
+  brushDrag = { mode: mode || 'window', x: e.clientX, domain: domain.slice() };
+});
+document.querySelectorAll('.range').forEach(b => b.addEventListener('click', () => { setDomain(...RANGES[b.dataset.range]); document.querySelector('.periods').open = false; }));
+document.getElementById('zoom-in').addEventListener('click', () => zoom(.7));
+document.getElementById('zoom-out').addEventListener('click', () => zoom(1 / .7));
+document.getElementById('reset').addEventListener('click', () => setDomain(...RANGES.full));
+document.getElementById('q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderList(); schedulePaint(); });
+for (const id of ['start-year', 'end-year']) document.getElementById(id).addEventListener('change', () => setDomain(+document.getElementById('start-year').value, +document.getElementById('end-year').value));
+const menu = document.getElementById('layer-menu');
+[ { id: 'events', name: 'Key events' }, ...lanes ].forEach(lane => {
+  const label = document.createElement('label'), input = document.createElement('input'); input.type = 'checkbox'; input.checked = true; input.dataset.lane = lane.id;
+  label.append(input, document.createTextNode(lane.name)); menu.append(label);
+  input.addEventListener('change', () => {
+    if (lane.id === 'events') showEvents = input.checked;
+    else if (input.checked) shown.add(lane.id); else shown.delete(lane.id);
+    renderList(); schedulePaint();
+  });
+});
+function pan(direction, farther = false) {
+  const shift = (domain[0] - domain[1]) * (farther ? .5 : .1) * direction;
+  setDomain(domain[0] + shift, domain[1] + shift);
+}
+function adjacentEvent(direction) {
+  const sequence = events.filter(d => matches(d));
+  if (!sequence.length || !showEvents) return;
+  let index = sequence.indexOf(selected);
+  if (index < 0) index = direction > 0 ? -1 : sequence.length;
+  const next = sequence[Math.max(0, Math.min(sequence.length - 1, index + direction))];
+  activate(next, true);
+}
+function closeMenus() { document.querySelectorAll('details[open]').forEach(d => { d.open = false; }); hideTip(); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeMenus(); if (document.activeElement === document.getElementById('q')) document.activeElement.blur(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  const slider = e.target instanceof Element ? e.target.closest('[data-brush][role="slider"]') : null;
+  if (slider && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+    e.preventDefault(); const mode = slider.dataset.brush, step = e.shiftKey ? 25 : 5;
+    let [a,b] = domain;
+    const change = e.key === 'ArrowLeft' ? step : -step;
+    if (mode === 'start') a = e.key === 'Home' ? 1100 : e.key === 'End' ? b+30 : Math.max(b+30, Math.min(1100, a+change));
+    else b = e.key === 'Home' ? a-30 : e.key === 'End' ? 420 : Math.min(a-30, Math.max(420, b+change));
+    setDomain(a,b);
+    requestAnimationFrame(() => overview.querySelector('[data-brush="'+mode+'"]').focus()); return;
+  }
+  switch (e.key) {
+    case '+': case '=': e.preventDefault(); zoom(.8); break;
+    case '-': case '_': e.preventDefault(); zoom(1.25); break;
+    case 'ArrowLeft': e.preventDefault(); pan(1, e.shiftKey); break;
+    case 'ArrowRight': e.preventDefault(); pan(-1, e.shiftKey); break;
+    case '[': e.preventDefault(); adjacentEvent(-1); break;
+    case ']': e.preventDefault(); adjacentEvent(1); break;
+    case 'f': case 'F': case '0': e.preventDefault(); setDomain(...RANGES.full); break;
+    case '/': e.preventDefault(); document.getElementById('q').focus(); break;
+    case '?': e.preventDefault(); document.querySelector('.shortcut-help').open = !document.querySelector('.shortcut-help').open; break;
+  }
+});
+document.addEventListener('pointerdown', e => {
+  document.querySelectorAll('.layers[open], .periods[open], .shortcut-help[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; });
+});
+document.getElementById('navigator-resizer').addEventListener('pointerdown', e => {
+  if (e.button !== 0) return;
+  e.preventDefault(); navigatorResize = { y: e.clientY, height: overview.clientHeight };
+});
+document.getElementById('navigator-resizer').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+  e.preventDefault(); e.stopPropagation();
+  overview.style.height = Math.max(60, Math.min(230, overview.clientHeight + (e.key === 'ArrowUp' ? 20 : -20))) + 'px'; paintOverview();
+});
+new ResizeObserver(schedulePaint).observe(wrap);
+window.addEventListener('resize', schedulePaint);
+renderDetail(); renderList(); paint();
+</script>
+</body>
+</html>
