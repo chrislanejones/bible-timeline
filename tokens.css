@@ -4,7 +4,7 @@
   --color-raised: oklch(24% .012 75);
   --color-ink: oklch(93% .014 80);
   --color-muted: oklch(71% .016 80);
-  --color-faint: oklch(59% .016 80);
+  --color-faint: oklch(68% .016 80);
   --color-line: oklch(34% .012 75);
   --color-grid: oklch(27% .009 75);
   --color-accent: oklch(80% .095 80);
@@ -29,9 +29,9 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  --text-xs: 11px;
-  --text-sm: 12px;
-  --text-base: 14px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
   --text-md: 18px;
   --text-display: 34px;
   --radius-control: 999px;

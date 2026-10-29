@@ -12,7 +12,7 @@
   --color-raised: oklch(24% .012 75);
   --color-ink: oklch(93% .014 80);
   --color-muted: oklch(71% .016 80);
-  --color-faint: oklch(59% .016 80);
+  --color-faint: oklch(68% .016 80);
   --color-line: oklch(34% .012 75);
   --color-grid: oklch(27% .009 75);
   --color-accent: oklch(80% .095 80);
@@ -37,9 +37,9 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
-  --text-xs: 11px;
-  --text-sm: 12px;
-  --text-base: 14px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
   --text-md: 18px;
   --text-display: 34px;
   --radius-control: 999px;
@@ -48,250 +48,213 @@
 }
 </style>
 <style>
-/* Interactive timeline: warm dark surfaces, blue/red king ratings, restrained gold events.
- * Native SVG rendering keeps the page standalone and available offline. */
+/* A standalone reading tool: clear type, bounded panels, and room to explore. */
 * { box-sizing: border-box; }
-html, body { margin: 0; overflow-x: clip; background: var(--color-paper); color: var(--color-ink); }
-body { font: var(--text-base)/1.5 var(--font-body); font-variant-numeric: tabular-nums; }
-button, input { font: inherit; }
-button { cursor: pointer; white-space: nowrap; }
-button, input, a { -webkit-tap-highlight-color: var(--color-transparent); }
-button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 4px; }
-button { color: var(--color-muted); border: 0; background: var(--color-transparent); }
-button:hover { color: var(--color-ink); }
-button:active { transform: translateY(1px); }
-button:disabled { opacity: .35; cursor: default; transform: none; }
-button[hidden], [hidden] { display: none !important; }
+html { background: var(--color-paper); color: var(--color-ink); }
+body { margin: 0; font: var(--text-base)/1.6 var(--font-body); font-variant-numeric: tabular-nums; }
+button, input, select { font: inherit; }
+button, summary { cursor: pointer; }
+button { color: var(--color-muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 9px 12px; min-height: 44px; }
+button:hover { color: var(--color-ink); background: var(--color-raised); }
+button:disabled { opacity: .4; cursor: default; }
+button[aria-pressed="true"], button[aria-current="true"] { background: var(--color-raised); color: var(--color-accent); border-color: var(--color-line); }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+[hidden] { display: none !important; }
+h1, h2, h3, p { margin: 0; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; line-height: 1.2; }
+a { color: var(--color-accent); text-underline-offset: 4px; }
 svg { display: block; }
-h1, h2, p { margin: 0; }
-h1, h2 { font-style: normal; overflow-wrap: anywhere; }
-a { color: var(--color-accent); text-decoration-color: var(--color-line); text-underline-offset: 4px; }
-a:hover { text-decoration-color: var(--color-accent); }
-.masthead { padding: 16px 32px; min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--color-line); }
-.identity { display: flex; align-items: center; gap: 18px; min-width: 0; }
-.brand-mark { width: 34px; height: 40px; color: var(--color-accent); flex: none; }
-h1 { font: 400 var(--text-display)/1.16 var(--font-display); letter-spacing: -.025em; }
-.subtitle { color: var(--color-muted); font-size: var(--text-sm); margin-top: 5px; }
-.edition { color: var(--color-faint); font-size: var(--text-sm); text-align: right; flex: none; }
-.edition strong { display: block; color: var(--color-accent); font-weight: 500; letter-spacing: .15em; font-size: var(--text-xs); }
-.toolbar { min-height: 70px; padding: 12px 32px; display: flex; align-items: center; gap: 20px; border-block: 1px solid var(--color-line); }
-.eras { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-.eras button { padding: 9px 15px; border-radius: var(--radius-control); font-size: var(--text-sm); transition: background-color var(--dur-short) var(--ease-out); }
-.eras button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-paper); }
-.search-box { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--color-line); border-radius: var(--radius-control); min-width: 190px; width: 245px; }
-.search-box svg { width: 15px; height: 15px; color: var(--color-faint); flex: none; }
-.search-box input { width: 100%; min-width: 0; border: 0; background: var(--color-transparent); color: var(--color-ink); outline-offset: 6px; font-size: var(--text-sm); }
-.search-box input::placeholder { color: var(--color-faint); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: fixed; top: -100px; left: 12px; z-index: 30; padding: 12px; background: var(--color-raised); }
+.skip-link:focus { top: 12px; }
+.masthead { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 32px; border-bottom: 1px solid var(--color-line); }
+h1 { font-size: clamp(25px, 2.5vw, 34px); letter-spacing: -.025em; }
+.subtitle { color: var(--color-muted); font-size: 13px; margin-top: 7px; }
+.search-area { position: relative; width: 320px; flex: 0 0 320px; }
+.search-box { display: flex; align-items: center; gap: 8px; border: 1px solid var(--color-line); border-radius: 24px; padding-left: 16px; }
 .search-box:focus-within { border-color: var(--color-accent); }
-.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 292px; min-height: calc(100dvh - 72px); }
-.timeline-panel { min-width: 0; display: flex; flex-direction: column; }
-.chart-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 28px 10px 32px; }
-.view-label { font-size: var(--text-sm); color: var(--color-muted); }
-.view-label strong { font-weight: 500; color: var(--color-ink); }
-.view-actions { display: flex; align-items: center; gap: 10px; }
-.icon-button { width: 30px; height: 30px; border: 1px solid var(--color-line); border-radius: 50%; display: grid; place-items: center; font-size: 18px; }
-.reset { font-size: var(--text-sm); padding: 6px; }
-.layers { position: relative; font-size: var(--text-sm); }
-.layers summary { color: var(--color-muted); cursor: pointer; padding: 6px 10px; list-style: none; white-space: nowrap; }
-.layers summary::-webkit-details-marker { display: none; }
-.layers summary::after { content: '⌄'; margin-left: 7px; }
-.layer-menu { position: absolute; right: 0; top: 36px; background: var(--color-raised); padding: 12px 16px; z-index: 5; border: 1px solid var(--color-line); border-radius: 12px; width: 192px; }
-.layer-menu label { display: flex; align-items: center; gap: 9px; padding: 7px 0; color: var(--color-ink); cursor: pointer; }
-.layer-menu input { accent-color: var(--color-accent); }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 15px; padding: 0 32px 10px; font-size: var(--text-xs); color: var(--color-muted); }
-.legend span { display: flex; gap: 6px; align-items: center; }
-.legend i { width: 7px; height: 7px; display: inline-block; border-radius: 50%; background: var(--mark-color); }
-.legend .best { --mark-color: var(--color-best); }
-.legend .good { --mark-color: var(--color-good); }
-.legend .mostly-good { --mark-color: var(--color-mostly-good); }
-.legend .mixed { --mark-color: var(--color-mixed); }
-.legend .mostly-bad { --mark-color: var(--color-mostly-bad); }
-.legend .bad { --mark-color: var(--color-bad); }
-.legend .worst { --mark-color: var(--color-worst); }
-.legend .prophet { --mark-color: var(--color-prophet); margin-left: 10px; }
-.legend .event { --mark-color: var(--color-accent); }
-.chart-wrap { position: relative; flex: 1; min-height: 540px; margin: 0 12px 0 16px; }
+.search-box input { width: 100%; min-width: 0; padding: 12px 0; border: 0; background: transparent; color: var(--color-ink); font-size: 16px; outline: none; }
+.search-box button { flex: none; padding: 8px 12px; }
+.search-box input::-webkit-search-cancel-button { -webkit-appearance: none; }
+.search-box input::placeholder { color: var(--color-faint); }
+.search-results { position: absolute; top: calc(100% + 8px); right: 0; width: min(430px, 90vw); max-height: min(65dvh, 540px); overflow: auto; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 12px; z-index: 20; padding: 12px; }
+.search-results p { padding: 6px 8px; color: var(--color-muted); font-size: 13px; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 350px; align-items: start; }
+.timeline-panel { min-width: 0; }
+.controls { padding: 20px 28px 12px; border-bottom: 1px solid var(--color-line); }
+.control-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.view-switch { display: flex; flex-wrap: wrap; gap: 4px; }
+.view-switch button { font-size: 14px; }
+.view-actions { display: flex; gap: 4px; align-items: center; }
+.icon-button { border-color: var(--color-line); width: 44px; font-size: 20px; }
+.era-nav { display: flex; gap: 6px; overflow-x: auto; padding: 12px 0 4px; scrollbar-width: thin; }
+.era-nav button { white-space: nowrap; text-align: left; font-size: 13px; flex: none; }
+.era-nav span { display: block; color: var(--color-faint); font-size: 12px; }
+.view-label { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 16px 0 6px; color: var(--color-muted); font-size: 13px; }
+.view-label strong { color: var(--color-ink); font-weight: 500; }
+.layers { position: relative; }
+.layers summary { padding: 10px; min-height: 44px; font-size: 14px; }
+.layer-menu { position: absolute; top: 100%; right: 0; width: 240px; max-height: 65dvh; overflow: auto; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 10px; padding: 10px 16px; z-index: 10; }
+.layer-menu label { display: flex; gap: 12px; align-items: center; min-height: 44px; font-size: 14px; }
+input[type="checkbox"] { accent-color: var(--color-accent); width: 18px; height: 18px; }
+.legend { display: flex; gap: 8px 18px; flex-wrap: wrap; color: var(--color-muted); font-size: 12px; padding: 14px 28px 0; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i, .rating i { width: 9px; height: 9px; border-radius: 50%; background: var(--mark-color); flex: none; }
+.chart-help { margin: 10px 28px 8px; color: var(--color-faint); font-size: 13px; }
+.chart-wrap { margin: 0 16px; }
 #chart { width: 100%; touch-action: pan-y; cursor: grab; }
 #chart.dragging { cursor: grabbing; }
-#chart text { font-family: var(--font-body); }
-#chart .axis-label { fill: var(--color-faint); font-size: var(--text-xs); }
-#chart .era-label { fill: var(--color-muted); font-size: var(--text-xs); letter-spacing: .08em; }
-#chart .lane-title { fill: var(--color-ink); font-size: var(--text-sm); font-weight: 500; }
-#chart .lane-subtitle { fill: var(--color-faint); font-size: 10px; }
-#chart .person-label { fill: var(--color-muted); font-size: var(--text-xs); pointer-events: none; }
-#chart .event-label { fill: var(--color-accent); font-size: var(--text-xs); pointer-events: none; }
-#chart .event-year { fill: var(--color-faint); font-size: 10px; pointer-events: none; }
-#chart .mark { cursor: pointer; }
-#chart .mark:focus-visible { outline: none; }
-#chart .mark:focus-visible .track, #chart .mark:hover .track { stroke: var(--color-ink); stroke-width: 2; }
-#chart .mark:focus-visible .event-dot, #chart .mark:hover .event-dot { stroke: var(--color-ink); stroke-width: 2; }
-#chart .mark .hit { fill: var(--color-transparent); }
-#overview [role="slider"]:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
-#chart .selection-ring { pointer-events: none; stroke: var(--color-ink); fill: var(--color-transparent); stroke-width: 1.5; }
-.overview-wrap { padding: 8px 32px 12px; border-top: 1px solid var(--color-line); background: var(--color-surface); position: sticky; bottom: 0; z-index: 3; }
-.overview-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: var(--color-faint); font-size: var(--text-xs); margin: 3px 0 8px; }
-.overview-top strong { color: var(--color-muted); font-weight: 400; }
-#overview { width: 100%; height: 92px; touch-action: none; }
-.overview-selection { fill: var(--color-accent-dim); fill-opacity: .2; stroke: var(--color-accent); cursor: grab; }
-.overview-handle { fill: var(--color-accent); cursor: ew-resize; }
-.navigator-resizer { display: flex; justify-content: center; width: 100%; height: 14px; padding: 5px; cursor: ns-resize; touch-action: none; }
-.navigator-resizer span { display: block; width: 34px; height: 3px; border-radius: 3px; background: var(--color-line); }
-.navigator-resizer:hover span, .navigator-resizer:focus-visible span { background: var(--color-accent); }
-.periods, .shortcut-help { position: relative; }
-.periods summary, .shortcut-help summary { list-style: none; cursor: pointer; white-space: nowrap; font-size: var(--text-sm); padding: 6px; }
-.periods summary::-webkit-details-marker, .shortcut-help summary::-webkit-details-marker { display: none; }
-.periods summary::after { content: '⌄'; margin-left: 6px; }
-.period-menu, .shortcut-menu { position: absolute; right: 0; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 12px; padding: 10px; z-index: 5; width: 205px; }
-.period-menu { top: 35px; flex-direction: column; align-items: stretch; }
-.period-menu button { text-align: left; }
-.shortcut-menu { bottom: 35px; width: min(310px, calc(100vw - 40px)); padding: 14px 16px; }
-.shortcut-menu div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: var(--text-xs); color: var(--color-muted); }
-kbd { font-family: var(--font-body); font-size: 11px; padding: 1px 5px; border: 1px solid var(--color-line); border-radius: 4px; color: var(--color-muted); }
-.chart-footer { padding: 12px 32px 18px; border-top: 1px solid var(--color-line); color: var(--color-faint); font-size: var(--text-xs); display: flex; justify-content: space-between; gap: 16px; }
-.sidebar { border-left: 1px solid var(--color-line); background: var(--color-surface); display: flex; flex-direction: column; min-width: 0; }
-.detail { padding: 26px 24px 23px; }
-.detail-category { color: var(--color-accent); font-size: var(--text-xs); letter-spacing: .08em; display: flex; justify-content: space-between; gap: 8px; }
-.detail h2 { font: 400 29px/1.13 var(--font-display); margin: 14px 0 10px; letter-spacing: -.025em; }
-.detail-date { font-size: var(--text-sm); color: var(--color-muted); }
-.detail-note { color: var(--color-muted); line-height: 1.7; margin-top: 18px; font-size: var(--text-base); }
-.rating { margin-top: 16px; display: flex; align-items: center; gap: 8px; color: var(--color-ink); font-size: var(--text-sm); }
-.rating i { width: 8px; height: 8px; border-radius: 50%; background: var(--rating-color); }
-.source-type { margin-top: 12px; color: var(--color-history); font-size: var(--text-xs); }
+#chart text { font-family: var(--font-body); font-size: 12px; fill: var(--color-muted); pointer-events: none; }
+#chart .lane-title { font-size: 13px; fill: var(--color-ink); }
+#chart .event-label { fill: var(--color-accent); }
 #chart .historical-event .event-label { fill: var(--color-history); }
-.legend .history { --mark-color: var(--color-history); }
-.scripture { margin-top: 18px; display: inline-flex; gap: 7px; align-items: center; font-size: var(--text-sm); }
-.detail-navigation { display: flex; align-items: center; justify-content: space-between; margin-top: 25px; border-top: 1px solid var(--color-line); padding-top: 14px; }
-.detail-navigation button { font-size: var(--text-sm); padding: 6px 0; }
-.detail-navigation span { color: var(--color-faint); font-size: var(--text-xs); }
-.story-head { padding: 18px 24px 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-top: 1px solid var(--color-line); }
-.story-head h2 { font-size: var(--text-base); font-weight: 500; }
-.story-head span { color: var(--color-faint); font-size: var(--text-xs); }
-.story-list { overflow-y: auto; height: 320px; flex: 1; min-height: 180px; padding: 0 14px 16px; scrollbar-width: thin; scrollbar-color: var(--color-line) var(--color-surface); }
-.story-item { width: 100%; text-align: left; padding: 11px 10px; border-radius: 8px; display: grid; grid-template-columns: 39px minmax(0, 1fr); gap: 10px; align-items: baseline; }
-.story-item:hover { background: var(--color-raised); }
-.story-item[aria-current="true"] { background: var(--color-raised); color: var(--color-ink); }
-.story-item .year { color: var(--color-faint); font-size: var(--text-xs); }
-.story-item .name { font-size: var(--text-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.story-item[aria-current="true"] .year { color: var(--color-accent); }
-.empty { color: var(--color-muted); padding: 16px 10px; line-height: 1.6; }
-.tooltip { position: fixed; z-index: 10; background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); border-radius: 10px; padding: 12px 15px; max-width: min(285px, calc(100% - 20px)); pointer-events: none; font-size: var(--text-sm); }
-.tooltip strong { display: block; font-weight: 600; }
-.tooltip span { color: var(--color-muted); }
-.methodology { border-top: 1px solid var(--color-line); padding: 14px 32px; font-size: var(--text-xs); color: var(--color-faint); }
-.methodology summary { cursor: pointer; width: fit-content; color: var(--color-muted); }
-.methodology p { max-width: 100ch; padding: 10px 0; line-height: 1.7; }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-@media (min-width: 1600px) { .workspace { grid-template-columns: minmax(0, 1fr) 330px; } .detail { padding: 30px; } }
+#chart .mark { cursor: pointer; outline: none; }
+#chart .mark:focus-visible .hit, #chart .mark:hover .hit { stroke: var(--color-accent); stroke-width: 2; }
+#chart .hit { fill: transparent; }
+#chart .selection-ring { stroke: var(--color-ink); stroke-width: 2; fill: transparent; pointer-events: none; }
+.overview-wrap { margin: 8px 28px 20px; padding-top: 12px; border-top: 1px solid var(--color-line); }
+.overview-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--color-muted); }
+#overview { width: 100%; height: 76px; touch-action: none; }
+#overview text { font: 12px var(--font-body); fill: var(--color-faint); }
+.overview-handle { cursor: ew-resize; }
+.year-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--color-muted); align-items: center; }
+.year-controls label { display: flex; gap: 8px; align-items: center; }
+.year-controls input { width: 78px; min-height: 36px; border: 1px solid var(--color-line); border-radius: 6px; color: var(--color-ink); background: var(--color-surface); padding: 4px 8px; }
+.sidebar { position: sticky; top: 12px; margin: 16px 16px 16px 0; max-height: calc(100dvh - 24px); overflow-y: auto; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface); scrollbar-width: thin; }
+.detail { padding: 24px; }
+.detail-category { font-size: 12px; color: var(--color-accent); letter-spacing: .05em; }
+.detail h2 { font-size: 30px; margin: 10px 0; }
+.detail-date { color: var(--color-muted); font-size: 14px; }
+.detail-note { margin: 18px 0; color: var(--color-ink); line-height: 1.75; }
+.date-note { color: var(--color-faint); font-size: 12px; margin-top: 8px; }
+.scripture { display: inline-block; margin: 6px 0 14px; font-size: 14px; }
+.rating { display: flex; gap: 8px; align-items: center; margin-top: 12px; font-size: 13px; }
+.detail-actions, .detail-navigation { display: flex; align-items: center; justify-content: space-between; gap: 6px; border-top: 1px solid var(--color-line); padding-top: 12px; margin-top: 12px; }
+.detail-actions button, .detail-navigation button { font-size: 13px; padding-inline: 8px; }
+.detail-navigation span { font-size: 12px; color: var(--color-faint); }
+.connections { margin-top: 20px; }
+.connections summary { color: var(--color-accent); min-height: 44px; padding-block: 10px; }
+.connections h3 { font-size: 13px; font-weight: 600; margin: 16px 0 4px; }
+.connections p { color: var(--color-faint); font-size: 12px; }
+.related-item { display: block; width: 100%; text-align: left; white-space: normal; font-size: 13px; }
+.related-item span { display: block; color: var(--color-faint); font-size: 12px; }
+.story-head { border-top: 1px solid var(--color-line); padding: 16px 24px 8px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.story-head h2 { font: 500 15px var(--font-body); }
+.story-head span { color: var(--color-faint); font-size: 12px; }
+.story-list { overflow-y: auto; max-height: 300px; padding: 0 12px 16px; scrollbar-width: thin; }
+.story-item { display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 10px; width: 100%; text-align: left; white-space: normal; line-height: 1.5; }
+.story-item .year { font-size: 12px; color: var(--color-faint); padding-top: 2px; }
+.story-item .name { font-size: 14px; }
+.story-item .kind { display: block; font-size: 12px; color: var(--color-faint); margin-top: 3px; }
+.empty { color: var(--color-muted); padding: 20px; }
+.list-view, .saved-view { padding: 24px 28px; }
+.list-intro { margin-bottom: 18px; }
+.list-intro h2 { font-size: 26px; }
+.list-intro p { font-size: 14px; color: var(--color-muted); margin-top: 6px; }
+.list-options { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; font-size: 14px; }
+.list-options label { display: flex; gap: 8px; align-items: center; }
+.chronological-list .story-item { border-bottom: 1px solid var(--color-grid); border-radius: 0; padding: 16px 8px; }
+.chronological-list .name { font-size: 16px; }
+.cluster-panel { margin: 14px 28px; border: 1px solid var(--color-line); background: var(--color-surface); border-radius: 10px; padding: 16px; }
+.cluster-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cluster-head h2 { font-size: 22px; }
+.cluster-list { max-height: 280px; overflow: auto; margin-top: 8px; }
+dialog { max-width: none; color: var(--color-ink); background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 16px; padding: 0; width: min(560px, calc(100% - 24px)); max-height: 88dvh; overscroll-behavior: contain; }
+dialog::backdrop { background: oklch(10% .009 75 / .75); }
+.dialog-toolbar { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: var(--color-surface); border-bottom: 1px solid var(--color-line); z-index: 1; color: var(--color-muted); font-size: 13px; }
+body:has(dialog[open]) { overflow: hidden; }
+.link-fallback { margin-top: 12px; }
+.link-fallback label { display: block; font-size: 13px; }
+.link-fallback input { width: 100%; color: var(--color-ink); background: var(--color-paper); border: 1px solid var(--color-line); padding: 10px; font-size: 13px; }
+.status { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); max-width: calc(100% - 32px); z-index: 40; border-radius: 8px; background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); padding: 10px 16px; font-size: 14px; pointer-events: none; }
+.status:empty, .reader-status:empty { display: none; }
+.reader-status { position: sticky; top: 61px; z-index: 2; padding: 10px 22px; background: var(--color-raised); color: var(--color-accent); font-size: 14px; }
+.methodology { border-top: 1px solid var(--color-line); padding: 20px 32px; color: var(--color-muted); font-size: 13px; }
+.methodology summary { padding-block: 6px; }
+.methodology p { max-width: 80ch; margin-top: 12px; }
+.shortcut-help { padding: 4px 28px 18px; font-size: 13px; color: var(--color-muted); }
+.shortcut-help p { margin-top: 8px; max-width: 75ch; }
+kbd { font: inherit; color: var(--color-ink); border: 1px solid var(--color-line); border-radius: 4px; padding: 1px 5px; }
 @media (max-width: 1100px) {
-  .workspace { grid-template-columns: minmax(0, 1fr); }
-  .sidebar { border-left: 0; border-top: 1px solid var(--color-line); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .story-head { border-top: 0; grid-column: 2; grid-row: 1; padding-bottom: 0; align-self: start; }
-  .detail { grid-row: 1 / 3; }
-  .story-list { grid-column: 2; grid-row: 2; height: 260px; margin-top: 16px; }
-  .chart-wrap { flex: none; }
-  .toolbar { flex-wrap: wrap; gap: 12px; }
-  .search-box { width: 210px; }
+  .workspace { display: block; }
+  .sidebar { display: none; }
+  .masthead { padding: 20px 24px; }
+  .search-area { flex-basis: 280px; width: 280px; }
 }
 @media (max-width: 650px) {
-  .masthead { padding: 16px 18px; flex-wrap: wrap; gap: 12px; }
-  .identity { gap: 11px; }
-  .brand-mark { width: 25px; height: 32px; }
+  .masthead { display: block; padding: max(18px, env(safe-area-inset-top)) 18px 16px; }
   h1 { font-size: 26px; }
-  .edition { display: none; }
-  .subtitle { max-width: 260px; font-size: 11px; }
-  .toolbar { padding: 12px 18px; gap: 12px; }
-  .eras { gap: 3px; }
-  .eras button { padding: 8px 9px; font-size: 11px; }
-  .search-box { width: 100%; margin-left: 0; }
-  .chart-toolbar { padding: 15px 18px 10px; flex-wrap: wrap; gap: 8px; }
-  .view-actions { gap: 7px; }
-  .view-label { font-size: 11px; }
-  .legend { padding: 0 18px 12px; gap: 6px 12px; font-size: 10px; }
-  .legend .prophet { margin-left: 0; }
-  .chart-wrap { margin: 0 8px; }
-  .overview-wrap { padding: 5px 18px 10px; }
-  .overview-top { font-size: 10px; flex-wrap: wrap; gap: 3px; }
-  .chart-footer { padding: 12px 18px; font-size: 10px; flex-wrap: wrap; gap: 8px; }
-  .chart-footer .desktop-hint { display: none; }
-  .sidebar { display: flex; }
-  .detail { padding: 24px; }
-  .story-head { border-top: 1px solid var(--color-line); padding-bottom: 12px; }
-  .story-list { height: 240px; flex: none; margin-top: 0; }
-  .methodology { padding: 14px 18px; }
+  .subtitle { font-size: 13px; }
+  .search-area { margin-top: 16px; width: 100%; }
+  .search-results { width: 100%; max-height: 55dvh; }
+  .controls { padding: 12px 14px 10px; }
+  .view-switch { gap: 0; }
+  .view-switch button { padding: 8px 10px; }
+  .control-row { gap: 10px; }
+  .view-actions { width: 100%; justify-content: flex-end; }
+  .view-actions .layers { margin-right: auto; }
+  .view-label { margin-top: 12px; font-size: 12px; }
+  .era-nav { padding-top: 10px; }
+  .legend { padding-inline: 18px; gap: 7px 12px; }
+  .chart-help { margin-inline: 18px; }
+  .chart-wrap { margin-inline: 6px; }
+  .overview-wrap { margin-inline: 18px; }
+  .year-controls input { font-size: 16px; min-height: 44px; }
+  .list-view, .saved-view { padding: 22px 18px; }
+  .cluster-panel { margin-inline: 18px; }
+  dialog { width: 100%; max-height: 90dvh; margin: auto 0 0; border-radius: 18px 18px 0 0; border-bottom: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .detail { padding: 22px; }
+  .detail h2 { font-size: 30px; }
+  .detail-note { font-size: 16px; }
+  .methodology { padding: 18px; }
+  .shortcut-help { padding-inline: 18px; }
 }
-@media (pointer: coarse) {
-  .eras button, .periods summary, .layers summary, .shortcut-help summary, .reset { min-height: 44px; display: inline-flex; align-items: center; }
-  .icon-button { width: 44px; height: 44px; font-size: 22px; }
-  .layer-menu label { padding: 12px 0; }
-  .period-menu button, .detail-navigation button { min-height: 44px; }
-  .story-item { padding: 14px 10px; }
-  .search-box { padding: 10px 14px; }
-  .navigator-resizer { height: 28px; padding: 12px 5px; }
-  .shortcut-help { display: none; }
-  .chart-footer .desktop-hint { display: none; }
-}
-@media (max-width: 650px) {
-  .search-box input { font-size: 16px; }
-  .view-actions { flex-wrap: wrap; }
-  .masthead { padding-top: max(16px, env(safe-area-inset-top)); padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
-  .overview-wrap { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-}
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to timeline</a>
 <header class="masthead">
-  <h1>Samuel to the New Testament</h1>
-  <label class="search-box"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="m12 12 5 5" stroke="currentColor" stroke-width="1.5"/></svg><span class="sr-only">Find a person or event</span><input id="q" type="search" placeholder="Find a person or event…" autocomplete="off"></label>
+  <div><h1>Samuel to the New Testament</h1><p class="subtitle">Explore the stories. See who lived at the same time.</p></div>
+  <div class="search-area" role="search">
+    <label class="sr-only" for="q">Find a person, event, or Scripture reference</label>
+    <div class="search-box"><input id="q" type="search" placeholder="Find a person or event…" autocomplete="off" aria-controls="search-results"><button id="clear-search" aria-label="Clear search" hidden>✕</button></div>
+    <section class="search-results" id="search-results" aria-label="Search results" hidden><p id="search-count" role="status"></p><div id="search-list"></div></section>
+  </div>
 </header>
-<main class="workspace">
-  <section class="timeline-panel" aria-label="Interactive Bible timeline">
-    <div class="chart-toolbar">
-      <div class="view-label"><strong id="visible-range">1100–1 BC</strong><span id="view-name"> · The whole story</span></div>
-      <div class="view-actions">
-        <details class="periods"><summary>Jump to era</summary><div class="period-menu eras" aria-label="Timeline periods">
-          <button class="range" data-range="full" aria-pressed="true">The whole story</button>
-          <button class="range" data-range="bridge" aria-pressed="false">Before the New Testament</button>
-          <button class="range" data-range="hebrew" aria-pressed="false">Samuel to Nehemiah</button>
-          <button class="range" data-range="united" aria-pressed="false">United kingdom</button>
-          <button class="range" data-range="divided" aria-pressed="false">Divided kingdom</button>
-          <button class="range" data-range="exile" aria-pressed="false">Exile & return</button>
-        </div></details>
-        <details class="layers"><summary>Layers</summary><div class="layer-menu" id="layer-menu"></div></details>
-        <button class="icon-button" id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
-        <button class="icon-button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
-        <button class="reset" id="reset" title="Show the whole story">Reset ↗</button>
+<main class="workspace" id="main-content" tabindex="-1">
+  <section class="timeline-panel" aria-label="Explore biblical history">
+    <div class="controls">
+      <div class="control-row">
+        <div class="view-switch" role="group" aria-label="Choose a view"><button data-view="timeline" aria-pressed="true">Timeline</button><button data-view="list" aria-pressed="false">Story list</button><button data-view="saved" aria-pressed="false">Saved <span id="saved-count">0</span></button></div>
+        <div class="view-actions"><details class="layers"><summary>Layers</summary><div class="layer-menu" id="layer-menu"></div></details><button class="icon-button" id="zoom-out" aria-label="Zoom out">−</button><button class="icon-button" id="zoom-in" aria-label="Zoom in">+</button><button id="reset">Fit all</button></div>
       </div>
+      <nav class="era-nav" aria-label="Jump to era">
+        <button data-range="full" aria-pressed="true">Whole story<span>1100–1 BC</span></button>
+        <button data-range="united" aria-pressed="false">United kingdom<span>1100–920 BC</span></button>
+        <button data-range="divided" aria-pressed="false">Divided kingdom<span>940–580 BC</span></button>
+        <button data-range="exile" aria-pressed="false">Exile & return<span>630–420 BC</span></button>
+        <button data-range="bridge" aria-pressed="false">Before the New Testament<span>440–1 BC</span></button>
+      </nav>
+      <div class="view-label"><div><strong id="visible-range">1100–1 BC</strong><span id="view-name"> · Whole story</span></div><button id="share-view">Copy view link ↗</button></div>
     </div>
-    <div class="legend" aria-label="King ratings from faithful to unfaithful">
-      <span class="best"><i></i>Best</span><span class="good"><i></i>Good</span><span class="mostly-good"><i></i>Mostly good</span><span class="mixed"><i></i>Mixed</span><span class="mostly-bad"><i></i>Mostly bad</span><span class="bad"><i></i>Bad</span><span class="worst"><i></i>Worst</span><span class="prophet"><i></i>Prophets</span><span class="event"><i></i>Events</span><span class="history"><i></i>Later history</span>
+    <section class="cluster-panel" id="cluster-panel" aria-labelledby="cluster-title" hidden><div class="cluster-head"><h2 id="cluster-title" tabindex="-1"></h2><button id="close-cluster" aria-label="Close grouped stories">Close ✕</button></div><p class="date-note">Choose a story, or zoom in to separate nearby dates.</p><button id="zoom-cluster">Zoom to these stories</button><div class="cluster-list" id="cluster-list"></div></section>
+    <div id="timeline-view">
+      <div class="legend" aria-label="Timeline colors"><span><i style="--mark-color:var(--color-best)"></i>Faithful kings</span><span><i style="--mark-color:var(--color-mixed)"></i>Mixed</span><span><i style="--mark-color:var(--color-bad)"></i>Unfaithful kings</span><span><i style="--mark-color:var(--color-prophet)"></i>Prophets</span><span><i style="--mark-color:var(--color-accent)"></i>Stories & leaders</span><span><i style="--mark-color:var(--color-history)"></i>Later history</span></div>
+      <p class="chart-help" id="chart-help">Choose an era to explore. Numbered circles open grouped stories.</p>
+      <div class="chart-wrap" id="chart-wrap"><svg id="chart" aria-label="Timeline of biblical stories, kings, and prophets"></svg></div>
+      <div class="overview-wrap"><div class="overview-top"><strong>Timeline navigator</strong><span>Drag edges to zoom · Drag middle to pan</span></div><svg id="overview" aria-label="Timeline range navigator"></svg><div class="year-controls"><label>From <input id="start-year" type="number" min="31" max="1100" value="1100" aria-label="Start year BC"></label><label>to <input id="end-year" type="number" min="1" max="1070" value="1" aria-label="End year BC"></label><span>BC · earlier → later</span></div></div>
     </div>
-    <div class="chart-wrap" id="chart-wrap"><svg id="chart" aria-label="Timeline of biblical events, kings, prophets, and restoration leaders"><title>Samuel to the New Testament, 1100 to 1 BC</title></svg></div>
-    <div class="overview-wrap">
-      <button class="navigator-resizer" id="navigator-resizer" aria-label="Resize timeline overview. Use up and down arrows when focused." title="Drag up or down to resize the overview"><span></span></button>
-      <div class="overview-top"><strong id="navigator-range">Timeline navigator · 1100–1 BC</strong><span>Drag edges to zoom · Drag middle to pan</span></div>
-      <svg id="overview" aria-label="Resizable timeline navigator"><title>Drag the selected window or its edges to navigate</title></svg>
-      <div class="sr-only"><label>Start year BC <input id="start-year" type="number" min="31" max="1100" value="1100"></label><label>End year BC <input id="end-year" type="number" min="1" max="1070" value="1"></label></div>
-    </div>
-    <div class="chart-footer"><span id="chart-count"></span><details class="shortcut-help"><summary>Keyboard shortcuts <kbd>?</kbd></summary><div class="shortcut-menu">
-        <div><span>Zoom in / out</span><span><kbd>+</kbd> <kbd>−</kbd></span></div>
-        <div><span>Pan earlier / later</span><span><kbd>←</kbd> <kbd>→</kbd></span></div>
-        <div><span>Pan farther</span><span><kbd>Shift</kbd> + arrow</span></div>
-        <div><span>Previous / next event</span><span><kbd>[</kbd> <kbd>]</kbd></span></div>
-        <div><span>Fit the whole story</span><kbd>F</kbd></div>
-        <div><span>Search</span><kbd>/</kbd></div>
-        <div><span>Close menus / tooltip</span><kbd>Esc</kbd></div>
-      </div></details><span>Earlier ← &nbsp; BC &nbsp; → Later</span></div>
+    <section class="list-view" id="list-view" aria-labelledby="list-title" hidden><div class="list-intro"><h2 id="list-title">The story, in order</h2><p id="list-count"></p></div><div class="list-options"><label><input type="checkbox" id="major-only"> Turning points only</label><label><input type="checkbox" id="include-people"> Include people</label></div><div class="chronological-list" id="chronological-list"></div></section>
+    <section class="saved-view" id="saved-view" aria-labelledby="saved-title" hidden><div class="list-intro"><h2 id="saved-title">Your saved stories</h2><p>Bookmarks stay in this browser. Use a story link to share with someone else.</p></div><div class="chronological-list" id="saved-list"></div></section>
+    <details class="shortcut-help"><summary>Keyboard & touch help</summary><p><kbd>+</kbd> / <kbd>−</kbd> zoom; <kbd>←</kbd> / <kbd>→</kbd> pan; <kbd>[</kbd> / <kbd>]</kbd> step through stories; <kbd>F</kbd> fits the full timeline; <kbd>/</kbd> searches. Use Tab to enter the chart and arrows to move between marks. Press Enter to read. On a phone, drag sideways to pan or pinch to zoom. Mouse wheel scrolls the page; hold Ctrl while scrolling over the chart to zoom.</p></details>
   </section>
-  <aside class="sidebar" aria-label="Selected story and event browser">
-    <section class="detail" id="detail" aria-live="polite"></section>
-    <div class="story-head"><h2 id="story-heading">Explore the story</h2><span id="result-count"></span></div>
-    <div class="story-list" id="story-list" aria-labelledby="story-heading"></div>
-  </aside>
+  <aside class="sidebar" aria-label="Selected story"><section class="detail" id="detail"></section><div class="story-head"><h2>Stories in this view</h2><span id="result-count"></span></div><div class="story-list" id="story-list"></div></aside>
 </main>
+<dialog id="reader" aria-labelledby="reader-title"><div class="dialog-toolbar"><span>Read & explore</span><button id="close-reader" autofocus>Back to exploring ✕</button></div><p class="reader-status" id="reader-status" role="status" aria-live="polite"></p><section class="detail" id="reader-detail"></section></dialog>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+<noscript><p class="empty">Enable JavaScript to explore the timeline. Story links open their external Scripture sources.</p></noscript>
 <details class="methodology"><summary>Dates, sources & king ratings</summary><p>Dates are approximate BC dates, following a conventional chronology of the monarchy. Stories without a securely known date are positioned illustratively and marked “c.”; co-regencies are simplified. Ezra’s return is shown at the traditional date of 458 BC, and Nehemiah’s at 445 BC. Joel and Obadiah have disputed dates. Prophet tracks indicate approximate activity, not lifespans. “Major” and “minor” refer to book length, not importance. King colors summarize the biblical assessment, with mixed reigns and repentance explained in the notes. A faithful rating does not imply a flawless life.</p><p>The later Second Temple period connects Ezra and Nehemiah with the world of the New Testament. “Between the Testaments” is a Christian label, not a claim that Jewish history or writing stopped. Biblical collections differ: 1–2 Maccabees and Sirach are part of Catholic and many Orthodox Old Testaments, but not the Jewish Tanakh or most Protestant Old Testaments. This timeline follows the stories’ settings rather than dating the completion of the Tanakh. Later entries link to their historical or literary sources. Their purple tracks do not carry the good/bad ratings used for the earlier kings. Approximate cultural developments represent periods, and the Gospel narratives overlap the final years shown.</p><p>Later-period references: <a href="https://www.deadseascrolls.org.il/learn-about-the-scrolls/historical-timeline" target="_blank" rel="noopener noreferrer">Israel Antiquities Authority timeline</a> · <a href="https://www.livius.org/articles/dynasty/hasmonaeans/" target="_blank" rel="noopener noreferrer">The Hasmoneans</a> · <a href="https://bible.usccb.org/bible/1maccabees/0" target="_blank" rel="noopener noreferrer">1 Maccabees</a>.</p><p>Chronology references: <a href="https://www.esv.org/resources/esv-global-study-bible/chart-00-ot-timeline/" target="_blank" rel="noopener noreferrer">ESV Old Testament timeline</a> · <a href="https://www.americanbible.org/engage/bible-resources/articles/ezra/" target="_blank" rel="noopener noreferrer">American Bible Society: Ezra</a>. Select any story for its Scripture reference.</p></details>
-<div class="tooltip" id="tip" hidden></div>
-<noscript><p class="detail-note">Enable JavaScript to explore this interactive timeline.</p></noscript>
 <script>
 const kings = [
   ["Saul", "united", 1050, 1010, -1, "First king. Rejected after Amalek. Dies on Gilboa.", "1 Sam 9–31"],
@@ -580,430 +543,407 @@ const laterPeople = [
   return { id: 'later-' + i, name, lane, start, end, note, ref, url, kind: 'leader', category: lane === 'powers' ? 'Political authority in Judea' : 'Later Second Temple ruler', era: 'second-temple', sourceType: 'Historical context' };
 });
 
+// Additional narrative links. These dates are approximate placements, not dates supplied by the passages.
+const addedEvents = [
+  [1045, 'Samuel addresses Israel and its king', 'As Israel enters the monarchy, Samuel calls both the people and their king to serve the Lord. He promises to keep praying for them and teaching them. The date is an illustrative placement near the beginning of Saul’s reign.', '1 Sam 12', 'Covenant', false, true, 'https://bible.usccb.org/bible/1samuel/12'],
+  [720, 'Assyria resettles the cities of Samaria', 'After the northern kingdom falls, Assyria brings communities from other regions into Samaria. The account describes a mixture of worship practices and a returning priest teaching about the Lord. The marker represents a process after the conquest, not a single securely dated migration.', '2 Kgs 17:24–41', 'Exile & resettlement', false, true, 'https://bible.usccb.org/bible/2kings/17'],
+  [622, 'Huldah speaks to Josiah’s officials', 'After the book of the Law is found, Josiah’s officials consult the prophet Huldah in Jerusalem. She announces judgment on Judah and acknowledges the king’s humility. Her counsel helps connect the discovery of the book with the covenant renewal that follows.', '2 Kgs 22:14–20; 2 Chr 34:22–28', 'Prophetic warning', false, true, 'https://bible.usccb.org/bible/2kings/22'],
+  [587, 'Jeremiah promises a new covenant', 'Jeremiah announces a future covenant with Israel and Judah in which God’s instruction is written on their hearts and their sins are forgiven. This placement groups the promise with hope amid Jerusalem’s crisis; the passage does not give an exact year.', 'Jer 31:31–34', 'Hope in exile', true, true, 'https://bible.usccb.org/bible/jeremiah/31'],
+  [586, 'Gedaliah is killed; survivors flee to Egypt', 'Babylon appoints Gedaliah to govern the people remaining in Judah. Ishmael kills him at Mizpah. Fearing Babylonian reprisals, survivors leave for Egypt. The precise year of the assassination is debated; it is placed here after Jerusalem’s fall.', '2 Kgs 25:22–26; Jer 40–43', 'After the fall', false, true, 'https://bible.usccb.org/bible/2kings/25'],
+  [561, 'Jehoiachin is released from prison', 'In the thirty-seventh year of Jehoiachin’s exile, Babylon’s new king releases him from prison and gives him a regular place at the royal table. Kings ends with this change in the captive Judean king’s fortunes. The event is conventionally placed around 561 BC.', '2 Kgs 25:27–30; Jer 52:31–34', 'Hope in exile', false, true, 'https://bible.usccb.org/bible/2kings/25']
+].map(([year, name, note, ref, category, major, approximate, url], i) => ({ id: 'added-' + i, year, name, note, ref, category, major, approximate, url, kind: 'event' }));
+events.push(...addedEvents);
+events.sort((a,b) => b.year - a.year);
+leaders.push({ id: 'leader-huldah', name: 'Huldah', lane: 'voices', start: 622, end: 621, category: 'Prophet · Judah', note: 'Josiah’s officials consult Huldah after the book of the Law is found. The short track marks that recorded consultation, not her lifespan or the full length of her ministry.', ref: '2 Kgs 22:14–20; 2 Chr 34:22–28', kind: 'leader' });
+
+// Stable names are used in links/bookmarks; display order never becomes an identifier.
+const slug = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const people = [...kings, ...prophets, ...leaders, ...laterPeople];
 const allItems = [...events, ...people];
+allItems.forEach(d => { d.key = [d.kind, d.lane || 'story', slug(d.name)].join('-'); });
+const byKey = new Map(allItems.map(d => [d.key, d]));
 const lanes = [
-  { id: 'samuel', name: 'Samuel', sub: 'Judge & prophet', height: 54 },
-  { id: 'united', name: 'United kingdom', sub: 'Saul · David · Solomon', height: 70 },
-  { id: 'israel', name: 'Israel', sub: 'The northern kingdom', height: 72 },
-  { id: 'judah', name: 'Judah', sub: 'The southern kingdom', height: 72 },
-  { id: 'voices', name: 'Prophetic voices', sub: 'Nathan · Elijah · Elisha', height: 53 },
-  { id: 'major', name: 'Major prophets', sub: 'Longer prophetic books', height: 86 },
-  { id: 'minor', name: 'Minor prophets', sub: 'Shorter prophetic books', height: 105 },
-  { id: 'restoration', name: 'Restoration', sub: 'Return & rebuilding', height: 86 },
-  { id: 'powers', name: 'Who ruled Judea', sub: 'Empires & autonomy', height: 72 },
-  { id: 'later', name: 'Later rulers', sub: 'Maccabees to Herod', height: 112 }
-];
-const shown = new Set(lanes.map(d => d.id));
-const initialRange = new URLSearchParams(location.search).get('era');
-let showEvents = true, query = '', domain = (Object.hasOwn(RANGES, initialRange) ? RANGES[initialRange] : RANGES.full).slice(), selected = events.find(d => d.year === (initialRange === 'bridge' ? 164 : 930));
-let listRangeKey = '';
-let geometry, drag = null, brushDrag = null, navigatorResize = null, touchGesture = null, hoverTimer, frame;
-const svg = document.getElementById('chart'), wrap = document.getElementById('chart-wrap');
-const tip = document.getElementById('tip'), overview = document.getElementById('overview');
-const colors = name => 'var(--color-' + name + ')';
-const matches = d => !query || [d.name, d.note, d.ref, d.category, d.where, d.kingdom, d.sourceType].filter(Boolean).join(' ').toLowerCase().includes(query);
-const visibleItems = () => allItems.filter(d => d.kind === 'event' ? showEvents : shown.has(d.lane));
+  ['samuel', 'Samuel'], ['united', 'United kingdom'], ['israel', 'Israel · north'], ['judah', 'Judah · south'],
+  ['voices', 'Prophetic voices'], ['major', 'Major prophets'], ['minor', 'Minor prophets'], ['restoration', 'Restoration'],
+  ['powers', 'Who ruled Judea'], ['later', 'Later rulers']
+].map(([id, name]) => ({ id, name }));
+const $ = id => document.getElementById(id);
+const narrow = () => matchMedia('(max-width: 1100px)').matches;
 const yearOf = d => d.year ?? d.start;
-const dateText = d => d.kind === 'event' ? (d.approximate ? 'c. ' : '') + Math.round(d.year) + ' BC' : 'c. ' + Math.round(d.start) + '–' + Math.round(d.end) + ' BC';
-const colorOf = d => d.era === 'second-temple' ? 'history' : d.kind === 'king' ? RATINGS[String(d.rating)].color : d.lane === 'samuel' ? 'neutral' : d.lane === 'restoration' ? 'prophet' : d.lane === 'major' || d.lane === 'voices' ? 'accent' : 'prophet';
-function el(tag, attrs, parent = svg, content) {
-  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
-  if (content !== undefined) node.textContent = content;
-  parent.appendChild(node); return node;
-}
+const dateText = d => d.kind === 'event' ? (d.approximate ? 'c. ' : '') + d.year + ' BC' : 'c. ' + Math.round(d.start) + '–' + Math.round(d.end) + ' BC';
+const colors = name => 'var(--color-' + name + ')';
+const prophetLanes = ['samuel', 'voices', 'major', 'minor'];
+const colorOf = d => d.era === 'second-temple' ? 'history' : d.kind === 'king' ? RATINGS[String(d.rating)].color : prophetLanes.includes(d.lane) ? 'prophet' : 'accent';
+const categoryOf = d => d.kind === 'king' ? (d.kingdom === 'israel' ? 'King of Israel · north' : d.kingdom === 'judah' ? 'Ruler of Judah · south' : 'United kingdom') : d.category || 'Prophet';
+let domain = RANGES.full.slice(), selected = events.find(d => d.year === 930), query = '', mode = 'timeline';
+let shown = new Set(lanes.map(d => d.id)), showEvents = true, allDetail = false, majorOnly = false, includePeople = false;
+let clusterItems = [], geometry, frame, urlTimer, statusTimer, pointer = null, brush = null, pinch = null, suppressClick = false, chartFocusKey = '';
+let returnFocus = null;
+let saved = new Set();
+try { const value = JSON.parse(localStorage.getItem('bible-atlas-bookmarks') || '[]'); if (Array.isArray(value)) saved = new Set(value.filter(k => byKey.has(k))); } catch { /* Storage may be unavailable; in-memory bookmarks still work. */ }
 function bounded(a, b) {
-  if (!Number.isFinite(a) || !Number.isFinite(b)) return domain.slice();
+  if (!Number.isFinite(a) || !Number.isFinite(b) || a <= b) return RANGES.full.slice();
   const span = Math.max(MIN_SPAN, Math.min(FULL_SPAN, a - b));
   a = Math.max(LAST_YEAR + span, Math.min(FIRST_YEAR, a));
   return [a, a - span];
 }
-function setDomain(a, b) {
-  domain = bounded(a, b); hideTip(); schedulePaint();
+function readURL() {
+  const p = new URLSearchParams(location.search);
+  domain = Object.hasOwn(RANGES, p.get('era')) ? RANGES[p.get('era')].slice() : RANGES.full.slice();
+  if (p.has('from') && p.has('to')) domain = bounded(Number(p.get('from')), Number(p.get('to')));
+  selected = byKey.get(p.get('story')) || events.find(d => d.year === (p.get('era') === 'bridge' ? 164 : 930));
+  mode = ['timeline', 'list', 'saved'].includes(p.get('view')) ? p.get('view') : (matchMedia('(max-width: 650px)').matches ? 'list' : 'timeline');
+  query = (p.get('q') || '').slice(0, 200);
+  shown = new Set(p.has('layers') ? p.get('layers').split(',').filter(k => lanes.some(l => l.id === k)) : lanes.map(d => d.id));
+  showEvents = p.get('events') !== '0'; allDetail = p.get('detail') === '1';
+  majorOnly = p.get('major') === '1' || (!p.has('view') && mode === 'list'); includePeople = p.get('people') === '1';
+  if (p.has('story') && !p.has('from') && !p.has('era')) domain = bounded(yearOf(selected) + 80, yearOf(selected) - 80);
 }
-function schedulePaint() { if (!frame) frame = requestAnimationFrame(() => { frame = null; paint(); }); }
-function activate(d, reveal = false) {
-  selected = d; hideTip(); renderDetail(); renderList(); updateSelection();
-  if (reveal && (yearOf(d) > domain[0] || yearOf(d) < domain[1])) {
-    const span = Math.max(120, Math.min(250, domain[0] - domain[1]));
-    setDomain(yearOf(d) + span * .5, yearOf(d) - span * .5);
+function stateURL() {
+  const u = new URL(location.href), p = u.searchParams;
+  ['era','from','to','story','view','q','layers','events','detail','major','people'].forEach(k => p.delete(k));
+  p.set('from', String(Math.round(domain[0] * 100) / 100)); p.set('to', String(Math.round(domain[1] * 100) / 100));
+  p.set('story', selected.key); p.set('view', mode);
+  if (query) p.set('q', query);
+  if (shown.size !== lanes.length) p.set('layers', [...shown].join(','));
+  if (!showEvents) p.set('events', '0'); if (allDetail) p.set('detail', '1');
+  if (majorOnly) p.set('major', '1'); if (includePeople) p.set('people', '1');
+  return u.href;
+}
+function persist(immediate = false) {
+  clearTimeout(urlTimer);
+  const write = () => { try { history.replaceState(null, '', stateURL()); } catch { /* file:// may restrict History APIs */ } };
+  if (immediate) write(); else urlTimer = setTimeout(write, 120);
+}
+function announce(message) { clearTimeout(statusTimer); const dialog = $('reader').open; $('status').textContent = dialog ? '' : message; $('reader-status').textContent = dialog ? message : ''; statusTimer = setTimeout(() => { $('status').textContent = ''; $('reader-status').textContent = ''; }, 4500); }
+const normalizedQuery = () => query.trim().toLocaleLowerCase();
+const matches = d => !normalizedQuery() || [d.name, d.note, d.ref, d.category, d.where, d.kingdom, d.sourceType].filter(Boolean).join(' ').toLocaleLowerCase().includes(normalizedQuery());
+const inRange = d => d.kind === 'event' ? d.year <= domain[0] && d.year >= domain[1] : d.start >= domain[1] && d.end <= domain[0];
+const enabled = d => d.kind === 'event' ? showEvents : shown.has(d.lane);
+const ordered = data => [...data].sort((a, b) => yearOf(b) - yearOf(a) || a.name.localeCompare(b.name));
+function html(tag, cls, text, parent) { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; if (parent) parent.append(n); return n; }
+function button(text, key, onClick, parent, cls = '') { const b = html('button', cls, text, parent); b.dataset.focusKey = key; b.addEventListener('click', onClick); return b; }
+function captureFocus() {
+  const n = document.activeElement, scope = n?.closest('[id]');
+  return n?.dataset?.focusKey ? { key: n.dataset.focusKey, scope: scope?.id } : null;
+}
+function restoreFocus(info) {
+  if (!info) return;
+  const scope = $(info.scope) || document;
+  const n = [...scope.querySelectorAll('[data-focus-key]')].find(n => n.dataset.focusKey === info.key);
+  if (n && !n.disabled) n.focus({ preventScroll: true });
+  else scope.querySelector('.detail-navigation button:not(:disabled)')?.focus({ preventScroll: true });
+}
+function setDomain(a, b) { domain = bounded(a, b); schedulePaint(); renderLists(); syncControls(); persist(); }
+function schedulePaint() { if (!frame) frame = requestAnimationFrame(() => { frame = null; if (mode === 'timeline') paint(); }); }
+function activate(d, { reveal = true, read = true } = {}) {
+  if (!$('reader').open) returnFocus = { element: document.activeElement, info: captureFocus() };
+  const focus = captureFocus(), changed = selected !== d;
+  selected = d; chartFocusKey = d.key;
+  if (d.kind === 'event') showEvents = true; else shown.add(d.lane);
+  if (reveal && !inRange(d)) domain = bounded(yearOf(d) + 80, yearOf(d) - 80);
+  if (read) $('search-results').hidden = true;
+  renderDetails(); renderLists(); syncControls(); schedulePaint(); persist(true);
+  if (narrow() && read) {
+    if (!$('reader').open) $('reader').showModal();
+    else restoreFocus(focus);
+    if (changed) { $('reader').scrollTop = 0; if (focus?.key.startsWith('related-')) $('reader-title').focus({ preventScroll: true }); }
+  } else { if (read && !['previous','next'].includes(focus?.key)) document.querySelector('.sidebar').scrollTop = 0; restoreFocus(focus); announce(d.name + ', ' + dateText(d)); }
+}
+function closeReader() { $('reader').close(); }
+$('reader').addEventListener('close', () => {
+  if (returnFocus?.info?.scope === 'search-list') $('q').focus({ preventScroll: true });
+  else if (returnFocus?.element?.isConnected && returnFocus.element.getClientRects().length) returnFocus.element.focus({ preventScroll: true });
+  else { restoreFocus(returnFocus?.info); if (document.activeElement === document.body) document.querySelector('[data-view="'+mode+'"]').focus(); }
+});
+$('close-reader').addEventListener('click', closeReader);
+function toggleSaved() {
+  const adding = !saved.has(selected.key); if (adding) saved.add(selected.key); else saved.delete(selected.key);
+  let stored = true;
+  try { localStorage.setItem('bible-atlas-bookmarks', JSON.stringify([...saved])); } catch { stored = false; }
+  const focus = captureFocus(); renderDetails(); renderSaved(); restoreFocus(focus);
+  announce(stored ? (adding ? 'Story saved in this browser.' : 'Bookmark removed.') : 'Browser storage is unavailable. Bookmarks will last for this visit only.');
+}
+async function share(parent) {
+  persist(true); const url = stateURL();
+  try { await navigator.clipboard.writeText(url); announce('Link copied. It includes your story and current view.'); }
+  catch {
+    parent.querySelector('.link-fallback')?.remove();
+    const box = html('div', 'link-fallback', undefined, parent), label = html('label', '', 'Copy this link:', box);
+    const input = html('input', '', undefined, label); input.value = url; input.readOnly = true; input.setAttribute('aria-label', 'Shareable timeline link'); input.focus(); input.select();
+    button('Close link', 'close-link', () => { box.remove(); parent.querySelector('button')?.focus(); }, box);
   }
 }
-function renderDetail() {
-  const panel = document.getElementById('detail'); panel.replaceChildren();
-  const make = (tag, cls, value, parent = panel) => { const n = document.createElement(tag); n.className = cls; n.textContent = value; parent.append(n); return n; };
-  const category = selected.kind === 'king' ? (selected.kingdom === 'united' ? 'UNITED KINGDOM' : selected.kingdom === 'israel' ? 'ISRAEL · NORTH' : 'JUDAH · SOUTH') : (selected.category || 'Prophet').toUpperCase();
-  make('div', 'detail-category', category);
-  make('h2', '', selected.name);
-  make('p', 'detail-date', dateText(selected));
-  if (selected.kind === 'king') {
-    const rating = make('div', 'rating', ''); rating.style.setProperty('--rating-color', colors(colorOf(selected)));
-    make('i', '', '', rating); make('span', '', RATINGS[String(selected.rating)].label, rating);
-  }
-  if (selected.sourceType) make('p', 'source-type', selected.sourceType);
-  make('p', 'detail-note', selected.note);
-  const link = make('a', 'scripture', selected.ref + ' ↗');
-  link.href = selected.url || 'https://www.biblegateway.com/passage/?search=' + encodeURIComponent(selected.ref) + '&version=ESV';
-  link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', 'Read source: ' + selected.ref);
-  const sequence = selected.kind === 'event' ? events : people.filter(d => d.lane === selected.lane);
-  const index = sequence.indexOf(selected), nav = make('div', 'detail-navigation', '');
-  const prev = make('button', '', '← Previous', nav); prev.disabled = index <= 0; prev.addEventListener('click', () => activate(sequence[index - 1], true));
-  make('span', '', (index + 1) + ' / ' + sequence.length, nav);
-  const next = make('button', '', 'Next →', nav); next.disabled = index >= sequence.length - 1; next.addEventListener('click', () => activate(sequence[index + 1], true));
-}
-function renderList() {
-  const list = document.getElementById('story-list'), nextRangeKey = domain.join(':'), scroll = listRangeKey === nextRangeKey ? list.scrollTop : 0;
-  listRangeKey = nextRangeKey;
-  list.replaceChildren();
-  const data = query ? visibleItems().filter(matches).sort((a, b) => yearOf(b) - yearOf(a)) : (showEvents ? events.filter(d => d.year <= domain[0] && d.year >= domain[1]) : people.filter(d => shown.has(d.lane) && d.start >= domain[1] && d.end <= domain[0]).sort((a,b) => b.start - a.start));
-  document.getElementById('story-heading').textContent = query ? 'Search results' : showEvents ? 'Stories in this view' : 'People in this view';
-  document.getElementById('result-count').textContent = data.length + (query ? ' found' : showEvents ? ' stories' : ' people');
-  data.forEach(d => {
-    const button = document.createElement('button'); button.className = 'story-item'; button.dataset.itemId = d.id;
-    button.setAttribute('aria-current', String(selected.id === d.id)); button.title = d.name + ' · ' + dateText(d);
-    const year = document.createElement('span'); year.className = 'year'; year.textContent = Math.round(yearOf(d));
-    const name = document.createElement('span'); name.className = 'name'; name.textContent = d.name;
-    button.append(year, name); button.addEventListener('click', () => activate(d, true)); list.append(button);
+function renderDetails() {
+  [$('detail'), $('reader-detail')].forEach(panel => {
+    const open = panel.querySelector('.connections')?.open || false;
+    panel.replaceChildren();
+    html('p', 'detail-category', categoryOf(selected), panel);
+    const heading = html('h2', '', selected.name, panel); if (panel.id === 'reader-detail') { heading.id = 'reader-title'; heading.tabIndex = -1; }
+    html('p', 'detail-date', dateText(selected), panel);
+    if (selected.kind === 'king') { const r = html('p', 'rating', undefined, panel), dot = html('i', '', undefined, r); dot.style.setProperty('--mark-color', colors(colorOf(selected))); html('span', '', RATINGS[String(selected.rating)].label, r); }
+    html('p', 'detail-note', selected.note, panel);
+    if (selected.approximate || selected.kind !== 'event') html('p', 'date-note', 'Approximate placement. Activity and reign dates are simplified; see the dates & sources note.', panel);
+    if (selected.sourceType) html('p', 'date-note', selected.sourceType, panel);
+    const link = html('a', 'scripture', selected.ref + ' ↗', panel);
+    link.href = selected.url || 'https://www.biblegateway.com/passage/?search=' + encodeURIComponent(selected.ref) + '&version=ESV';
+    link.target = '_blank'; link.rel = 'noopener noreferrer'; link.setAttribute('aria-label', 'Read source: ' + selected.ref);
+    const actions = html('div', 'detail-actions', undefined, panel);
+    const save = button(saved.has(selected.key) ? 'Saved ✓' : 'Save story', 'save-story', toggleSaved, actions); save.setAttribute('aria-pressed', String(saved.has(selected.key)));
+    button('Copy story link ↗', 'share-story', () => share(panel), actions);
+    const sequence = selected.kind === 'event' ? ordered(events.filter(matches)) : ordered(people.filter(d => d.lane === selected.lane));
+    const index = sequence.indexOf(selected), nav = html('div', 'detail-navigation', undefined, panel);
+    const prev = button('← Previous', 'previous', () => activate(sequence[index - 1]), nav); prev.disabled = index <= 0;
+    html('span', '', index >= 0 ? (index + 1) + ' / ' + sequence.length : 'Outside search', nav);
+    const next = button('Next →', 'next', () => activate(sequence[index + 1]), nav); next.disabled = index < 0 || index >= sequence.length - 1;
+    const connections = html('details', 'connections', undefined, panel); connections.open = open;
+    html('summary', '', 'Who lived at the same time?', connections);
+    html('p', '', 'Based on the approximate dates shown here. Overlap does not mean these people met.', connections);
+    const start = selected.year ?? selected.start, end = selected.year ?? selected.end;
+    const overlap = d => d !== selected && d.start >= end && d.end <= start;
+    const groups = [
+      ['Rulers & political powers', people.filter(d => (d.kind === 'king' || ['powers','later'].includes(d.lane)) && overlap(d))],
+      ['Prophets active then', people.filter(d => prophetLanes.includes(d.lane) && overlap(d))],
+      ['Other leaders', people.filter(d => d.lane === 'restoration' && overlap(d))]
+    ];
+    groups.forEach(([title, data]) => {
+      html('h3', '', title, connections);
+      if (!data.length) html('p', '', 'No matching entry in this timeline.', connections);
+      ordered(data).forEach(d => relatedButton(d, connections));
+    });
+    const nearby = events.filter(d => d !== selected && (selected.kind === 'event' ? Math.abs(d.year - start) <= 20 : d.year <= start && d.year >= end));
+    const nearest = nearby.sort((a,b) => Math.abs(a.year - start) - Math.abs(b.year - start)).slice(0, 6);
+    html('h3', '', selected.kind === 'event' ? 'Stories within 20 years' : 'Stories during this period', connections);
+    if (!nearest.length) html('p', '', 'No nearby story is recorded in this timeline.', connections);
+    ordered(nearest).forEach(d => relatedButton(d, connections));
   });
-  if (!data.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = query ? 'No matches. Try a name, place, or source. You can also turn on more layers.' : 'No stories in this view. Zoom out, change the date range, or turn on more layers.'; list.append(p); }
-  list.scrollTop = scroll;
 }
-function showTip(d, clientX, clientY) {
-  tip.replaceChildren();
-  const title = document.createElement('strong'); title.textContent = d.name;
-  const meta = document.createElement('span'); meta.textContent = dateText(d) + (d.kind === 'king' ? ' · ' + RATINGS[String(d.rating)].label : '');
-  tip.append(title, meta); tip.hidden = false;
-  tip.style.left = Math.max(10, Math.min(innerWidth - tip.offsetWidth - 10, clientX + 14)) + 'px';
-  tip.style.top = Math.max(10, Math.min(innerHeight - tip.offsetHeight - 10, clientY + 14)) + 'px';
+function relatedButton(d, parent) {
+  const b = button(d.name, 'related-' + d.key, () => activate(d), parent, 'related-item');
+  html('span', '', categoryOf(d) + ' · ' + dateText(d), b);
 }
-function hideTip() { clearTimeout(hoverTimer); tip.hidden = true; }
-function interactive(node, d) {
-  node.classList.add('mark'); node.dataset.itemId = d.id;
-  node.setAttribute('tabindex', '0'); node.setAttribute('role', 'button');
-  node.setAttribute('aria-label', d.name + ', ' + dateText(d) + (d.kind === 'king' ? ', ' + RATINGS[String(d.rating)].label : '') + '. Select to read.');
-  node.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') { clearTimeout(hoverTimer); hoverTimer = setTimeout(() => showTip(d, e.clientX, e.clientY), 600); } });
-  node.addEventListener('pointerleave', hideTip);
-  node.addEventListener('focus', () => { const r = node.getBoundingClientRect(); showTip(d, r.x, r.y); });
-  node.addEventListener('blur', hideTip);
-  node.addEventListener('click', e => {
-    if (suppressClick) return;
-    activate(d);
-    if (e.pointerType === 'touch' || matchMedia('(pointer: coarse)').matches) {
-      const r = node.getBoundingClientRect(); showTip(d, r.x, r.y - 54);
-      hoverTimer = setTimeout(hideTip, 2200);
+function storyButton(d, parent, meta = false) {
+  const b = button('', d.key, () => activate(d), parent, 'story-item'); b.dataset.itemKey = d.key;
+  b.setAttribute('aria-current', String(d === selected));
+  html('span', 'year', (d.approximate || d.kind !== 'event' ? 'c. ' : '') + Math.round(yearOf(d)), b);
+  const name = html('span', 'name', d.name, b); if (meta) html('span', 'kind', categoryOf(d) + ' · ' + d.ref, name);
+  return b;
+}
+function populateList(parent, data, empty, meta = false) { const scroll = parent.scrollTop; parent.replaceChildren(); if (!data.length) html('p', 'empty', empty, parent); else data.forEach(d => storyButton(d, parent, meta)); parent.scrollTop = scroll; }
+function renderLists() {
+  const data = ordered(events.filter(d => showEvents && inRange(d) && matches(d)));
+  $('result-count').textContent = data.length + ' stories';
+  populateList($('story-list'), data, 'No stories in this range. Try another era or enable the Stories layer.');
+  const list = ordered(allItems.filter(d => enabled(d) && inRange(d) && matches(d) && (d.kind === 'event' ? !majorOnly || d.major : includePeople)));
+  $('list-count').textContent = list.length + ' entries · ' + Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC. Choose an era above to narrow the list.';
+  populateList($('chronological-list'), list, 'No entries match this view. Try Fit all, clear search, or enable more layers.', true);
+  renderSaved();
+}
+function renderSaved() {
+  $('saved-count').textContent = saved.size;
+  populateList($('saved-list'), ordered([...saved].map(k => byKey.get(k)).filter(Boolean)), 'No bookmarks yet. Open a story and choose Save story.', true);
+}
+function renderSearch() {
+  $('clear-search').hidden = !query;
+  const active = Boolean(query.trim()); $('search-results').hidden = !active;
+  if (!active) { $('search-list').replaceChildren(); return; }
+  // Search all content, including hidden layers; exact names come first.
+  const q = normalizedQuery(), results = allItems.filter(matches).sort((a,b) => {
+    const rank = d => d.name.toLowerCase() === q ? 0 : d.name.toLowerCase().startsWith(q) ? 1 : 2;
+    return rank(a) - rank(b) || yearOf(b) - yearOf(a);
+  });
+  $('search-count').textContent = results.length + ' matches across all eras and layers';
+  populateList($('search-list'), results, 'No matches. Try a person, place, or reference such as “Jer 31”.', true);
+}
+function syncControls() {
+  document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === mode)));
+  ['timeline','list','saved'].forEach(v => $(v + '-view').hidden = mode !== v);
+  $('zoom-in').disabled = domain[0] - domain[1] <= MIN_SPAN; $('zoom-out').disabled = domain[0] - domain[1] >= FULL_SPAN;
+  let label = 'Custom range';
+  document.querySelectorAll('[data-range]').forEach(b => { const active = RANGES[b.dataset.range].every((n,i) => Math.abs(n - domain[i]) < 1); b.setAttribute('aria-pressed', String(active)); if (active) label = b.firstChild.textContent; });
+  $('visible-range').textContent = Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC'; $('view-name').textContent = ' · ' + label;
+  $('start-year').value = Math.round(domain[0]); $('end-year').value = Math.round(domain[1]);
+  $('q').value = query; $('major-only').checked = majorOnly; $('include-people').checked = includePeople;
+  document.querySelectorAll('[data-layer]').forEach(input => { input.checked = input.dataset.layer === 'events' ? showEvents : input.dataset.layer === 'detail' ? allDetail : shown.has(input.dataset.layer); });
+}
+function switchView(next) { mode = next; $('cluster-panel').hidden = true; syncControls(); renderLists(); schedulePaint(); persist(true); }
+function openCluster(items, trigger) {
+  clusterItems = items; returnFocus = { element: trigger, info: captureFocus() };
+  $('cluster-title').textContent = items.length + ' stories · ' + Math.round(yearOf(items[0])) + '–' + Math.round(yearOf(items.at(-1))) + ' BC';
+  populateList($('cluster-list'), items, '', true); $('cluster-panel').hidden = false;
+  $('cluster-title').focus({ preventScroll: true }); $('cluster-panel').scrollIntoView({ block: 'nearest' });
+}
+function el(tag, attrs, parent, text) { const n = document.createElementNS('http://www.w3.org/2000/svg', tag); Object.entries(attrs).forEach(([k,v]) => n.setAttribute(k,v)); if (text !== undefined) n.textContent = text; parent.append(n); return n; }
+const measureCanvas = document.createElement('canvas'), measure = measureCanvas.getContext('2d');
+function textWidth(text, size = 12) { measure.font = size + 'px ' + getComputedStyle(document.body).fontFamily; return measure.measureText(text).width; }
+function shorten(text, width, size = 12) { if (textWidth(text,size) <= width) return text; let s = text; while (s.length && textWidth(s + '…',size) > width) s = s.slice(0,-1); return s + '…'; }
+function chartMark(node, key, label, action) {
+  node.classList.add('mark'); node.dataset.focusKey = key; node.setAttribute('role','button'); node.setAttribute('tabindex','-1'); node.setAttribute('aria-label',label);
+  el('title',{},node,label);
+  node.addEventListener('click', () => { if (!suppressClick) action(node); });
+  node.addEventListener('focus', () => { chartFocusKey = key; document.querySelectorAll('#chart .mark').forEach(n => n.setAttribute('tabindex',n === node ? '0':'-1')); });
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); action(node); }
+    if (['ArrowRight','ArrowLeft','ArrowUp','ArrowDown','Home','End'].includes(e.key)) {
+      e.preventDefault(); e.stopPropagation(); const marks = [...$('chart').querySelectorAll('.mark')], index = marks.indexOf(node);
+      const next = e.key === 'Home' ? 0 : e.key === 'End' ? marks.length-1 : Math.max(0,Math.min(marks.length-1,index + (['ArrowRight','ArrowDown'].includes(e.key) ? 1 : -1)));
+      marks[next]?.focus();
     }
   });
-  node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(d); } });
-}
-function updateSelection() {
-  svg.querySelectorAll('.selection-ring').forEach(d => d.remove());
-  const mark = svg.querySelector('[data-item-id="' + selected.id + '"]');
-  svg.querySelectorAll('.mark').forEach(n => n.setAttribute('aria-pressed', String(n === mark)));
-  if (!mark) return;
-  const dot = mark.querySelector('.event-dot'), track = mark.querySelector('.track');
-  if (dot) el('circle', { class: 'selection-ring', cx: dot.getAttribute('cx'), cy: dot.getAttribute('cy'), r: 8 }, mark);
-  else if (track) el('rect', { class: 'selection-ring', x: +track.getAttribute('x') - 3, y: +track.getAttribute('y') - 3, width: +track.getAttribute('width') + 6, height: +track.getAttribute('height') + 6, rx: 8 }, mark);
 }
 function paint() {
-  const width = wrap.clientWidth, small = width < 620, left = small ? 87 : 133, right = small ? 13 : 26;
-  const plotW = Math.max(80, width - left - right), span = domain[0] - domain[1];
-  const x = y => left + (domain[0] - y) / span * plotW;
-  const active = lanes.filter(d => shown.has(d.id) && people.some(p => p.lane === d.id && p.start >= domain[1] && p.end <= domain[0]));
-  const layouts = new Map();
-  active.forEach(lane => {
-    const stacked = ['major', 'minor', 'restoration', 'voices', 'later'].includes(lane.id);
-    const placements = new Map(), ends = [];
-    if (stacked) {
-      people.filter(d => d.lane === lane.id && d.start >= domain[1] && d.end <= domain[0]).sort((a,b) => b.start - a.start).forEach(d => {
-        const start = Math.max(left, x(d.start)), end = Math.min(width - right, x(d.end)), textW = d.name.length * 6.2;
-        const labelX = Math.max(left, Math.min(start + 1, width - right - textW));
-        const occupiedStart = Math.min(start, labelX), occupiedEnd = Math.max(end, labelX + textW);
-        let row = ends.findIndex(last => occupiedStart >= last + 10);
-        if (row < 0) row = ends.length;
-        ends[row] = occupiedEnd; placements.set(d.id, { row, labelX });
-      });
-    }
-    const rowCount = Math.max(1, ends.length);
-    layouts.set(lane.id, { stacked, placements, rowCount, height: Math.max(lane.height, stacked ? rowCount * 25 + 16 : lane.height) });
+  const svg = $('chart'), width = $('chart-wrap').clientWidth;
+  if (!width) return;
+  const activeFocus = document.activeElement?.closest('#chart') ? chartFocusKey : null;
+  const small = width < 620, left = small ? 18 : 142, right = 22, plotW = Math.max(80, width-left-right), span = domain[0]-domain[1];
+  const x = year => left + (domain[0]-year)/span*plotW;
+  const overviewMode = span > 500 && !allDetail && !query.trim();
+  const activeLanes = lanes.filter(l => shown.has(l.id) && (!overviewMode || ['united','israel','judah','powers'].includes(l.id)) && people.some(d => d.lane === l.id && inRange(d)));
+  const focusItems = events.filter(d => showEvents && inRange(d) && matches(d));
+  // Broad views show turning points. Other stories remain available in the list/search.
+  const eventData = ordered(overviewMode ? focusItems.filter(d => d.major || d === selected) : focusItems);
+  const minGap = 48, buckets = [];
+  eventData.forEach(d => { const last = buckets.at(-1); if (last && x(d.year)-x(last[0].year) < minGap) last.push(d); else buckets.push([d]); });
+  // Each bucket owns a disjoint horizontal interval; even large touch targets cannot steal another marker's click.
+  const centers = buckets.map(items => (x(items[0].year)+x(items.at(-1).year))/2);
+  const labelRows = [[],[],[]];
+  const eventLayouts = buckets.map((items,i) => {
+    const cx = centers[i], text = items.length === 1 ? items[0].name : items.length + ' stories';
+    const label = shorten(text, small ? 135 : 180), tw = textWidth(label), tx = Math.max(left, Math.min(width-right-tw, cx-tw/2));
+    let row = labelRows.findIndex(r => r.every(([a,b]) => tx > b+12 || tx+tw < a-12));
+    if (row >= 0) labelRows[row].push([tx,tx+tw]);
+    return {items,cx,tx,label,row,low:i ? (centers[i-1]+cx)/2 : left-12, high:i < centers.length-1 ? (cx+centers[i+1])/2 : width-right+12};
   });
-  const laneTotal = active.reduce((sum, d) => sum + layouts.get(d.id).height, 0);
-  const extra = innerWidth > 1100 ? Math.max(0, innerHeight - 355 - laneTotal) / Math.max(1, active.length) : 0;
-  const eventH = showEvents ? (small ? 118 : 132) : 16;
-  let y = 71 + eventH;
-  const laneY = {}; active.forEach(d => { laneY[d.id] = y; y += layouts.get(d.id).height + extra; });
-  const height = Math.max(320, y + 24);
-  geometry = { width, left, right, plotW, height, x, laneY };
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`); svg.setAttribute('height', height); svg.replaceChildren();
-  wrap.style.minHeight = height + 'px';
-  el('title', {}, svg, 'Biblical history from Samuel to the New Testament. Use era buttons or the overview to explore, and select a person or event to read.');
-  const defs = el('defs', {}), clip = el('clipPath', { id: 'plot-clip' }, defs);
-  el('rect', { x: left - 5, y: 0, width: plotW + 10, height }, clip);
-  const g = el('g', { 'clip-path': 'url(#plot-clip)' });
-  const periods = [[1100, 1050, 'Judges'], [1050, 930, 'United kingdom'], [930, 586, 'Divided kingdom'], [586, 538, 'Exile'], [538, 332, 'Persian / return'], [332, 198, 'Greek kingdoms'], [198, 142, 'Seleucids'], [142, 63, 'Hasmoneans'], [63, 1, 'Rome / Herod']];
-  periods.forEach(([a, b, title]) => {
-    const start = Math.max(left, x(a)), end = Math.min(width - right, x(b));
-    if (end <= start) return;
-    el('line', { x1: start, x2: end - 4, y1: 15, y2: 15, stroke: colors(a === 586 ? 'bad' : a === 538 ? 'prophet' : 'line'), 'stroke-width': 2 }, g);
-    if (end - start > title.length * 6 + 12) el('text', { x: start + 4, y: 34, class: 'era-label' }, g, title.toUpperCase());
-  });
-  const desired = Math.max(3, Math.floor(plotW / 64)), rough = span / desired;
-  const step = [5, 10, 20, 25, 50, 100, 200].find(d => d >= rough) || 200;
-  for (let yr = Math.ceil(domain[1] / step) * step; yr <= domain[0]; yr += step) {
-    const px = x(yr); el('line', { x1: px, x2: px, y1: 68, y2: height - 12, stroke: colors('grid'), 'stroke-dasharray': '2 5' }, g);
-    el('text', { x: px, y: 59, class: 'axis-label', 'text-anchor': 'middle' }, svg, yr);
-  }
-  el('text', { x: 13, y: 59, class: 'axis-label' }, svg, 'YEAR BC');
-  if (showEvents) {
-    el('text', { x: 13, y: 103, class: 'lane-title' }, svg, 'Key events');
-    if (!small) el('text', { x: 13, y: 119, class: 'lane-subtitle' }, svg, 'Select a moment');
-    const occupied = [[], [], []], baseline = 71 + eventH - 17;
-    const inView = events.filter(d => d.year <= domain[0] && d.year >= domain[1]);
-    const labelPriority = d => d.id === selected.id ? 100 : d.era === 'second-temple' && [332, 164, 63, 6].includes(d.year) ? 94 : d.major && d.year === 445 ? 95 : d.major && d.year === 458 ? 90 : d.major && d.year === 1080 ? 85 : d.major ? 80 : 0;
-    const labelData = inView.filter(d => matches(d)).sort((a, b) => labelPriority(b) - labelPriority(a) || b.year - a.year);
-    const labels = new Map();
-    labelData.forEach(d => {
-      if (!d.major && !query && span > 320) return;
-      const px = x(d.year), maxChars = small ? 21 : 27;
-      const label = d.name.length > maxChars ? d.name.slice(0, maxChars - 1) + '…' : d.name;
-      const labelW = Math.min(plotW, label.length * 5.7 + 8), tx = Math.max(left + 2, Math.min(px - 1, width - right - labelW));
-      const row = occupied.findIndex(r => r.every(([a, b]) => tx + labelW + 8 < a || tx > b + 8));
-      if (row < 0) return; occupied[row].push([tx, tx + labelW]); labels.set(d.id, { tx, row, label });
-    });
-    inView.forEach(d => {
-      const px = x(d.year), item = el('g', { opacity: matches(d) ? 1 : .12, class: d.era === 'second-temple' ? 'historical-event' : '' }, g);
-      const eventColor = colors(d.era === 'second-temple' ? 'history' : 'accent');
-      const label = labels.get(d.id), cy = label ? 93 + label.row * 31 : baseline;
-      if (label) {
-        el('line', { x1: px, x2: px, y1: cy + 8, y2: height - 12, stroke: eventColor, opacity: d.id === selected.id ? .35 : .1, 'stroke-dasharray': '2 5' }, item);
-        el('text', { x: label.tx + 9, y: cy + 4, class: 'event-label' }, item, label.label);
-        el('text', { x: label.tx + 9, y: cy + 18, class: 'event-year' }, item, (d.approximate ? 'c. ' : '') + d.year);
-        if (Math.abs(label.tx - px) > 8) el('line', { x1: px, x2: label.tx + 4, y1: cy, y2: cy, stroke: eventColor, opacity: .5 }, item);
-      }
-      el('circle', { cx: px, cy, r: 4, fill: colors('paper'), stroke: eventColor, 'stroke-width': 1.4, class: 'event-dot' }, item);
-      el('circle', { cx: px, cy, r: 11, class: 'hit' }, item); interactive(item, d);
-    });
-  }
-  active.forEach(lane => {
-    const top = laneY[lane.id], layout = layouts.get(lane.id), h = layout.height + extra;
-    el('line', { x1: 12, x2: width - right, y1: top, y2: top, stroke: colors('grid') });
-    const title = small ? ({ united: 'United', voices: 'Prophets', major: 'Major', minor: 'Minor', restoration: 'Restoration', powers: 'Judea', later: 'Later rulers' }[lane.id] || lane.name) : lane.name;
-    el('text', { x: 13, y: top + 27, class: 'lane-title' }, svg, title);
-    if (!small) el('text', { x: 13, y: top + 43, class: 'lane-subtitle' }, svg, lane.sub);
-    if (lane.id === 'israel' && domain[1] < 722) {
-      const xx = Math.max(left, x(722)), w = width - right - xx;
-      if (w > 0) { el('rect', { x: xx, y: top + 10, width: w, height: h - 20, rx: 6, fill: colors('exile') }, g); if (w > 150) el('text', { x: xx + 12, y: top + 39, class: 'person-label' }, g, 'Assyrian exile'); }
-    }
-    if (lane.id === 'judah') {
-      const xx = Math.max(left, x(586)), end = Math.min(width - right, x(538));
-      if (end > xx) { el('rect', { x: xx, y: top + 10, width: end - xx, height: h - 20, rx: 6, fill: colors('exile') }, g); if (end - xx > 45) el('text', { x: xx + 8, y: top + 37, class: 'person-label' }, g, 'Exile'); }
-      const rx = Math.max(left, x(538)); if (rx < width - right) { el('rect', { x: rx, y: top + 10, width: width - right - rx, height: h - 20, rx: 6, fill: colors('return') }, g); if (width - right - rx > 90) el('text', { x: rx + 10, y: top + 39, class: 'person-label' }, g, 'Returned Judah'); }
-    }
-    const data = people.filter(d => d.lane === lane.id && d.start >= domain[1] && d.end <= domain[0]).sort((a,b) => b.start - a.start);
-    const { stacked, rowCount, placements } = layout;
-    const labelOccupied = [];
-    let shortOrdinal = 0;
+  const layouts = [], eventBottom = showEvents ? 226 : 62;
+  let cursor = eventBottom;
+  activeLanes.forEach(lane => {
+    const data = ordered(people.filter(d => d.lane === lane.id && inRange(d) && matches(d)));
+    if (!data.length) return;
+    const ends = [], placements = [];
     data.forEach(d => {
-      const start = Math.max(left, x(d.start)), end = Math.min(width - right, x(d.end));
-      const rawW = Math.max(2.8, end - start), isMatch = matches(d);
-      const row = stacked ? placements.get(d.id).row : 0;
-      const rowSpace = (h - 19) / rowCount;
-      const tinyKing = d.kind === 'king' && rawW < 5;
-      const yy = top + (stacked ? 20 + row * rowSpace : tinyKing ? 5 + (shortOrdinal++ % 2) * 13 : 31), thick = stacked ? 5 : tinyKing ? 5 : 10;
-      if (tinyKing) el('line', { x1: start + rawW/2, x2: start + rawW/2, y1: yy + thick, y2: top + 37, stroke: colors(colorOf(d)), opacity: .4 }, g);
-      const item = el('g', { opacity: isMatch ? 1 : .13 }, g);
-      const track = el('rect', { x: start, y: yy, width: rawW, height: thick, rx: thick / 2, fill: colors(colorOf(d)), class: 'track' }, item);
-      const hitW = Math.max(11, rawW); el('rect', { x: start - (hitW - rawW) / 2, y: yy - 10, width: hitW, height: 26, class: 'hit' }, item);
-      interactive(item, d);
-      if (!isMatch) return;
-      const textW = d.name.length * 5.8, preferred = ['David', 'Solomon', 'Ahab', 'Jehu', 'Jeroboam II', 'Asa', 'Hezekiah', 'Manasseh', 'Josiah'].includes(d.name);
-      let labelX = stacked ? placements.get(d.id).labelX : start + 1;
-      if (stacked || lane.id === 'samuel' || rawW > textW + 4 || (preferred && span > 300) || query) {
-        if (labelX + textW > width - right) labelX = Math.max(left, width - right - textW);
-        const collision = labelOccupied.some(d => d.row === row && labelX < d.end + 6 && labelX + textW > d.start - 6);
-        if (!collision) {
-          el('text', { x: labelX, y: stacked ? yy - 5 : yy + 27, class: 'person-label' }, item, d.name);
-          labelOccupied.push({ row, start: labelX, end: labelX + textW });
-        }
-      }
+      const a = Math.max(left,x(d.start)), b = Math.min(width-right,x(d.end)), label = shorten(d.name, Math.min(150,plotW));
+      const tx = Math.min(a,width-right-textWidth(label));
+      const occupiedStart = Math.min(a,tx), occupiedEnd = Math.max(b,tx+textWidth(label),a+24);
+      let row = ends.findIndex(last => occupiedStart > last+12); if(row<0) row=ends.length;
+      ends[row] = occupiedEnd; placements.push({d,a,b,tx,label,row});
+    });
+    // In a wide overview, brief reigns are grouped rather than expanded into dozens of rows.
+    let groups = null;
+    if (overviewMode) {
+      groups=[]; data.forEach(d => {const last=groups.at(-1); if(last && x(d.start)-x(last[0].start)<48) last.push(d); else groups.push([d]);});
+    }
+    const height = (small ? 40 : 12) + (groups ? 72 : Math.max(1,ends.length)*55) + 14;
+    layouts.push({lane,top:cursor,height,placements,groups}); cursor += height;
+  });
+  const height = Math.max(240,cursor+20); geometry={width,left,right,plotW,x,height};
+  svg.replaceChildren(); svg.setAttribute('viewBox',`0 0 ${width} ${height}`); svg.setAttribute('height',height);
+  el('title',{},svg,'Interactive biblical timeline. Use arrow keys between marks; Enter opens a story.');
+  const desired=Math.max(2,Math.floor(plotW/80)), rough=span/desired, step=[5,10,20,25,50,100,200,400].find(n=>n>=rough)||400;
+  for(let year=Math.ceil(domain[1]/step)*step;year<=domain[0];year+=step){ const xx=x(year); el('line',{x1:xx,x2:xx,y1:42,y2:height-12,stroke:colors('grid'),'stroke-dasharray':'2 5'},svg); el('text',{x:xx,y:28,'text-anchor':'middle'},svg,year); }
+  if(!small) el('text',{x:12,y:28},svg,'YEAR BC');
+  eventLayouts.forEach(({items,cx,tx,label,row,low,high})=>{
+    const d=items[0], cy=183, g=el('g',{class:d.era==='second-temple'?'historical-event':''},svg);
+    if(row>=0) { const ly=60+row*33; el('rect',{x:tx-3,y:ly-17,width:textWidth(label)+6,height:26,rx:4,class:'label-hit',fill:'transparent'},g); el('path',{d:`M ${cx} ${cy-16} V ${ly+8}`,stroke:colors('line'),fill:'none','pointer-events':'none'},g); el('text',{x:tx,y:ly,class:'event-label'},g,label); }
+    el('circle',{cx,cy,r:items.length>1?15:6,fill:items.length>1?colors('raised'):colors('paper'),stroke:colors(d.era==='second-temple'?'history':'accent'),'stroke-width':1.5},g);
+    if(items.length>1) el('text',{x:cx,y:cy+4,'text-anchor':'middle'},g,items.length);
+    el('rect',{x:Math.max(low,cx-22),y:cy-22,width:Math.min(high,cx+22)-Math.max(low,cx-22),height:44,rx:8,class:'hit'},g);
+    const key=items.length===1?d.key:'cluster-'+items.map(d=>d.key).join('_');
+    chartMark(g,key,items.length===1?d.name+', '+dateText(d):items.length+' stories from '+items[0].year+' to '+items.at(-1).year+' BC. Open group.',n=>items.length===1?activate(d):openCluster(items,n));
+    if(items.includes(selected)) el('circle',{cx,cy,r:items.length>1?19:11,class:'selection-ring'},g);
+  });
+  if (!eventLayouts.length && showEvents) el('text',{x:left,y:100},svg,'No stories in this range. Try another era.');
+  layouts.forEach(({lane,top,height,placements,groups})=>{
+    el('line',{x1:small?12:8,x2:width-right,y1:top,y2:top,stroke:colors('grid')},svg);
+    el('text',{x:small?18:12,y:top+24,class:'lane-title'},svg,small?lane.name:shorten(lane.name,left-22,13));
+    const offset=small?46:22;
+    if(groups){
+      groups.forEach((items,i)=>{
+        const d=items[0],a=Math.max(left,x(d.start)),b=Math.max(a+6,Math.min(width-right,x(items.at(-1).end))),cy=top+offset+10;
+        const g=el('g',{},svg), label=items.length===1?d.name:items.length+' rulers';
+        el('rect',{x:a,y:cy,width:b-a,height:10,rx:5,fill:colors(items.length > 1 && d.kind === 'king' ? 'neutral' : colorOf(d))},g);
+        const nextA=i+1<groups.length?x(groups[i+1][0].start):width-right;
+        const hitA=i?(x(groups[i-1].at(-1).end)+a)/2:left-8,hitB=(b+nextA)/2;
+        el('rect',{x:Math.max(hitA,a-6),y:cy-14,width:Math.max(1,Math.min(hitB,b+6)-Math.max(hitA,a-6)),height:44,rx:5,class:'hit'},g);
+        const room=nextA-a-8; if(room>24)el('text',{x:a,y:cy+31},g,shorten(label,room));
+        chartMark(g,items.length===1?d.key:'people-'+lane.id+'-'+i,items.map(d=>d.name).join(', ')+'. Select to explore.',()=>{
+          if(items.length===1)activate(d); else { allDetail=true; setDomain(items[0].start+15,items.at(-1).end-15); announce('Zoomed to '+lane.name+'. Select a ruler to read.'); }
+        });
+        if(items.includes(selected))el('rect',{x:a-2,y:cy-3,width:b-a+4,height:16,rx:6,class:'selection-ring'},g);
+      });
+    } else placements.forEach(({d,a,b,tx,label,row})=>{
+      const yy=top+offset+row*55,g=el('g',{},svg);
+      el('text',{x:tx,y:yy+1},g,label); const trackW=Math.max(4,b-a);
+      el('rect',{x:a,y:yy+10,width:trackW,height:8,rx:4,fill:colors(colorOf(d))},g);
+      el('rect',{x:Math.min(tx,a)-3,y:yy-15,width:Math.max(trackW,textWidth(label),24)+6,height:44,rx:6,class:'hit'},g);
+      chartMark(g,d.key,d.name+', '+dateText(d)+'. '+(d.kind==='king'?RATINGS[String(d.rating)].label+'. ':'')+'Select to read.',()=>activate(d));
+      if(d===selected)el('rect',{x:a-2,y:yy+7,width:trackW+4,height:14,rx:5,class:'selection-ring'},g);
     });
   });
-  if (domain[0] > 930 && domain[1] < 930) el('line', { x1: x(930), x2: x(930), y1: 71 + eventH, y2: height - 12, stroke: colors('accent'), 'stroke-dasharray': '3 5', opacity: .28 }, g);
-  updateSelection(); paintOverview();
-  if (listRangeKey !== domain.join(':')) renderList();
-  document.getElementById('visible-range').textContent = Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC';
-  let range = 'Custom view';
-  document.querySelectorAll('.range').forEach(b => {
-    const values = RANGES[b.dataset.range], on = values.every((v,i) => Math.abs(v - domain[i]) < 1);
-    b.setAttribute('aria-pressed', String(on)); if (on) range = b.textContent;
-  });
-  document.getElementById('view-name').textContent = ' · ' + range;
-  document.getElementById('zoom-out').disabled = span >= FULL_SPAN - 1;
-  document.getElementById('zoom-in').disabled = span <= 30.1;
-  document.getElementById('start-year').value = Math.round(domain[0]);
-  document.getElementById('end-year').value = Math.round(domain[1]);
-  const count = visibleItems().filter(d => matches(d) && (d.kind === 'event' ? d.year <= domain[0] && d.year >= domain[1] : d.start >= domain[1] && d.end <= domain[0])).length;
-  document.getElementById('chart-count').textContent = count + ' people & events in view';
+  const marks=[...svg.querySelectorAll('.mark')], current=marks.find(n=>n.dataset.focusKey===chartFocusKey)||marks.find(n=>n.dataset.focusKey===selected.key)||marks[0];
+  if(current)current.setAttribute('tabindex','0'); if(activeFocus)current?.focus({preventScroll:true});
+  $('chart-help').textContent=overviewMode?'Overview: turning points and kingdoms. Choose an era to reveal prophets and more stories. Numbered circles open groups.':'Select a name or circle to read. Numbered circles group nearby stories. Drag sideways to pan.';
+  paintOverview();
 }
 function paintOverview() {
-  const w = overview.clientWidth, h = overview.clientHeight, padding = 10;
-  const x = year => padding + (FIRST_YEAR - year) / FULL_SPAN * (w - padding * 2);
-  overview.setAttribute('viewBox', `0 0 ${w} ${h}`); overview.replaceChildren();
-  el('title', {}, overview, 'Drag the selected window to pan. Drag either edge to zoom. Drag the grip above to resize this navigator.');
-  const plotTop = 23, plotBottom = h - 9, rowH = (plotBottom - plotTop) / 3;
-  for (let yr = FIRST_YEAR; yr >= LAST_YEAR; yr -= w < 600 ? 200 : 100) {
-    el('text', { x: x(yr), y: 12, 'text-anchor': 'middle', fill: colors('faint'), 'font-size': 10 }, overview, yr);
-    el('line', { x1: x(yr), x2: x(yr), y1: 19, y2: plotBottom, stroke: colors('grid') }, overview);
-  }
-  ['united', 'israel', 'judah'].forEach((lane, row) => {
-    [...kings.filter(d => d.lane === lane), ...(row === 2 ? laterPeople.filter(d => d.lane === 'powers' && d.start <= 539) : [])].forEach(d => el('rect', { x: x(d.start), y: plotTop + row * rowH + rowH * .25, width: Math.max(1, x(d.end) - x(d.start)), height: Math.max(3, rowH * .28), rx: 2, fill: colors(colorOf(d)), opacity: .7 }, overview));
+  const svg=$('overview'),w=svg.clientWidth,h=76,pad=24; if(!w)return;
+  const x=year=>pad+(FIRST_YEAR-year)/FULL_SPAN*(w-pad*2); svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  for(let yr=1100;yr>=1;yr-=w<600?300:100)el('text',{x:x(yr),y:14,'text-anchor':'middle'},svg,yr);
+  el('rect',{x:pad,y:32,width:w-pad*2,height:24,rx:6,fill:colors('grid')},svg);
+  events.filter(d=>d.major).forEach(d=>el('line',{x1:x(d.year),x2:x(d.year),y1:33,y2:55,stroke:colors(d.era==='second-temple'?'history':'accent'),opacity:.6},svg));
+  const a=x(domain[0]),b=x(domain[1]);el('rect',{x:a,y:26,width:Math.max(1,b-a),height:36,rx:6,fill:colors('accent-dim'),opacity:.65,stroke:colors('accent'),'data-brush':'window'},svg);
+  [a,b].forEach((xx,i)=>{
+    const mode=i?'end':'start',g=el('g',{'data-brush':mode,role:'slider',tabindex:0,'aria-label':(i?'End':'Start')+' year BC','aria-valuemin':i?1:Math.ceil(domain[1]+30),'aria-valuemax':i?Math.floor(domain[0]-30):1100,'aria-valuenow':Math.round(domain[i]),'aria-valuetext':Math.round(domain[i])+' BC'},svg);
+    el('rect',{x:xx-18,y:22,width:36,height:44,fill:'transparent',class:'overview-handle'},g);el('rect',{x:xx-3,y:26,width:6,height:36,rx:3,fill:colors('accent'),'pointer-events':'none'},g);
+    g.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();e.stopPropagation();let[a,b]=domain,delta=(e.key==='ArrowLeft'?1:-1)*(e.shiftKey?25:5);if(i)b=e.key==='Home'?a-30:e.key==='End'?1:Math.min(a-30,Math.max(1,b+delta));else a=e.key==='Home'?1100:e.key==='End'?b+30:Math.max(b+30,Math.min(1100,a+delta));setDomain(a,b);requestAnimationFrame(()=>$('overview').querySelector('[data-brush="'+mode+'"]').focus({preventScroll:true}));});
   });
-  events.filter(d => d.major).forEach(d => el('line', { x1: x(d.year), x2: x(d.year), y1: plotTop, y2: plotBottom, stroke: colors('accent'), opacity: .17 }, overview));
-  const a = x(domain[0]), b = x(domain[1]);
-  el('rect', { x: padding, y: 18, width: Math.max(0, a - padding), height: h - 19, fill: colors('paper'), opacity: .65 }, overview);
-  el('rect', { x: b, y: 18, width: Math.max(0, w - padding - b), height: h - 19, fill: colors('paper'), opacity: .65 }, overview);
-  el('rect', { x: a, y: 18, width: Math.max(1, b-a), height: h - 19, rx: 5, class: 'overview-selection', 'data-brush': 'window' }, overview);
-  [a, b].forEach((xx, i) => {
-    const mode = i ? 'end' : 'start', handle = el('g', { 'data-brush': mode, role: 'slider', tabindex: 0, 'aria-label': (i ? 'End' : 'Start') + ' year BC', 'aria-valuemin': i ? LAST_YEAR : Math.ceil(domain[1]+30), 'aria-valuemax': i ? Math.floor(domain[0]-30) : FIRST_YEAR, 'aria-valuenow': Math.round(domain[i]) }, overview);
-    el('rect', { x: xx - 14, y: 16, width: 28, height: h - 17, fill: colors('transparent'), cursor: 'ew-resize' }, handle);
-    el('rect', { x: xx - 4, y: 18, width: 8, height: h - 19, rx: 4, class: 'overview-handle' }, handle);
-    el('line', { x1: xx - 1, x2: xx - 1, y1: h/2 - 4, y2: h/2 + 10, stroke: colors('paper'), 'pointer-events': 'none' }, handle);
-    el('line', { x1: xx + 1, x2: xx + 1, y1: h/2 - 4, y2: h/2 + 10, stroke: colors('paper'), 'pointer-events': 'none' }, handle);
-  });
-  document.getElementById('navigator-range').textContent = 'Timeline navigator · ' + Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC';
 }
-function zoom(factor, fraction = .5) {
-  const span = domain[0] - domain[1], next = Math.min(FULL_SPAN, Math.max(30, span * factor));
-  const focus = domain[0] - fraction * span;
-  setDomain(focus + fraction * next, focus - (1 - fraction) * next);
-}
-let suppressClick = false;
-svg.addEventListener('pointerdown', e => {
-  if (e.button !== 0 || touchGesture || !geometry) return;
-  drag = { x: e.clientX, domain: domain.slice(), moved: false };
+function zoom(factor,fraction=.5) { const span=domain[0]-domain[1],next=Math.min(FULL_SPAN,Math.max(MIN_SPAN,span*factor)),focus=domain[0]-span*fraction;setDomain(focus+next*fraction,focus-next*(1-fraction)); }
+function pan(direction,farther=false){const delta=(domain[0]-domain[1])*(farther?.5:.1)*direction;setDomain(domain[0]+delta,domain[1]+delta);}
+// Pointer and touch navigation never captures ordinary vertical page scrolling.
+$('chart').addEventListener('pointerdown',e=>{if(e.button!==0||pinch||!geometry)return;pointer={x:e.clientX,y:e.clientY,domain:domain.slice(),moved:false};});
+$('overview').addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();brush={mode:e.target.closest('[data-brush]')?.dataset.brush||'window',x:e.clientX,domain:domain.slice()};});
+window.addEventListener('pointermove',e=>{
+  if(pointer&&!pinch){const dx=e.clientX-pointer.x;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(e.clientY-pointer.y)){pointer.moved=true;$('chart').classList.add('dragging');const delta=dx/geometry.plotW*(pointer.domain[0]-pointer.domain[1]);setDomain(pointer.domain[0]+delta,pointer.domain[1]+delta);}}
+  if(brush){const delta=(e.clientX-brush.x)/($('overview').clientWidth-48)*FULL_SPAN,[a,b]=brush.domain;if(brush.mode==='start')setDomain(Math.max(b+30,Math.min(1100,a-delta)),b);else if(brush.mode==='end')setDomain(a,Math.min(a-30,Math.max(1,b-delta)));else setDomain(a-delta,b-delta);}
 });
-window.addEventListener('pointermove', e => {
-  if (navigatorResize) {
-    overview.style.height = Math.max(60, Math.min(230, navigatorResize.height + navigatorResize.y - e.clientY)) + 'px';
-    paintOverview();
-  }
-  if (drag) {
-    const shift = (e.clientX - drag.x) / geometry.plotW * (drag.domain[0] - drag.domain[1]);
-    if (Math.abs(e.clientX - drag.x) > (e.pointerType === 'touch' ? 8 : 4)) { drag.moved = true; hideTip(); svg.classList.add('dragging'); setDomain(drag.domain[0] + shift, drag.domain[1] + shift); }
-  }
-  if (brushDrag) {
-    const shift = (e.clientX - brushDrag.x) / (overview.clientWidth - 20) * FULL_SPAN;
-    const [a, b] = brushDrag.domain;
-    if (brushDrag.mode === 'start') setDomain(Math.max(b + 30, Math.min(FIRST_YEAR, a - shift)), b);
-    else if (brushDrag.mode === 'end') setDomain(a, Math.min(a - 30, Math.max(LAST_YEAR, b - shift)));
-    else setDomain(a - shift, b - shift);
-  }
+function finishPointer(){if(pointer?.moved||pinch){suppressClick=true;setTimeout(()=>{suppressClick=false;},200);}pointer=null;brush=null;$('chart').classList.remove('dragging');}
+window.addEventListener('pointerup',finishPointer);window.addEventListener('pointercancel',finishPointer);
+$('chart').addEventListener('wheel',e=>{if(!e.ctrlKey||!geometry)return;e.preventDefault();const fraction=Math.max(0,Math.min(1,(e.clientX-$('chart').getBoundingClientRect().left-geometry.left)/geometry.plotW));zoom(e.deltaY>0?1.12:1/1.12,fraction);},{passive:false});
+$('chart').addEventListener('touchstart',e=>{if(e.touches.length!==2||!geometry)return;const[a,b]=e.touches;pointer=null;pinch={distance:Math.max(10,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)),domain:domain.slice(),middle:(a.clientX+b.clientX)/2};},{passive:true});
+$('chart').addEventListener('touchmove',e=>{if(!pinch||e.touches.length!==2)return;e.preventDefault();const[a,b]=e.touches,dist=Math.max(10,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)),span=pinch.domain[0]-pinch.domain[1],next=Math.max(30,Math.min(FULL_SPAN,span*pinch.distance/dist)),fraction=Math.max(0,Math.min(1,(pinch.middle-$('chart').getBoundingClientRect().left-geometry.left)/geometry.plotW)),focus=pinch.domain[0]-span*fraction,shift=((a.clientX+b.clientX)/2-pinch.middle)/geometry.plotW*next;setDomain(focus+fraction*next+shift,focus-(1-fraction)*next+shift);},{passive:false});
+function finishTouch(e){if(e.touches.length<2){if(pinch){suppressClick=true;setTimeout(()=>{suppressClick=false;},200);}pinch=null;pointer=null;}}
+$('chart').addEventListener('touchend',finishTouch);$('chart').addEventListener('touchcancel',finishTouch);
+// Controls are created once; repainting never removes the focused toolbar button.
+[{id:'events',name:'Stories'},...lanes,{id:'detail',name:'All detail in overview'}].forEach(lane=>{const label=html('label','',undefined,$('layer-menu')),input=html('input','',undefined,label);input.type='checkbox';input.dataset.layer=lane.id;label.append(document.createTextNode(lane.name));input.addEventListener('change',()=>{if(lane.id==='events')showEvents=input.checked;else if(lane.id==='detail')allDetail=input.checked;else if(input.checked)shown.add(lane.id);else shown.delete(lane.id);renderLists();schedulePaint();persist(true);});});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+document.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',()=>{if(mode==='saved')mode='timeline';$('cluster-panel').hidden=true;setDomain(...RANGES[b.dataset.range]);}));
+$('zoom-in').addEventListener('click',()=>zoom(.7));$('zoom-out').addEventListener('click',()=>zoom(1/.7));$('reset').addEventListener('click',()=>{allDetail=false;query='';$('q').value='';renderSearch();$('cluster-panel').hidden=true;setDomain(...RANGES.full);});
+$('share-view').addEventListener('click',()=>share(document.querySelector('.controls')));
+$('major-only').addEventListener('change',e=>{majorOnly=e.target.checked;renderLists();persist(true);});$('include-people').addEventListener('change',e=>{includePeople=e.target.checked;renderLists();persist(true);});
+$('q').addEventListener('input',e=>{query=e.target.value.slice(0,200);renderSearch();renderLists();schedulePaint();persist();});
+$('q').addEventListener('focus',()=>{if(query.trim())renderSearch();});
+$('q').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();renderSearch();$('search-list').querySelector('button')?.focus();}if(e.key==='Enter'){e.preventDefault();$('search-list').querySelector('button')?.click();}});
+$('clear-search').addEventListener('click',()=>{query='';syncControls();renderSearch();renderLists();schedulePaint();persist(true);$('q').focus();});
+$('close-cluster').addEventListener('click',()=>{$('cluster-panel').hidden=true;restoreFocus(returnFocus?.info);if(!document.activeElement.closest('#chart'))document.querySelector('[data-view="timeline"]').focus();});
+$('zoom-cluster').addEventListener('click',()=>{const top=yearOf(clusterItems[0]),bottom=yearOf(clusterItems.at(-1));allDetail=true;$('cluster-panel').hidden=true;setDomain(top+15,bottom-15);($('zoom-in').disabled ? $('reset') : $('zoom-in')).focus();});
+for(const id of ['start-year','end-year'])$(id).addEventListener('change',()=>{const a=Number($('start-year').value),b=Number($('end-year').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a<=b||a-b<MIN_SPAN||a>1100||b<1){announce('Choose BC dates from 1100 to 1, with the start at least 30 years earlier.');syncControls();return;}setDomain(a,b);});
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-area'))$('search-results').hidden=true;if(!e.target.closest('.layers'))document.querySelector('.layers').open=false;});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if($('reader').open)return;$('search-results').hidden=true;document.querySelector('.layers').open=false;if(!$('cluster-panel').hidden)$('close-cluster').click();return;}
+  if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable="true"]')||$('reader').open)return;
+  if(e.key==='/'){e.preventDefault();$('q').focus();}
+  else if(e.key==='?'){e.preventDefault();const help=document.querySelector('.shortcut-help');help.open=!help.open;if(help.open)help.scrollIntoView({block:'nearest'});}
+  else if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.8);}else if(e.key==='-'||e.key==='_'){e.preventDefault();zoom(1.25);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();pan(1,e.shiftKey);}else if(e.key==='ArrowRight'){e.preventDefault();pan(-1,e.shiftKey);}
+  else if(e.key.toLowerCase()==='f'){e.preventDefault();setDomain(...RANGES.full);}
+  else if(e.key==='['||e.key===']'){e.preventDefault();const seq=ordered(events.filter(matches)),i=seq.indexOf(selected),next=seq[Math.max(0,Math.min(seq.length-1,i+(e.key===']'?1:-1)))];if(next)activate(next,{read:false});}
 });
-function finishPointer() {
-  if (drag?.moved) { suppressClick = true; setTimeout(() => { suppressClick = false; }, 0); }
-  drag = null; brushDrag = null; navigatorResize = null; svg.classList.remove('dragging');
-}
-window.addEventListener('pointerup', finishPointer);
-window.addEventListener('pointercancel', finishPointer);
-svg.addEventListener('wheel', e => {
-  if (!geometry) return; e.preventDefault();
-  const fraction = Math.max(0, Math.min(1, (e.clientX - svg.getBoundingClientRect().left - geometry.left) / geometry.plotW));
-  zoom(e.deltaY > 0 ? 1.13 : 1 / 1.13, fraction);
-}, { passive: false });
-svg.addEventListener('touchstart', e => {
-  if (e.touches.length !== 2) return;
-  const [a,b] = e.touches;
-  drag = null; touchGesture = { distance: Math.abs(a.clientX - b.clientX), domain: domain.slice(), midpoint: (a.clientX + b.clientX) / 2 };
-}, { passive: true });
-svg.addEventListener('touchmove', e => {
-  if (!touchGesture || e.touches.length !== 2) return; e.preventDefault();
-  const [a,b] = e.touches, distance = Math.max(10, Math.abs(a.clientX - b.clientX));
-  const span = touchGesture.domain[0] - touchGesture.domain[1];
-  const next = Math.max(30, Math.min(FULL_SPAN, span * touchGesture.distance / distance));
-  const fraction = Math.max(0, Math.min(1, (touchGesture.midpoint - svg.getBoundingClientRect().left - geometry.left) / geometry.plotW));
-  const shift = ((a.clientX + b.clientX) / 2 - touchGesture.midpoint) / geometry.plotW * next;
-  const focus = touchGesture.domain[0] - span * fraction;
-  setDomain(focus + fraction * next + shift, focus - (1-fraction) * next + shift);
-}, { passive: false });
-svg.addEventListener('touchend', e => { if (e.touches.length < 2) touchGesture = null; });
-overview.addEventListener('pointerdown', e => {
-  if (e.button !== 0) return;
-  e.preventDefault(); const mode = e.target.closest('[data-brush]')?.dataset.brush;
-  if (!mode) {
-    const year = FIRST_YEAR - (e.clientX - overview.getBoundingClientRect().left - 10) / (overview.clientWidth - 20) * FULL_SPAN;
-    const span = domain[0] - domain[1]; domain = bounded(year + span / 2, year - span / 2); schedulePaint();
-  }
-  brushDrag = { mode: mode || 'window', x: e.clientX, domain: domain.slice() };
-});
-document.querySelectorAll('.range').forEach(b => b.addEventListener('click', () => { setDomain(...RANGES[b.dataset.range]); document.querySelector('.periods').open = false; if (b.dataset.range === 'bridge') activate(historyEvents.find(d => d.year === 164)); }));
-document.getElementById('zoom-in').addEventListener('click', () => zoom(.7));
-document.getElementById('zoom-out').addEventListener('click', () => zoom(1 / .7));
-document.getElementById('reset').addEventListener('click', () => setDomain(...RANGES.full));
-document.getElementById('q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderList(); schedulePaint(); });
-for (const id of ['start-year', 'end-year']) document.getElementById(id).addEventListener('change', () => setDomain(+document.getElementById('start-year').value, +document.getElementById('end-year').value));
-const menu = document.getElementById('layer-menu');
-[ { id: 'events', name: 'Key events' }, ...lanes ].forEach(lane => {
-  const label = document.createElement('label'), input = document.createElement('input'); input.type = 'checkbox'; input.checked = true; input.dataset.lane = lane.id;
-  label.append(input, document.createTextNode(lane.name)); menu.append(label);
-  input.addEventListener('change', () => {
-    if (lane.id === 'events') showEvents = input.checked;
-    else if (input.checked) shown.add(lane.id); else shown.delete(lane.id);
-    renderList(); schedulePaint();
-  });
-});
-function pan(direction, farther = false) {
-  const shift = (domain[0] - domain[1]) * (farther ? .5 : .1) * direction;
-  setDomain(domain[0] + shift, domain[1] + shift);
-}
-function adjacentEvent(direction) {
-  const sequence = events.filter(d => matches(d));
-  if (!sequence.length || !showEvents) return;
-  let index = sequence.indexOf(selected);
-  if (index < 0) index = direction > 0 ? -1 : sequence.length;
-  const next = sequence[Math.max(0, Math.min(sequence.length - 1, index + direction))];
-  activate(next, true);
-}
-function closeMenus() { document.querySelectorAll('details[open]').forEach(d => { d.open = false; }); hideTip(); }
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeMenus(); if (document.activeElement === document.getElementById('q')) document.activeElement.blur(); return; }
-  if (e.ctrlKey || e.metaKey || e.altKey || e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
-  const slider = e.target instanceof Element ? e.target.closest('[data-brush][role="slider"]') : null;
-  if (slider && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-    e.preventDefault(); const mode = slider.dataset.brush, step = e.shiftKey ? 25 : 5;
-    let [a,b] = domain;
-    const change = e.key === 'ArrowLeft' ? step : -step;
-    if (mode === 'start') a = e.key === 'Home' ? FIRST_YEAR : e.key === 'End' ? b+30 : Math.max(b+30, Math.min(FIRST_YEAR, a+change));
-    else b = e.key === 'Home' ? a-30 : e.key === 'End' ? LAST_YEAR : Math.min(a-30, Math.max(LAST_YEAR, b+change));
-    setDomain(a,b);
-    requestAnimationFrame(() => overview.querySelector('[data-brush="'+mode+'"]').focus()); return;
-  }
-  switch (e.key) {
-    case '+': case '=': e.preventDefault(); zoom(.8); break;
-    case '-': case '_': e.preventDefault(); zoom(1.25); break;
-    case 'ArrowLeft': e.preventDefault(); pan(1, e.shiftKey); break;
-    case 'ArrowRight': e.preventDefault(); pan(-1, e.shiftKey); break;
-    case '[': e.preventDefault(); adjacentEvent(-1); break;
-    case ']': e.preventDefault(); adjacentEvent(1); break;
-    case 'f': case 'F': case '0': e.preventDefault(); setDomain(...RANGES.full); break;
-    case '/': e.preventDefault(); document.getElementById('q').focus(); break;
-    case '?': e.preventDefault(); document.querySelector('.shortcut-help').open = !document.querySelector('.shortcut-help').open; break;
-  }
-});
-document.addEventListener('pointerdown', e => {
-  document.querySelectorAll('.layers[open], .periods[open], .shortcut-help[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; });
-});
-document.getElementById('navigator-resizer').addEventListener('pointerdown', e => {
-  if (e.button !== 0) return;
-  e.preventDefault(); navigatorResize = { y: e.clientY, height: overview.clientHeight };
-});
-document.getElementById('navigator-resizer').addEventListener('keydown', e => {
-  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
-  e.preventDefault(); e.stopPropagation();
-  overview.style.height = Math.max(60, Math.min(230, overview.clientHeight + (e.key === 'ArrowUp' ? 20 : -20))) + 'px'; paintOverview();
-});
-new ResizeObserver(schedulePaint).observe(wrap);
-window.addEventListener('resize', schedulePaint);
-renderDetail(); renderList(); paint();
+window.addEventListener('popstate',()=>{readURL();renderDetails();renderLists();syncControls();renderSearch();schedulePaint();});
+window.addEventListener('resize',()=>{if(!narrow()&&$('reader').open)$('reader').close();schedulePaint();});
+window.addEventListener('pagehide',()=>persist(true));
+new ResizeObserver(schedulePaint).observe($('chart-wrap'));
+readURL(); renderDetails(); renderLists(); syncControls(); renderSearch(); if(mode==='timeline')paint();
+if(byKey.has(new URLSearchParams(location.search).get('story'))&&narrow()){$('reader').showModal();}
 </script>
 </body>
 </html>
