@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#23211e">
-<title>Bible Atlas · Samuel to the New Testament</title>
+<title>Bible Atlas · Genesis to the New Testament</title>
 <style>
 :root {
   --color-paper: oklch(17% .009 75);
@@ -79,7 +79,7 @@ h1 { font-size: clamp(25px, 2.5vw, 34px); letter-spacing: -.025em; }
 .search-box input::placeholder { color: var(--color-faint); }
 .search-results { position: absolute; top: calc(100% + 8px); right: 0; width: min(430px, 90vw); max-height: min(65dvh, 540px); overflow: auto; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 12px; z-index: 20; padding: 12px; }
 .search-results p { padding: 6px 8px; color: var(--color-muted); font-size: 13px; }
-.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 350px; align-items: start; }
+.workspace { display: block; }
 .timeline-panel { min-width: 0; }
 .controls { padding: 20px 28px 12px; border-bottom: 1px solid var(--color-line); }
 .control-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
@@ -90,8 +90,11 @@ h1 { font-size: clamp(25px, 2.5vw, 34px); letter-spacing: -.025em; }
 .era-nav { display: flex; gap: 6px; overflow-x: auto; padding: 12px 0 4px; scrollbar-width: thin; }
 .era-nav button { white-space: nowrap; text-align: left; font-size: 13px; flex: none; }
 .era-nav span { display: block; color: var(--color-faint); font-size: 12px; }
-.view-label { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin: 16px 0 6px; color: var(--color-muted); font-size: 13px; }
+.view-label { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin: 16px 0 6px; color: var(--color-muted); font-size: 13px; }
 .view-label strong { color: var(--color-ink); font-weight: 500; }
+.rating-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.rating-switch > span { margin-right: 6px; }
+.rating-switch button { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 6px 12px; }
 .layers { position: relative; }
 .layers summary { padding: 10px; min-height: 44px; font-size: 14px; }
 .layer-menu { position: absolute; top: 100%; right: 0; width: 240px; max-height: 65dvh; overflow: auto; background: var(--color-raised); border: 1px solid var(--color-line); border-radius: 10px; padding: 10px 16px; z-index: 10; }
@@ -99,9 +102,12 @@ h1 { font-size: clamp(25px, 2.5vw, 34px); letter-spacing: -.025em; }
 input[type="checkbox"] { accent-color: var(--color-accent); width: 18px; height: 18px; }
 .legend { display: flex; gap: 8px 18px; flex-wrap: wrap; color: var(--color-muted); font-size: 12px; padding: 14px 28px 0; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
-.legend i, .rating i { width: 9px; height: 9px; border-radius: 50%; background: var(--mark-color); flex: none; }
-.chart-help { margin: 10px 28px 8px; color: var(--color-faint); font-size: 13px; }
-.chart-wrap { margin: 0 16px; }
+.legend i, .rating i, .rating-switch i { width: 9px; height: 9px; border-radius: 50%; background: var(--mark-color); flex: none; }
+.legend i.undated { background: transparent; border: 1.5px dashed var(--color-accent); }
+.chart-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 10px 28px 8px; min-height: 44px; }
+.chart-help { color: var(--color-faint); font-size: 13px; }
+.card-chip { flex: none; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-color: var(--color-line); color: var(--color-accent); font-size: 13px; }
+.chart-wrap { position: relative; margin: 0 16px; }
 #chart { width: 100%; touch-action: pan-y; cursor: grab; }
 #chart.dragging { cursor: grabbing; }
 #chart text { font-family: var(--font-body); font-size: 12px; fill: var(--color-muted); pointer-events: none; }
@@ -113,14 +119,28 @@ input[type="checkbox"] { accent-color: var(--color-accent); width: 18px; height:
 #chart .hit { fill: transparent; }
 #chart .selection-ring { stroke: var(--color-ink); stroke-width: 2; fill: transparent; pointer-events: none; }
 .overview-wrap { margin: 8px 28px 20px; padding-top: 12px; border-top: 1px solid var(--color-line); }
-.overview-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--color-muted); }
+.overview-top { display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap; font-size: 12px; color: var(--color-muted); }
+.overview-top > span { margin-left: auto; }
 #overview { width: 100%; height: 76px; touch-action: none; }
 #overview text { font: 12px var(--font-body); fill: var(--color-faint); }
 .overview-handle { cursor: ew-resize; }
-.year-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--color-muted); align-items: center; }
+.year-controls { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--color-muted); align-items: center; }
 .year-controls label { display: flex; gap: 8px; align-items: center; }
 .year-controls input { width: 78px; min-height: 36px; border: 1px solid var(--color-line); border-radius: 6px; color: var(--color-ink); background: var(--color-surface); padding: 4px 8px; }
-.sidebar { position: sticky; top: 12px; margin: 16px 16px 16px 0; max-height: calc(100dvh - 24px); overflow-y: auto; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface); scrollbar-width: thin; }
+/* The selected story floats over the chart, anchored to its mark. */
+.story-card { position: absolute; top: 8px; left: 8px; z-index: 6; width: 380px; max-height: min(calc(100dvh - 180px), 660px); min-height: 200px; overflow-y: auto; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface); box-shadow: 0 18px 44px oklch(8% .009 75 / .6); scrollbar-width: thin; }
+.card-bar { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 4px; padding: 2px 6px 2px 18px; background: var(--color-surface); border-bottom: 1px solid var(--color-grid); color: var(--color-faint); font-size: 12px; cursor: grab; touch-action: none; user-select: none; }
+.card-bar span { margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-bar button { font-size: 13px; padding: 6px 10px; }
+.story-card.dragging .card-bar { cursor: grabbing; }
+.story-card .detail { padding: 16px 20px 20px; }
+.story-card .detail h2 { font-size: 25px; margin: 8px 0; }
+.story-card .detail h2:focus-visible { outline-offset: 2px; }
+.story-card .detail-note { margin: 14px 0; line-height: 1.65; }
+.card-arrow { position: absolute; z-index: 7; width: 12px; height: 12px; background: var(--color-surface); border-left: 1px solid var(--color-line); border-top: 1px solid var(--color-line); transform: rotate(45deg); pointer-events: none; }
+.peek { position: absolute; z-index: 8; pointer-events: none; max-width: 280px; padding: 8px 12px; border: 1px solid var(--color-line); border-radius: 8px; background: var(--color-raised); font-size: 13px; line-height: 1.4; box-shadow: 0 8px 20px oklch(8% .009 75 / .5); }
+.peek strong { display: block; font-weight: 500; color: var(--color-ink); }
+.peek span { color: var(--color-muted); font-size: 12px; }
 .detail { padding: 24px; }
 .detail-category { font-size: 12px; color: var(--color-accent); letter-spacing: .05em; }
 .detail h2 { font-size: 30px; margin: 10px 0; }
@@ -138,10 +158,6 @@ input[type="checkbox"] { accent-color: var(--color-accent); width: 18px; height:
 .connections p { color: var(--color-faint); font-size: 12px; }
 .related-item { display: block; width: 100%; text-align: left; white-space: normal; font-size: 13px; }
 .related-item span { display: block; color: var(--color-faint); font-size: 12px; }
-.story-head { border-top: 1px solid var(--color-line); padding: 16px 24px 8px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.story-head h2 { font: 500 15px var(--font-body); }
-.story-head span { color: var(--color-faint); font-size: 12px; }
-.story-list { overflow-y: auto; max-height: 300px; padding: 0 12px 16px; scrollbar-width: thin; }
 .story-item { display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 10px; width: 100%; text-align: left; white-space: normal; line-height: 1.5; }
 .story-item .year { font-size: 12px; color: var(--color-faint); padding-top: 2px; }
 .story-item .name { font-size: 14px; }
@@ -168,6 +184,8 @@ body:has(dialog[open]) { overflow: hidden; }
 .link-fallback input { width: 100%; color: var(--color-ink); background: var(--color-paper); border: 1px solid var(--color-line); padding: 10px; font-size: 13px; }
 .status { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); max-width: calc(100% - 32px); z-index: 40; border-radius: 8px; background: var(--color-raised); color: var(--color-ink); border: 1px solid var(--color-line); padding: 10px 16px; font-size: 14px; pointer-events: none; }
 .status:empty, .reader-status:empty { display: none; }
+/* The floating card already shows the selection; its announcement is for screen readers only. */
+.status.quiet { width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); }
 .reader-status { position: sticky; top: 61px; z-index: 2; padding: 10px 22px; background: var(--color-raised); color: var(--color-accent); font-size: 14px; }
 .methodology { border-top: 1px solid var(--color-line); padding: 20px 32px; color: var(--color-muted); font-size: 13px; }
 .methodology summary { padding-block: 6px; }
@@ -175,9 +193,12 @@ body:has(dialog[open]) { overflow: hidden; }
 .shortcut-help { padding: 4px 28px 18px; font-size: 13px; color: var(--color-muted); }
 .shortcut-help p { margin-top: 8px; max-width: 75ch; }
 kbd { font: inherit; color: var(--color-ink); border: 1px solid var(--color-line); border-radius: 4px; padding: 1px 5px; }
+/* On wide screens the navigator stays within reach however tall the chart grows. */
+@media (min-width: 1101px) {
+  .overview-wrap { position: sticky; bottom: 0; z-index: 9; margin: 8px 0 0; padding: 10px 28px 12px; background: var(--color-paper); }
+}
 @media (max-width: 1100px) {
-  .workspace { display: block; }
-  .sidebar { display: none; }
+  .story-card, .card-arrow, .card-chip, .peek { display: none !important; }
   .masthead { padding: 20px 24px; }
   .search-area { flex-basis: 280px; width: 280px; }
 }
@@ -196,7 +217,7 @@ kbd { font: inherit; color: var(--color-ink); border: 1px solid var(--color-line
   .view-label { margin-top: 12px; font-size: 12px; }
   .era-nav { padding-top: 10px; }
   .legend { padding-inline: 18px; gap: 7px 12px; }
-  .chart-help { margin-inline: 18px; }
+  .chart-top { margin-inline: 18px; min-height: 0; }
   .chart-wrap { margin-inline: 6px; }
   .overview-wrap { margin-inline: 18px; }
   .year-controls input { font-size: 16px; min-height: 44px; }
@@ -215,7 +236,7 @@ kbd { font: inherit; color: var(--color-ink); border: 1px solid var(--color-line
 <body>
 <a class="skip-link" href="#main-content">Skip to timeline</a>
 <header class="masthead">
-  <div><h1>Samuel to the New Testament</h1><p class="subtitle">Explore the stories. See who lived at the same time.</p></div>
+  <div><h1>Genesis to the New Testament</h1><p class="subtitle">Explore the stories, from the beginning to the eve of Matthew. See who lived at the same time.</p></div>
   <div class="search-area" role="search">
     <label class="sr-only" for="q">Find a person, event, or Scripture reference</label>
     <div class="search-box"><input id="q" type="search" placeholder="Find a person or event…" autocomplete="off" aria-controls="search-results"><button id="clear-search" aria-label="Clear search" hidden>✕</button></div>
@@ -230,31 +251,33 @@ kbd { font: inherit; color: var(--color-ink); border: 1px solid var(--color-line
         <div class="view-actions"><details class="layers"><summary>Layers</summary><div class="layer-menu" id="layer-menu"></div></details><button class="icon-button" id="zoom-out" aria-label="Zoom out">−</button><button class="icon-button" id="zoom-in" aria-label="Zoom in">+</button><button id="reset">Fit all</button></div>
       </div>
       <nav class="era-nav" aria-label="Jump to era">
-        <button data-range="full" aria-pressed="true">Whole story<span>1100–1 BC</span></button>
+        <button data-range="full" aria-pressed="true">Whole story<span>2200–1 BC</span></button>
+        <button data-range="patriarchs" aria-pressed="false">Patriarchs<span>2200–1790 BC</span></button>
+        <button data-range="exodus" aria-pressed="false">Exodus & conquest<span>1540–1360 BC</span></button>
+        <button data-range="judges" aria-pressed="false">Judges<span>1400–1040 BC</span></button>
         <button data-range="united" aria-pressed="false">United kingdom<span>1100–920 BC</span></button>
         <button data-range="divided" aria-pressed="false">Divided kingdom<span>940–580 BC</span></button>
         <button data-range="exile" aria-pressed="false">Exile & return<span>630–420 BC</span></button>
         <button data-range="bridge" aria-pressed="false">Before the New Testament<span>440–1 BC</span></button>
       </nav>
-      <div class="view-label"><div><strong id="visible-range">1100–1 BC</strong><span id="view-name"> · Whole story</span></div><button id="share-view">Copy view link ↗</button></div>
+      <div class="view-label"><div><strong id="visible-range">2200–1 BC</strong><span id="view-name"> · Whole story</span></div><div class="rating-switch" role="group" aria-label="Show kings by rating"><span>Kings</span><button data-rating="all" aria-pressed="true">All</button><button data-rating="good" aria-pressed="false"><i style="--mark-color:var(--color-good)"></i>Good</button><button data-rating="mixed" aria-pressed="false"><i style="--mark-color:var(--color-mixed)"></i>Mixed</button><button data-rating="bad" aria-pressed="false"><i style="--mark-color:var(--color-bad)"></i>Bad</button></div><button id="share-view">Copy view link ↗</button></div>
     </div>
     <section class="cluster-panel" id="cluster-panel" aria-labelledby="cluster-title" hidden><div class="cluster-head"><h2 id="cluster-title" tabindex="-1"></h2><button id="close-cluster" aria-label="Close grouped stories">Close ✕</button></div><p class="date-note">Choose a story, or zoom in to separate nearby dates.</p><button id="zoom-cluster">Zoom to these stories</button><div class="cluster-list" id="cluster-list"></div></section>
     <div id="timeline-view">
-      <div class="legend" aria-label="Timeline colors"><span><i style="--mark-color:var(--color-best)"></i>Faithful kings</span><span><i style="--mark-color:var(--color-mixed)"></i>Mixed</span><span><i style="--mark-color:var(--color-bad)"></i>Unfaithful kings</span><span><i style="--mark-color:var(--color-prophet)"></i>Prophets</span><span><i style="--mark-color:var(--color-accent)"></i>Stories & leaders</span><span><i style="--mark-color:var(--color-history)"></i>Later history</span></div>
-      <p class="chart-help" id="chart-help">Choose an era to explore. Numbered circles open grouped stories.</p>
-      <div class="chart-wrap" id="chart-wrap"><svg id="chart" aria-label="Timeline of biblical stories, kings, and prophets"></svg></div>
-      <div class="overview-wrap"><div class="overview-top"><strong>Timeline navigator</strong><span>Drag edges to zoom · Drag middle to pan</span></div><svg id="overview" aria-label="Timeline range navigator"></svg><div class="year-controls"><label>From <input id="start-year" type="number" min="31" max="1100" value="1100" aria-label="Start year BC"></label><label>to <input id="end-year" type="number" min="1" max="1070" value="1" aria-label="End year BC"></label><span>BC · earlier → later</span></div></div>
+      <div class="legend" aria-label="Timeline colors"><span><i style="--mark-color:var(--color-best)"></i>Faithful kings</span><span><i style="--mark-color:var(--color-mixed)"></i>Mixed</span><span><i style="--mark-color:var(--color-bad)"></i>Unfaithful kings</span><span><i style="--mark-color:var(--color-prophet)"></i>Prophets</span><span><i style="--mark-color:var(--color-accent)"></i>Stories, patriarchs & leaders</span><span><i style="--mark-color:var(--color-history)"></i>Empires & later history</span><span><i class="undated"></i>Undated beginnings</span></div>
+      <div class="chart-top"><p class="chart-help" id="chart-help">Choose an era to explore. Numbered circles open grouped stories.</p><button class="card-chip" id="card-chip" hidden></button></div>
+      <div class="chart-wrap" id="chart-wrap"><svg id="chart" aria-label="Timeline of biblical stories, patriarchs, judges, kings, and prophets. Use arrow keys between marks; Enter opens a story."></svg><aside class="story-card" id="story-card" aria-label="Selected story" hidden><div class="card-bar" id="card-bar"><span id="card-status">Selected</span><button id="hide-card" aria-label="Hide story card">Hide ✕</button></div><section class="detail" id="detail"></section></aside><i class="card-arrow" id="card-arrow" hidden></i><div class="peek" id="peek" aria-hidden="true" hidden></div></div>
+      <div class="overview-wrap" id="overview-wrap"><div class="overview-top"><strong>Timeline navigator</strong><div class="year-controls"><label>From <input id="start-year" type="number" min="31" max="2200" value="2200" aria-label="Start year BC"></label><label>to <input id="end-year" type="number" min="1" max="2170" value="1" aria-label="End year BC"></label><span>BC · earlier → later</span></div><span>Drag edges to zoom · Drag middle to pan</span></div><svg id="overview" aria-label="Timeline range navigator"></svg></div>
     </div>
     <section class="list-view" id="list-view" aria-labelledby="list-title" hidden><div class="list-intro"><h2 id="list-title">The story, in order</h2><p id="list-count"></p></div><div class="list-options"><label><input type="checkbox" id="major-only"> Turning points only</label><label><input type="checkbox" id="include-people"> Include people</label></div><div class="chronological-list" id="chronological-list"></div></section>
     <section class="saved-view" id="saved-view" aria-labelledby="saved-title" hidden><div class="list-intro"><h2 id="saved-title">Your saved stories</h2><p>Bookmarks stay in this browser. Use a story link to share with someone else.</p></div><div class="chronological-list" id="saved-list"></div></section>
-    <details class="shortcut-help"><summary>Keyboard & touch help</summary><p><kbd>+</kbd> / <kbd>−</kbd> zoom; <kbd>←</kbd> / <kbd>→</kbd> pan; <kbd>[</kbd> / <kbd>]</kbd> step through stories; <kbd>F</kbd> fits the full timeline; <kbd>/</kbd> searches. Use Tab to enter the chart and arrows to move between marks. Press Enter to read. On a phone, drag sideways to pan or pinch to zoom. Mouse wheel scrolls the page; hold Ctrl while scrolling over the chart to zoom.</p></details>
+    <details class="shortcut-help"><summary>Keyboard & touch help</summary><p><kbd>+</kbd> / <kbd>−</kbd> zoom; <kbd>←</kbd> / <kbd>→</kbd> pan; <kbd>[</kbd> / <kbd>]</kbd> step through stories; <kbd>F</kbd> fits the full timeline; <kbd>/</kbd> searches. Use Tab to enter the chart and arrows to move between marks. Press Enter to read. On a wide screen the story opens in a card beside its mark: drag the card’s top bar to move it, or press <kbd>Esc</kbd> inside it to hide it. On a phone, drag sideways to pan or pinch to zoom. Mouse wheel scrolls the page; hold Ctrl while scrolling over the chart to zoom.</p></details>
   </section>
-  <aside class="sidebar" aria-label="Selected story"><section class="detail" id="detail"></section><div class="story-head"><h2>Stories in this view</h2><span id="result-count"></span></div><div class="story-list" id="story-list"></div></aside>
 </main>
 <dialog id="reader" aria-labelledby="reader-title"><div class="dialog-toolbar"><span>Read & explore</span><button id="close-reader" autofocus>Back to exploring ✕</button></div><p class="reader-status" id="reader-status" role="status" aria-live="polite"></p><section class="detail" id="reader-detail"></section></dialog>
 <div class="status" id="status" role="status" aria-live="polite"></div>
 <noscript><p class="empty">Enable JavaScript to explore the timeline. Story links open their external Scripture sources.</p></noscript>
-<details class="methodology"><summary>Dates, sources & king ratings</summary><p>Dates are approximate BC dates, following a conventional chronology of the monarchy. Stories without a securely known date are positioned illustratively and marked “c.”; co-regencies are simplified. Ezra’s return is shown at the traditional date of 458 BC, and Nehemiah’s at 445 BC. Joel and Obadiah have disputed dates. Prophet tracks indicate approximate activity, not lifespans. “Major” and “minor” refer to book length, not importance. King colors summarize the biblical assessment, with mixed reigns and repentance explained in the notes. A faithful rating does not imply a flawless life.</p><p>The later Second Temple period connects Ezra and Nehemiah with the world of the New Testament. “Between the Testaments” is a Christian label, not a claim that Jewish history or writing stopped. Biblical collections differ: 1–2 Maccabees and Sirach are part of Catholic and many Orthodox Old Testaments, but not the Jewish Tanakh or most Protestant Old Testaments. This timeline follows the stories’ settings rather than dating the completion of the Tanakh. Later entries link to their historical or literary sources. Their purple tracks do not carry the good/bad ratings used for the earlier kings. Approximate cultural developments represent periods, and the Gospel narratives overlap the final years shown.</p><p>Later-period references: <a href="https://www.deadseascrolls.org.il/learn-about-the-scrolls/historical-timeline" target="_blank" rel="noopener noreferrer">Israel Antiquities Authority timeline</a> · <a href="https://www.livius.org/articles/dynasty/hasmonaeans/" target="_blank" rel="noopener noreferrer">The Hasmoneans</a> · <a href="https://bible.usccb.org/bible/1maccabees/0" target="_blank" rel="noopener noreferrer">1 Maccabees</a>.</p><p>Chronology references: <a href="https://www.esv.org/resources/esv-global-study-bible/chart-00-ot-timeline/" target="_blank" rel="noopener noreferrer">ESV Old Testament timeline</a> · <a href="https://www.americanbible.org/engage/bible-resources/articles/ezra/" target="_blank" rel="noopener noreferrer">American Bible Society: Ezra</a>. Select any story for its Scripture reference.</p></details>
+<details class="methodology"><summary>Dates, sources & king ratings</summary><p>Genesis 1–11 and Job give no dates. Their stories appear as an undated group at the start of the timeline, in the Bible’s own order, and are never assigned a year. Dates from Abraham to the judges follow the conventional “early” chronology: the exodus about 1446 BC, 430 years in Egypt before it, and the ages Genesis gives for the patriarchs. Many historians place the exodus later, about 1260 BC, or regard the patriarchal dates as unrecoverable. These dates organize the stories; they do not settle those debates. The judges’ tracks follow the years of rest and rule stated in Judges, placed illustratively.</p><p>Dates are approximate BC dates, following a conventional chronology of the monarchy. Stories without a securely known date are positioned illustratively and marked “c.”; co-regencies are simplified. Ezra’s return is shown at the traditional date of 458 BC, and Nehemiah’s at 445 BC. Joel and Obadiah have disputed dates. Prophet tracks indicate approximate activity, not lifespans. “Major” and “minor” refer to book length, not importance. King colors summarize the biblical assessment, with mixed reigns and repentance explained in the notes. A faithful rating does not imply a flawless life.</p><p>The later Second Temple period connects Ezra and Nehemiah with the world of the New Testament. “Between the Testaments” is a Christian label, not a claim that Jewish history or writing stopped. Biblical collections differ: 1–2 Maccabees and Sirach are part of Catholic and many Orthodox Old Testaments, but not the Jewish Tanakh or most Protestant Old Testaments. This timeline follows the stories’ settings rather than dating the completion of the Tanakh. Later entries link to their historical or literary sources. Their purple tracks do not carry the good/bad ratings used for the earlier kings. Approximate cultural developments represent periods, and the Gospel narratives overlap the final years shown.</p><p>Later-period references: <a href="https://www.deadseascrolls.org.il/learn-about-the-scrolls/historical-timeline" target="_blank" rel="noopener noreferrer">Israel Antiquities Authority timeline</a> · <a href="https://www.livius.org/articles/dynasty/hasmonaeans/" target="_blank" rel="noopener noreferrer">The Hasmoneans</a> · <a href="https://bible.usccb.org/bible/1maccabees/0" target="_blank" rel="noopener noreferrer">1 Maccabees</a>.</p><p>Chronology references: <a href="https://www.esv.org/resources/esv-global-study-bible/chart-00-ot-timeline/" target="_blank" rel="noopener noreferrer">ESV Old Testament timeline</a> · <a href="https://www.americanbible.org/engage/bible-resources/articles/ezra/" target="_blank" rel="noopener noreferrer">American Bible Society: Ezra</a>. Select any story for its Scripture reference.</p></details>
 <script>
 const kings = [
   ["Saul", "united", 1050, 1010, -1, "First king. Rejected after Amalek. Dies on Gilboa.", "1 Sam 9–31"],
@@ -329,8 +352,8 @@ const RATINGS = {
   '-1': { color: 'bad', label: 'Bad' },
   '-2': { color: 'worst', label: 'Worst' }
 };
-const FIRST_YEAR = 1100, LAST_YEAR = 1, MIN_SPAN = 30, FULL_SPAN = FIRST_YEAR - LAST_YEAR;
-const RANGES = { full: [FIRST_YEAR, LAST_YEAR], hebrew: [1100, 420], united: [1100, 920], divided: [940, 580], exile: [630, 420], bridge: [440, LAST_YEAR] };
+const FIRST_YEAR = 2200, LAST_YEAR = 1, MIN_SPAN = 30, FULL_SPAN = FIRST_YEAR - LAST_YEAR;
+const RANGES = { full: [FIRST_YEAR, LAST_YEAR], patriarchs: [FIRST_YEAR, 1790], exodus: [1540, 1360], judges: [1400, 1040], hebrew: [1100, 420], united: [1100, 920], divided: [940, 580], exile: [630, 420], bridge: [440, LAST_YEAR] };
 const events = [
   [1080, 'Samuel is called', 'God calls the young Samuel at Shiloh. He becomes a prophet and the last great judge, guiding Israel into the age of kings.', '1 Sam 3', 'Calling', true, true],
   [1070, 'The ark is captured', 'The Philistines capture the ark. Eli and his sons die. The ark later returns to Israel, but Shiloh’s old order has ended.', '1 Sam 4–6', 'Conflict', false, true],
@@ -556,27 +579,130 @@ events.push(...addedEvents);
 events.sort((a,b) => b.year - a.year);
 leaders.push({ id: 'leader-huldah', name: 'Huldah', lane: 'voices', start: 622, end: 621, category: 'Prophet · Judah', note: 'Josiah’s officials consult Huldah after the book of the Law is found. The short track marks that recorded consultation, not her lifespan or the full length of her ministry.', ref: '2 Kgs 22:14–20; 2 Chr 34:22–28', kind: 'leader' });
 
+// Genesis to Judges. Dates before Samuel follow the conventional early chronology (exodus c. 1446 BC,
+// 430 years in Egypt, ages from Genesis). Every placement is approximate; see the dates & sources note.
+const earlyEvents = [
+  [2091, 'God calls Abram', 'At seventy-five Abram leaves Haran with Sarai and Lot. God promises him land, descendants, and blessing for every family on earth.', 'Gen 12:1–9', 'Calling', true],
+  [2090, 'Abram and Sarai in Egypt', 'Famine drives them to Egypt, where Abram passes Sarai off as his sister. Pharaoh sends them away, enriched and rebuked.', 'Gen 12:10–20', 'Journey', false],
+  [2085, 'Abram rescues Lot; Melchizedek blesses him', 'Lot is carried off in a raid on Sodom. Abram pursues the kings and recovers him, then is blessed by Melchizedek, king and priest of Salem.', 'Gen 14', 'Deliverance', false],
+  [2082, 'The covenant with Abram', 'Abram believes the promise of descendants as many as the stars, and it is counted to him as righteousness. God seals the promise with a covenant and foretells four hundred years in a foreign land.', 'Gen 15', 'Covenant', true],
+  [2080, 'Ishmael is born', 'Sarai gives her servant Hagar to Abram. Hagar flees, hears a promise beside a spring in the wilderness, and bears Ishmael.', 'Gen 16', 'Family', false],
+  [2067, 'New names and three visitors', 'God renames Abraham and Sarah and gives circumcision as the covenant sign. Three visitors promise a son within the year, and Sarah laughs.', 'Gen 17–18', 'Covenant', false],
+  [2067, 'Sodom and Gomorrah are destroyed', 'Abraham pleads for the cities. Lot escapes with his daughters, his wife looks back, and fire falls on the plain.', 'Gen 18:16–19:29', 'Judgment', true],
+  [2066, 'Isaac is born', 'The promised son arrives when Abraham is a hundred years old. Hagar and Ishmael are sent away and kept alive in the wilderness.', 'Gen 21', 'Promise', true],
+  [2050, 'Abraham offers Isaac', 'God tests Abraham on Mount Moriah. The knife is raised, a ram is provided, and the promise is confirmed with an oath. Isaac’s age is not given; the placement is illustrative.', 'Gen 22', 'Testing', true],
+  [2029, 'Sarah dies; the cave of Machpelah', 'Abraham buys a field and cave near Hebron from Ephron the Hittite and buries Sarah there. It is the family’s first owned land in Canaan.', 'Gen 23', 'Family', false],
+  [2026, 'Isaac marries Rebekah', 'Abraham’s servant travels to Mesopotamia and meets Rebekah at a well. She leaves her family and becomes Isaac’s wife.', 'Gen 24', 'Family', false],
+  [2006, 'Jacob and Esau are born', 'Twins struggle in the womb, and the older will serve the younger. Esau later trades his birthright for a meal.', 'Gen 25:19–34', 'Family', false],
+  [1991, 'Abraham dies', 'Abraham dies at 175 and is buried beside Sarah by Isaac and Ishmael. The promise passes to Isaac.', 'Gen 25:7–11', 'Family', false],
+  [1929, 'Jacob takes the blessing and flees', 'With Rebekah’s help Jacob deceives his blind father. Running from Esau, he dreams at Bethel of a stairway to heaven and hears the promise renewed.', 'Gen 27–28', 'Promise', true],
+  [1922, 'Jacob marries Leah and Rachel', 'Laban tricks Jacob into fourteen years of service for two wives. Eleven sons and a daughter are born in Paddan-aram.', 'Gen 29–30', 'Family', false],
+  [1909, 'Jacob wrestles at the Jabbok', 'Returning home, Jacob wrestles through the night, is wounded, and is renamed Israel. The next day he meets Esau in peace.', 'Gen 32–33', 'Covenant', true],
+  [1898, 'Joseph is sold into Egypt', 'Jacob’s favored son, with his dreams and his robe, is sold by his brothers at seventeen. In Egypt he serves Potiphar and is jailed on a false charge.', 'Gen 37; 39', 'Conflict', true],
+  [1885, 'Joseph interprets Pharaoh’s dreams', 'Brought from prison, Joseph explains seven years of plenty and seven of famine. At thirty he is set over all Egypt.', 'Gen 41', 'Deliverance', true],
+  [1876, 'Jacob’s family settles in Egypt', 'Famine brings the brothers to Joseph, who reveals himself and forgives them. Jacob and his household of seventy settle in Goshen.', 'Gen 42–47', 'Journey', true],
+  [1859, 'Jacob blesses his sons and dies', 'Jacob adopts Ephraim and Manasseh, speaks over each tribe, and is carried back to Machpelah for burial.', 'Gen 48–50', 'Family', false],
+  [1805, 'Joseph dies', 'Joseph dies at 110, trusting that God will bring Israel out of Egypt. His bones wait for the exodus.', 'Gen 50:22–26', 'Promise', false],
+  [1526, 'Moses is born and rescued', 'Pharaoh orders Hebrew boys thrown into the Nile. Moses’ mother hides him in a basket among the reeds, and Pharaoh’s daughter adopts him.', 'Exod 1–2', 'Deliverance', true],
+  [1486, 'Moses flees to Midian', 'After killing an Egyptian overseer, Moses escapes to Midian, marries Zipporah, and keeps sheep for forty years.', 'Exod 2:11–25', 'Journey', false],
+  [1446, 'The burning bush', 'At Horeb God speaks from a bush that burns without being consumed, reveals the name I AM, and sends Moses back to Egypt with Aaron.', 'Exod 3–4', 'Calling', true],
+  [1446, 'Plagues and Passover', 'Ten plagues break Egypt’s hold. Blood on the doorposts spares Israel’s firstborn, and Passover becomes the yearly memorial of release.', 'Exod 7–12', 'Deliverance', true],
+  [1446, 'Israel crosses the sea', 'Trapped between the army and the water, Israel walks through on dry ground. Pharaoh’s chariots are swept away, and Moses and Miriam lead the song.', 'Exod 14–15', 'Deliverance', true],
+  [1446, 'The covenant at Sinai', 'Thunder, trumpet, and the Ten Commandments. Israel agrees to the covenant, and Moses receives the law on the mountain.', 'Exod 19–24', 'Covenant', true],
+  [1446, 'The golden calf', 'While Moses is on the mountain, Aaron casts a calf. Moses intercedes, the tablets are broken and remade, and the glory of God passes by.', 'Exod 32–34', 'Judgment', false],
+  [1445, 'The tabernacle is raised', 'Israel builds the tent of meeting as commanded. The cloud settles on it and the glory fills it.', 'Exod 35–40', 'Worship', false],
+  [1445, 'The spies and forty years decreed', 'Twelve scouts explore Canaan. Ten spread fear, while Joshua and Caleb trust. That generation is sentenced to die in the wilderness.', 'Num 13–14', 'Judgment', true],
+  [1440, 'Korah’s rebellion', 'Korah, Dathan, and Abiram challenge Moses and Aaron. The ground opens, and Aaron’s staff buds to confirm his priesthood. The wilderness years give no date for it.', 'Num 16–17', 'Conflict', false],
+  [1407, 'Water from the rock at Kadesh', 'Miriam dies at Kadesh. Moses strikes the rock in anger instead of speaking to it, and he and Aaron are barred from the land.', 'Num 20', 'Judgment', false],
+  [1407, 'The bronze serpent', 'Venomous snakes strike the grumbling camp. Those who look at the bronze serpent Moses lifts on a pole live.', 'Num 21:4–9', 'Deliverance', false],
+  [1407, 'Balaam blesses Israel', 'Hired by Moab to curse Israel, Balaam can only bless. A donkey that speaks and a star out of Jacob mark the story.', 'Num 22–24', 'Prophecy', false],
+  [1406, 'Moses’ farewell and death', 'On the plains of Moab Moses retells the law, sings, and blesses the tribes. He dies on Mount Nebo, in sight of the land.', 'Deut 29–34', 'Covenant', true],
+  [1406, 'Israel crosses the Jordan', 'The river stops as the ark enters it. Twelve stones at Gilgal mark the crossing into the land.', 'Josh 3–4', 'Deliverance', true],
+  [1406, 'Jericho falls', 'Rahab hides the spies and is spared. After seven days of marching and a shout, the walls collapse.', 'Josh 2; 6', 'Conquest', true],
+  [1405, 'Defeat and victory at Ai', 'Achan’s theft brings a defeat. After judgment Ai falls, and the covenant is read aloud at Mount Ebal.', 'Josh 7–8', 'Judgment', false],
+  [1400, 'The land is divided', 'Caleb receives Hebron, the tribes are given their territories by lot, and cities of refuge and Levitical towns are set apart.', 'Josh 13–21', 'Settlement', false],
+  [1375, 'Joshua’s farewell at Shechem', 'Joshua reviews what God has done and calls Israel to choose whom they will serve. The people renew the covenant.', 'Josh 24', 'Covenant', true],
+  [1370, 'Othniel delivers Israel', 'The pattern of Judges begins: Israel forgets, is oppressed, cries out, and is rescued. Othniel, Caleb’s kinsman, is the first judge.', 'Judg 3:7–11', 'Deliverance', false],
+  [1310, 'Ehud defeats Moab', 'A left-handed Benjaminite carries a hidden sword to King Eglon. The land rests for eighty years.', 'Judg 3:12–30', 'Deliverance', false],
+  [1210, 'Deborah and Barak defeat Sisera', 'Deborah judges Israel under her palm tree and sends Barak against Sisera’s chariots. Jael finishes the general, and Deborah’s song follows.', 'Judg 4–5', 'Deliverance', true],
+  [1160, 'Gideon’s three hundred', 'A reluctant leader, a fleece, torches, and trumpets. Midian scatters, but the ephod Gideon makes becomes a snare.', 'Judg 6–8', 'Deliverance', true],
+  [1130, 'Abimelech’s violent rule', 'Gideon’s son kills his brothers and rules from Shechem. A millstone dropped from a tower ends him.', 'Judg 9', 'Conflict', false],
+  [1120, 'Ruth and Naomi return to Bethlehem', 'A widowed Moabite clings to her mother-in-law and to Israel’s God. Boaz redeems her, and their line leads to David. The book places itself only “in the days when the judges ruled.”', 'Ruth 1–4', 'Family', true],
+  [1085, 'Jephthah’s vow', 'An outcast leads Gilead against Ammon and makes a rash vow that costs his daughter.', 'Judg 10:6–12:7', 'Conflict', false],
+  [1075, 'Samson and the Philistines', 'A Nazirite from birth, strong and reckless. Delilah, the shorn hair, and the temple of Dagon brought down on the Philistine lords.', 'Judg 13–16', 'Conflict', true]
+].map(([year, name, note, ref, category, major], i) => ({ id: 'early-' + i, year, name, note, ref, category, major, approximate: true, kind: 'event' }));
+// Genesis 1–11 and Job carry no dates. They sit at the start of the axis in canonical order and are labelled undated.
+const undatedEvents = [
+  ['In the beginning: creation', 'God creates the heavens and the earth, fills them with life, and rests on the seventh day. Humanity is made in God’s image and placed in a garden to tend it.', 'Gen 1–2', 'Beginnings', true],
+  ['The fall', 'The serpent, the fruit, and the hiding. Adam and Eve are clothed and sent out of Eden, with a promise that the serpent’s head will be crushed.', 'Gen 3', 'Beginnings', true],
+  ['Cain kills Abel', 'The first murder. Cain’s offering is passed over, anger wins, and he becomes a wanderer under a protecting mark.', 'Gen 4', 'Conflict', false],
+  ['Noah and the flood', 'Violence fills the earth. Noah builds the ark, the waters cover the land, and God makes a covenant with every living creature, with the rainbow as its sign.', 'Gen 6–9', 'Covenant', true],
+  ['The tower of Babel', 'A city and a tower built to make a name. God confuses the builders’ language and scatters the nations across the earth.', 'Gen 11:1–9', 'Judgment', false],
+  ['Job loses everything and meets God', 'Job, a man from the land of Uz, loses his children, wealth, and health. His friends explain, Job protests, and God answers from the whirlwind. The setting resembles the age of the patriarchs, but the book gives no date.', 'Job 1–2; 38–42', 'Wisdom', false]
+].map(([name, note, ref, category, major], i) => ({ id: 'undated-' + i, year: FIRST_YEAR, order: i, undated: true, name, note, ref, category, major, approximate: true, kind: 'event' }));
+events.push(...earlyEvents, ...undatedEvents);
+events.sort((a, b) => b.year - a.year);
+// Patriarch tracks are lifespans given in Genesis; judges' tracks follow the years of rest or rule stated in Judges.
+const earlyPeople = [
+  ['Abraham', 'patriarchs', 2166, 1991, 'Patriarch', 'Called out of Haran at seventy-five. The promise of land, descendants, and blessing for the nations begins with him. Genesis gives his lifespan as 175 years.', 'Gen 12–25'],
+  ['Sarah', 'patriarchs', 2156, 2029, 'Matriarch', 'Abraham’s wife and the mother of Isaac at ninety. She is the only woman whose age at death Genesis records.', 'Gen 17–23'],
+  ['Isaac', 'patriarchs', 2066, 1886, 'Patriarch', 'The promised son. He marries Rebekah, fathers Esau and Jacob, blesses the younger by mistake, and dies at 180.', 'Gen 21–35'],
+  ['Jacob', 'patriarchs', 2006, 1859, 'Patriarch · Israel', 'Renamed Israel at the Jabbok. His twelve sons become the tribes. He dies in Egypt at 147.', 'Gen 25–50'],
+  ['Joseph', 'patriarchs', 1915, 1805, 'Governor · Egypt', 'Sold by his brothers, raised to govern Egypt, and the means of his family’s survival. He dies at 110.', 'Gen 37–50'],
+  ['Aaron', 'exodus', 1529, 1406, 'High priest', 'Moses’ older brother and spokesman before Pharaoh. He becomes Israel’s first high priest and dies on Mount Hor at 123.', 'Exod 4; 28; Num 20:22–29'],
+  ['Moses', 'exodus', 1526, 1406, 'Prophet & lawgiver', 'Forty years in Pharaoh’s house, forty in Midian, and forty leading Israel. He dies on Mount Nebo at 120.', 'Exod 2–Deut 34'],
+  ['Joshua', 'exodus', 1405, 1375, 'Leader of the conquest', 'Moses’ aide and one of the two trusting spies. He leads Israel across the Jordan and through the conquest. The track marks his leadership, not his lifespan.', 'Josh 1–24'],
+  ['Miriam', 'voices', 1446, 1407, 'Prophet · wilderness', 'Called a prophet at the sea, where she leads the women in song. She later challenges Moses and dies at Kadesh. The track marks the wilderness years, not her lifespan.', 'Exod 15:20–21; Num 12; 20:1'],
+  ['Othniel', 'judges', 1370, 1330, 'Judge · Judah', 'The first judge. He defeats Cushan-rishathaim, and the land rests forty years.', 'Judg 3:7–11'],
+  ['Ehud', 'judges', 1310, 1230, 'Judge · Benjamin', 'Kills Eglon of Moab. The land rests eighty years.', 'Judg 3:12–30'],
+  ['Deborah', 'judges', 1210, 1170, 'Prophet & judge', 'Judges Israel from the hill country of Ephraim and, with Barak, defeats Sisera. The land rests forty years.', 'Judg 4–5'],
+  ['Gideon', 'judges', 1160, 1120, 'Judge · Manasseh', 'Defeats Midian with three hundred men and refuses the offer of kingship. The land rests forty years.', 'Judg 6–8'],
+  ['Eli', 'judges', 1110, 1070, 'Priest & judge · Shiloh', 'Priest at Shiloh who raises Samuel and judges Israel forty years. He dies when the ark is captured.', '1 Sam 1–4'],
+  ['Jephthah', 'judges', 1085, 1079, 'Judge · Gilead', 'Defeats Ammon and judges Israel six years.', 'Judg 11:1–12:7'],
+  ['Samson', 'judges', 1075, 1055, 'Judge · Dan', 'Judges Israel twenty years in the days of the Philistines.', 'Judg 13–16']
+].map(([name, lane, start, end, category, note, ref], i) => ({ id: 'early-person-' + i, name, lane, start, end, category, note, ref, kind: 'leader' }));
+// The powers that held the land before Persia, sourced from the biblical narrative itself.
+const earlyPowers = [
+  ['Egypt', 1876, 1446, 'Jacob’s family arrives in Egypt as honored guests and stays 430 years, ending in slavery under a pharaoh who did not know Joseph. Dates follow the conventional early chronology.', 'Exod 1; 12:40–41'],
+  ['Assyria', 745, 612, 'From Tiglath-pileser III until Nineveh falls, Assyria presses on both kingdoms. It ends the northern kingdom in 722 and besieges Jerusalem in 701.', '2 Kgs 15–19'],
+  ['Babylon', 612, 539, 'After Nineveh falls, Babylon inherits the region. Nebuchadnezzar deports Judah in stages and burns the temple in 586. Cyrus takes Babylon in 539.', '2 Kgs 24–25; Dan 1–5']
+].map(([name, start, end, note, ref], i) => ({ id: 'power-' + i, name, lane: 'powers', start, end, note, ref, kind: 'leader', category: 'Ruling power', historical: true }));
+
 // Stable names are used in links/bookmarks; display order never becomes an identifier.
 const slug = value => value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const people = [...kings, ...prophets, ...leaders, ...laterPeople];
+const people = [...earlyPeople, ...kings, ...prophets, ...leaders, ...earlyPowers, ...laterPeople];
 const allItems = [...events, ...people];
 allItems.forEach(d => { d.key = [d.kind, d.lane || 'story', slug(d.name)].join('-'); });
 const byKey = new Map(allItems.map(d => [d.key, d]));
 const lanes = [
+  ['patriarchs', 'Patriarchs'], ['exodus', 'Exodus & conquest'], ['judges', 'Judges'],
   ['samuel', 'Samuel'], ['united', 'United kingdom'], ['israel', 'Israel · north'], ['judah', 'Judah · south'],
   ['voices', 'Prophetic voices'], ['major', 'Major prophets'], ['minor', 'Minor prophets'], ['restoration', 'Restoration'],
-  ['powers', 'Who ruled Judea'], ['later', 'Later rulers']
+  ['powers', 'Ruling powers'], ['later', 'Later rulers']
 ].map(([id, name]) => ({ id, name }));
+// Defaults for a first visit and for era links that name no story.
+const DEFAULT_STORY = 'event-story-the-kingdom-divides';
+const ERA_STORIES = { patriarchs: 'event-story-god-calls-abram', exodus: 'event-story-israel-crosses-the-sea', judges: 'event-story-deborah-and-barak-defeat-sisera', bridge: 'event-story-the-temple-is-rededicated-hanukkah' };
+// Lanes drawn in the broad overview, and those whose back-to-back reigns are grouped there.
+const OVERVIEW_LANES = ['patriarchs', 'exodus', 'judges', 'united', 'israel', 'judah', 'powers'];
+const GROUPED_LANES = ['united', 'israel', 'judah', 'powers'];
+// Before the monarchy the three early lanes never overlap in time, so the overview draws them as one band.
+const EARLY_LANES = ['patriarchs', 'exodus', 'judges'];
 const $ = id => document.getElementById(id);
 const narrow = () => matchMedia('(max-width: 1100px)').matches;
 const yearOf = d => d.year ?? d.start;
-const dateText = d => d.kind === 'event' ? (d.approximate ? 'c. ' : '') + d.year + ' BC' : 'c. ' + Math.round(d.start) + '–' + Math.round(d.end) + ' BC';
+const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+const dateText = d => d.undated ? 'Undated' : d.kind === 'event' ? (d.approximate ? 'c. ' : '') + d.year + ' BC' : 'c. ' + Math.round(d.start) + '–' + Math.round(d.end) + ' BC';
 const colors = name => 'var(--color-' + name + ')';
 const prophetLanes = ['samuel', 'voices', 'major', 'minor'];
-const colorOf = d => d.era === 'second-temple' ? 'history' : d.kind === 'king' ? RATINGS[String(d.rating)].color : prophetLanes.includes(d.lane) ? 'prophet' : 'accent';
+const isHistory = d => d.era === 'second-temple' || Boolean(d.historical);
+const colorOf = d => isHistory(d) ? 'history' : d.kind === 'king' ? RATINGS[String(d.rating)].color : prophetLanes.includes(d.lane) ? 'prophet' : 'accent';
 const categoryOf = d => d.kind === 'king' ? (d.kingdom === 'israel' ? 'King of Israel · north' : d.kingdom === 'judah' ? 'Ruler of Judah · south' : 'United kingdom') : d.category || 'Prophet';
-let domain = RANGES.full.slice(), selected = events.find(d => d.year === 930), query = '', mode = 'timeline';
-let shown = new Set(lanes.map(d => d.id)), showEvents = true, allDetail = false, majorOnly = false, includePeople = false;
+const fallbackStory = () => byKey.get(DEFAULT_STORY) || events[0];
+let domain = RANGES.full.slice(), selected = fallbackStory(), query = '', mode = 'timeline';
+let shown = new Set(lanes.map(d => d.id)), showEvents = true, allDetail = false, majorOnly = false, includePeople = false, kingFilter = 'all';
+// The floating card: open once a reader chooses something; a drag offset lasts until the next selection.
+let cardOpen = false, cardShift = null, cardDrag = null, cardFocus = false, cardReveal = false, lastWidth = 0;
 let clusterItems = [], geometry, frame, urlTimer, statusTimer, pointer = null, brush = null, pinch = null, suppressClick = false, chartFocusKey = '';
 let returnFocus = null;
 let saved = new Set();
@@ -591,23 +717,26 @@ function readURL() {
   const p = new URLSearchParams(location.search);
   domain = Object.hasOwn(RANGES, p.get('era')) ? RANGES[p.get('era')].slice() : RANGES.full.slice();
   if (p.has('from') && p.has('to')) domain = bounded(Number(p.get('from')), Number(p.get('to')));
-  selected = byKey.get(p.get('story')) || events.find(d => d.year === (p.get('era') === 'bridge' ? 164 : 930));
+  selected = byKey.get(p.get('story')) || byKey.get(ERA_STORIES[p.get('era')]) || fallbackStory();
+  cardOpen = byKey.has(p.get('story'));
   mode = ['timeline', 'list', 'saved'].includes(p.get('view')) ? p.get('view') : (matchMedia('(max-width: 650px)').matches ? 'list' : 'timeline');
   query = (p.get('q') || '').slice(0, 200);
   shown = new Set(p.has('layers') ? p.get('layers').split(',').filter(k => lanes.some(l => l.id === k)) : lanes.map(d => d.id));
   showEvents = p.get('events') !== '0'; allDetail = p.get('detail') === '1';
+  kingFilter = ['good', 'mixed', 'bad'].includes(p.get('kings')) ? p.get('kings') : 'all';
   majorOnly = p.get('major') === '1' || (!p.has('view') && mode === 'list'); includePeople = p.get('people') === '1';
-  if (p.has('story') && !p.has('from') && !p.has('era')) domain = bounded(yearOf(selected) + 80, yearOf(selected) - 80);
+  if (p.has('story') && !p.has('from') && !p.has('era')) domain = focusDomain(selected);
 }
 function stateURL() {
   const u = new URL(location.href), p = u.searchParams;
-  ['era','from','to','story','view','q','layers','events','detail','major','people'].forEach(k => p.delete(k));
+  ['era','from','to','story','view','q','layers','events','detail','major','people','kings'].forEach(k => p.delete(k));
   p.set('from', String(Math.round(domain[0] * 100) / 100)); p.set('to', String(Math.round(domain[1] * 100) / 100));
   p.set('story', selected.key); p.set('view', mode);
   if (query) p.set('q', query);
   if (shown.size !== lanes.length) p.set('layers', [...shown].join(','));
   if (!showEvents) p.set('events', '0'); if (allDetail) p.set('detail', '1');
   if (majorOnly) p.set('major', '1'); if (includePeople) p.set('people', '1');
+  if (kingFilter !== 'all') p.set('kings', kingFilter);
   return u.href;
 }
 function persist(immediate = false) {
@@ -615,12 +744,20 @@ function persist(immediate = false) {
   const write = () => { try { history.replaceState(null, '', stateURL()); } catch { /* file:// may restrict History APIs */ } };
   if (immediate) write(); else urlTimer = setTimeout(write, 120);
 }
-function announce(message) { clearTimeout(statusTimer); const dialog = $('reader').open; $('status').textContent = dialog ? '' : message; $('reader-status').textContent = dialog ? message : ''; statusTimer = setTimeout(() => { $('status').textContent = ''; $('reader-status').textContent = ''; }, 4500); }
+function announce(message, quiet = false) { clearTimeout(statusTimer); const dialog = $('reader').open; $('status').classList.toggle('quiet', quiet); $('status').textContent = dialog ? '' : message; $('reader-status').textContent = dialog ? message : ''; statusTimer = setTimeout(() => { $('status').textContent = ''; $('reader-status').textContent = ''; }, 4500); }
 const normalizedQuery = () => query.trim().toLocaleLowerCase();
 const matches = d => !normalizedQuery() || [d.name, d.note, d.ref, d.category, d.where, d.kingdom, d.sourceType].filter(Boolean).join(' ').toLocaleLowerCase().includes(normalizedQuery());
 const inRange = d => d.kind === 'event' ? d.year <= domain[0] && d.year >= domain[1] : d.start >= domain[1] && d.end <= domain[0];
-const enabled = d => d.kind === 'event' ? showEvents : shown.has(d.lane);
-const ordered = data => [...data].sort((a, b) => yearOf(b) - yearOf(a) || a.name.localeCompare(b.name));
+const ratingGroup = d => d.rating > 0 ? 'good' : d.rating < 0 ? 'bad' : 'mixed';
+const passesRating = d => d.kind !== 'king' || kingFilter === 'all' || ratingGroup(d) === kingFilter;
+const enabled = d => d.kind === 'event' ? showEvents : shown.has(d.lane) && passesRating(d);
+const ordered = data => [...data].sort((a, b) => yearOf(b) - yearOf(a) || (a.order ?? 0) - (b.order ?? 0) || a.name.localeCompare(b.name));
+// The reader dialog serves phones and the list views; the wide timeline uses the floating card instead.
+const useReader = () => narrow() || mode !== 'timeline';
+const overviewNow = () => domain[0] - domain[1] > 500 && !allDetail && !query.trim();
+const chartShows = d => inRange(d) && enabled(d) && (d.kind === 'event' || !overviewNow() || OVERVIEW_LANES.includes(d.lane));
+const undatedScope = items => items.some(d => d.ref.startsWith('Job')) ? 'Genesis 1–11 and Job' : 'Genesis 1–11';
+function focusDomain(d) { const a = d.year ?? d.start, b = d.year ?? d.end, pad = Math.max(60, (a - b) * .2); return bounded(a + pad, b - pad); }
 function html(tag, cls, text, parent) { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; if (parent) parent.append(n); return n; }
 function button(text, key, onClick, parent, cls = '') { const b = html('button', cls, text, parent); b.dataset.focusKey = key; b.addEventListener('click', onClick); return b; }
 function captureFocus() {
@@ -637,18 +774,34 @@ function restoreFocus(info) {
 function setDomain(a, b) { domain = bounded(a, b); schedulePaint(); renderLists(); syncControls(); persist(); }
 function schedulePaint() { if (!frame) frame = requestAnimationFrame(() => { frame = null; if (mode === 'timeline') paint(); }); }
 function activate(d, { reveal = true, read = true } = {}) {
+  if (!d) return;
   if (!$('reader').open) returnFocus = { element: document.activeElement, info: captureFocus() };
   const focus = captureFocus(), changed = selected !== d;
-  selected = d; chartFocusKey = d.key;
+  selected = d; chartFocusKey = d.key; cardOpen = true; cardReveal = true; if (changed) cardShift = null;
   if (d.kind === 'event') showEvents = true; else shown.add(d.lane);
-  if (reveal && !inRange(d)) domain = bounded(yearOf(d) + 80, yearOf(d) - 80);
+  if (!passesRating(d)) kingFilter = 'all';
+  if (reveal && (!inRange(d) || (mode === 'timeline' && !chartShows(d)))) domain = focusDomain(d);
   if (read) $('search-results').hidden = true;
   renderDetails(); renderLists(); syncControls(); schedulePaint(); persist(true);
-  if (narrow() && read) {
+  if (useReader() && read) {
     if (!$('reader').open) $('reader').showModal();
     else restoreFocus(focus);
     if (changed) { $('reader').scrollTop = 0; if (focus?.key.startsWith('related-')) $('reader-title').focus({ preventScroll: true }); }
-  } else { if (read && !['previous','next'].includes(focus?.key)) document.querySelector('.sidebar').scrollTop = 0; restoreFocus(focus); announce(d.name + ', ' + dateText(d)); }
+  } else {
+    if (read && !['previous','next'].includes(focus?.key)) $('story-card').scrollTop = 0;
+    // A choice made from search has no mark to return to, so the card's heading takes focus once it is placed.
+    if (read && focus?.scope === 'search-list') cardFocus = true; else restoreFocus(focus);
+    announce(d.name + ', ' + dateText(d), mode === 'timeline');
+  }
+}
+// Brings the selected entry back onto the chart when a search, filter, layer, or range has hidden its mark.
+function revealSelected() {
+  query = ''; renderSearch();
+  if (selected.kind === 'event') showEvents = true; else shown.add(selected.lane);
+  if (!passesRating(selected)) kingFilter = 'all';
+  cardShift = null; domain = focusDomain(selected);
+  renderLists(); syncControls(); schedulePaint(); persist(true);
+  announce('Showing ' + selected.name + ' on the timeline.');
 }
 function closeReader() { $('reader').close(); }
 $('reader').addEventListener('close', () => {
@@ -679,11 +832,12 @@ function renderDetails() {
     const open = panel.querySelector('.connections')?.open || false;
     panel.replaceChildren();
     html('p', 'detail-category', categoryOf(selected), panel);
-    const heading = html('h2', '', selected.name, panel); if (panel.id === 'reader-detail') { heading.id = 'reader-title'; heading.tabIndex = -1; }
+    const heading = html('h2', '', selected.name, panel); heading.tabIndex = -1; if (panel.id === 'reader-detail') heading.id = 'reader-title';
     html('p', 'detail-date', dateText(selected), panel);
     if (selected.kind === 'king') { const r = html('p', 'rating', undefined, panel), dot = html('i', '', undefined, r); dot.style.setProperty('--mark-color', colors(colorOf(selected))); html('span', '', RATINGS[String(selected.rating)].label, r); }
     html('p', 'detail-note', selected.note, panel);
-    if (selected.approximate || selected.kind !== 'event') html('p', 'date-note', 'Approximate placement. Activity and reign dates are simplified; see the dates & sources note.', panel);
+    if (selected.undated) html('p', 'date-note', 'Scripture gives no date for this story. It is shown before the patriarchs to keep the Bible’s order, not to claim a year.', panel);
+    else if (selected.approximate || selected.kind !== 'event') html('p', 'date-note', 'Approximate placement. Activity and reign dates are simplified; see the dates & sources note.', panel);
     if (selected.sourceType) html('p', 'date-note', selected.sourceType, panel);
     const link = html('a', 'scripture', selected.ref + ' ↗', panel);
     link.href = selected.url || 'https://www.biblegateway.com/passage/?search=' + encodeURIComponent(selected.ref) + '&version=ESV';
@@ -704,16 +858,16 @@ function renderDetails() {
     const groups = [
       ['Rulers & political powers', people.filter(d => (d.kind === 'king' || ['powers','later'].includes(d.lane)) && overlap(d))],
       ['Prophets active then', people.filter(d => prophetLanes.includes(d.lane) && overlap(d))],
-      ['Other leaders', people.filter(d => d.lane === 'restoration' && overlap(d))]
+      ['Patriarchs, judges & other leaders', people.filter(d => ['patriarchs', 'exodus', 'judges', 'restoration'].includes(d.lane) && overlap(d))]
     ];
     groups.forEach(([title, data]) => {
       html('h3', '', title, connections);
       if (!data.length) html('p', '', 'No matching entry in this timeline.', connections);
       ordered(data).forEach(d => relatedButton(d, connections));
     });
-    const nearby = events.filter(d => d !== selected && (selected.kind === 'event' ? Math.abs(d.year - start) <= 20 : d.year <= start && d.year >= end));
-    const nearest = nearby.sort((a,b) => Math.abs(a.year - start) - Math.abs(b.year - start)).slice(0, 6);
-    html('h3', '', selected.kind === 'event' ? 'Stories within 20 years' : 'Stories during this period', connections);
+    const nearby = events.filter(d => d !== selected && (selected.undated ? d.undated : !d.undated && (selected.kind === 'event' ? Math.abs(d.year - start) <= 20 : d.year <= start && d.year >= end)));
+    const nearest = selected.undated ? nearby : nearby.sort((a,b) => Math.abs(a.year - start) - Math.abs(b.year - start)).slice(0, 6);
+    html('h3', '', selected.undated ? 'Other undated stories' : selected.kind === 'event' ? 'Stories within 20 years' : 'Stories during this period', connections);
     if (!nearest.length) html('p', '', 'No nearby story is recorded in this timeline.', connections);
     ordered(nearest).forEach(d => relatedButton(d, connections));
   });
@@ -725,23 +879,22 @@ function relatedButton(d, parent) {
 function storyButton(d, parent, meta = false) {
   const b = button('', d.key, () => activate(d), parent, 'story-item'); b.dataset.itemKey = d.key;
   b.setAttribute('aria-current', String(d === selected));
-  html('span', 'year', (d.approximate || d.kind !== 'event' ? 'c. ' : '') + Math.round(yearOf(d)), b);
+  html('span', 'year', d.undated ? 'Undated' : (d.approximate || d.kind !== 'event' ? 'c. ' : '') + Math.round(yearOf(d)), b);
   const name = html('span', 'name', d.name, b); if (meta) html('span', 'kind', categoryOf(d) + ' · ' + d.ref, name);
   return b;
 }
 function populateList(parent, data, empty, meta = false) { const scroll = parent.scrollTop; parent.replaceChildren(); if (!data.length) html('p', 'empty', empty, parent); else data.forEach(d => storyButton(d, parent, meta)); parent.scrollTop = scroll; }
 function renderLists() {
-  const data = ordered(events.filter(d => showEvents && inRange(d) && matches(d)));
-  $('result-count').textContent = data.length + ' stories';
-  populateList($('story-list'), data, 'No stories in this range. Try another era or enable the Stories layer.');
-  const list = ordered(allItems.filter(d => enabled(d) && inRange(d) && matches(d) && (d.kind === 'event' ? !majorOnly || d.major : includePeople)));
-  $('list-count').textContent = list.length + ' entries · ' + Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC. Choose an era above to narrow the list.';
-  populateList($('chronological-list'), list, 'No entries match this view. Try Fit all, clear search, or enable more layers.', true);
+  if (mode === 'list') {
+    const list = ordered(allItems.filter(d => enabled(d) && inRange(d) && matches(d) && (d.kind === 'event' ? !majorOnly || d.major : includePeople)));
+    $('list-count').textContent = list.length + ' entries · ' + Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC. Choose an era above to narrow the list.';
+    populateList($('chronological-list'), list, 'No entries match this view. Try Fit all, clear search, or enable more layers.', true);
+  }
   renderSaved();
 }
 function renderSaved() {
   $('saved-count').textContent = saved.size;
-  populateList($('saved-list'), ordered([...saved].map(k => byKey.get(k)).filter(Boolean)), 'No bookmarks yet. Open a story and choose Save story.', true);
+  if (mode === 'saved') populateList($('saved-list'), ordered([...saved].map(k => byKey.get(k)).filter(Boolean)), 'No bookmarks yet. Open a story and choose Save story.', true);
 }
 function renderSearch() {
   $('clear-search').hidden = !query;
@@ -764,12 +917,14 @@ function syncControls() {
   $('visible-range').textContent = Math.round(domain[0]) + '–' + Math.round(domain[1]) + ' BC'; $('view-name').textContent = ' · ' + label;
   $('start-year').value = Math.round(domain[0]); $('end-year').value = Math.round(domain[1]);
   $('q').value = query; $('major-only').checked = majorOnly; $('include-people').checked = includePeople;
+  document.querySelectorAll('[data-rating]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rating === kingFilter)));
   document.querySelectorAll('[data-layer]').forEach(input => { input.checked = input.dataset.layer === 'events' ? showEvents : input.dataset.layer === 'detail' ? allDetail : shown.has(input.dataset.layer); });
 }
 function switchView(next) { mode = next; $('cluster-panel').hidden = true; syncControls(); renderLists(); schedulePaint(); persist(true); }
 function openCluster(items, trigger) {
   clusterItems = items; returnFocus = { element: trigger, info: captureFocus() };
-  $('cluster-title').textContent = items.length + ' stories · ' + Math.round(yearOf(items[0])) + '–' + Math.round(yearOf(items.at(-1))) + ' BC';
+  $('cluster-title').textContent = items[0].undated ? items.length + ' undated stories · ' + undatedScope(items) : items.length + ' stories · ' + Math.round(yearOf(items[0])) + '–' + Math.round(yearOf(items.at(-1))) + ' BC';
+  $('zoom-cluster').hidden = Boolean(items[0].undated);
   populateList($('cluster-list'), items, '', true); $('cluster-panel').hidden = false;
   $('cluster-title').focus({ preventScroll: true }); $('cluster-panel').scrollIntoView({ block: 'nearest' });
 }
@@ -777,10 +932,20 @@ function el(tag, attrs, parent, text) { const n = document.createElementNS('http
 const measureCanvas = document.createElement('canvas'), measure = measureCanvas.getContext('2d');
 function textWidth(text, size = 12) { measure.font = size + 'px ' + getComputedStyle(document.body).fontFamily; return measure.measureText(text).width; }
 function shorten(text, width, size = 12) { if (textWidth(text,size) <= width) return text; let s = text; while (s.length && textWidth(s + '…',size) > width) s = s.slice(0,-1); return s + '…'; }
-function chartMark(node, key, label, action) {
+function showPeek(node, [title, meta]) {
+  const peek = $('peek'), wrap = $('chart-wrap').getBoundingClientRect(), m = (node.querySelector('.anchor') || node).getBoundingClientRect();
+  peek.replaceChildren(); html('strong', '', title, peek); html('span', '', meta, peek); peek.hidden = false;
+  const w = peek.offsetWidth, h = peek.offsetHeight, above = m.top - wrap.top - h - 12;
+  peek.style.left = clamp(m.left + m.width / 2 - wrap.left - w / 2, 4, Math.max(4, wrap.width - w - 4)) + 'px';
+  peek.style.top = (above < 0 ? m.bottom - wrap.top + 12 : above) + 'px';
+}
+function hidePeek() { $('peek').hidden = true; }
+function chartMark(node, key, label, action, peek, members = []) {
   node.classList.add('mark'); node.dataset.focusKey = key; node.setAttribute('role','button'); node.setAttribute('tabindex','-1'); node.setAttribute('aria-label',label);
-  el('title',{},node,label);
-  node.addEventListener('click', () => { if (!suppressClick) action(node); });
+  if (members.length > 1) node.dataset.members = members.map(d => d.key).join(' ');
+  node.addEventListener('click', () => { if (suppressClick) return; hidePeek(); action(node); });
+  node.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !pointer?.moved && !cardDrag) showPeek(node, peek); });
+  node.addEventListener('pointerleave', hidePeek);
   node.addEventListener('focus', () => { chartFocusKey = key; document.querySelectorAll('#chart .mark').forEach(n => n.setAttribute('tabindex',n === node ? '0':'-1')); });
   node.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); action(node); }
@@ -791,24 +956,31 @@ function chartMark(node, key, label, action) {
     }
   });
 }
+const groupNoun = lane => lane === 'powers' ? ' powers' : lane === 'early' ? ' people' : ' rulers';
 function paint() {
   const svg = $('chart'), width = $('chart-wrap').clientWidth;
   if (!width) return;
+  hidePeek();
   const activeFocus = document.activeElement?.closest('#chart') ? chartFocusKey : null;
   const small = width < 620, left = small ? 18 : 142, right = 22, plotW = Math.max(80, width-left-right), span = domain[0]-domain[1];
   const x = year => left + (domain[0]-year)/span*plotW;
-  const overviewMode = span > 500 && !allDetail && !query.trim();
-  const activeLanes = lanes.filter(l => shown.has(l.id) && (!overviewMode || ['united','israel','judah','powers'].includes(l.id)) && people.some(d => d.lane === l.id && inRange(d)));
+  const overviewMode = overviewNow();
+  const bands = overviewMode
+    ? [{ id: 'early', name: 'Before the kings', ids: EARLY_LANES }, ...lanes.filter(l => OVERVIEW_LANES.includes(l.id) && !EARLY_LANES.includes(l.id)).map(l => ({ ...l, ids: [l.id] }))]
+    : lanes.map(l => ({ ...l, ids: [l.id] }));
+  const inBand = (d, band) => band.ids.includes(d.lane) && shown.has(d.lane) && inRange(d);
+  const activeLanes = bands.filter(band => people.some(d => inBand(d, band)));
   const focusItems = events.filter(d => showEvents && inRange(d) && matches(d));
   // Broad views show turning points. Other stories remain available in the list/search.
-  const eventData = ordered(overviewMode ? focusItems.filter(d => d.major || d === selected) : focusItems);
+  const eventData = ordered(overviewMode ? focusItems.filter(d => d.major || d.undated || d === selected) : focusItems);
+  // Undated stories never share a bucket with dated ones, so a count on the axis always means real years.
   const minGap = 48, buckets = [];
-  eventData.forEach(d => { const last = buckets.at(-1); if (last && x(d.year)-x(last[0].year) < minGap) last.push(d); else buckets.push([d]); });
+  eventData.forEach(d => { const last = buckets.at(-1); if (last && Boolean(last[0].undated) === Boolean(d.undated) && x(d.year)-x(last[0].year) < minGap) last.push(d); else buckets.push([d]); });
   // Each bucket owns a disjoint horizontal interval; even large touch targets cannot steal another marker's click.
   const centers = buckets.map(items => (x(items[0].year)+x(items.at(-1).year))/2);
   const labelRows = [[],[],[]];
   const eventLayouts = buckets.map((items,i) => {
-    const cx = centers[i], text = items.length === 1 ? items[0].name : items.length + ' stories';
+    const cx = centers[i], text = items.length === 1 ? items[0].name : items[0].undated ? 'Undated beginnings' : items.length + ' stories';
     const label = shorten(text, small ? 135 : 180), tw = textWidth(label), tx = Math.max(left, Math.min(width-right-tw, cx-tw/2));
     let row = labelRows.findIndex(r => r.every(([a,b]) => tx > b+12 || tx+tw < a-12));
     if (row >= 0) labelRows[row].push([tx,tx+tw]);
@@ -817,7 +989,7 @@ function paint() {
   const layouts = [], eventBottom = showEvents ? 226 : 62;
   let cursor = eventBottom;
   activeLanes.forEach(lane => {
-    const data = ordered(people.filter(d => d.lane === lane.id && inRange(d) && matches(d)));
+    const data = ordered(people.filter(d => inBand(d, lane) && matches(d) && passesRating(d)));
     if (!data.length) return;
     const ends = [], placements = [];
     data.forEach(d => {
@@ -827,9 +999,10 @@ function paint() {
       let row = ends.findIndex(last => occupiedStart > last+12); if(row<0) row=ends.length;
       ends[row] = occupiedEnd; placements.push({d,a,b,tx,label,row});
     });
-    // In a wide overview, brief reigns are grouped rather than expanded into dozens of rows.
+    // In a wide overview, back-to-back reigns are grouped rather than expanded into dozens of rows.
     let groups = null;
-    if (overviewMode) {
+    // A phone has no room to name sixteen early figures at once, so the early band groups there too.
+    if (overviewMode && (GROUPED_LANES.includes(lane.id) || (small && lane.id === 'early'))) {
       groups=[]; data.forEach(d => {const last=groups.at(-1); if(last && x(d.start)-x(last[0].start)<48) last.push(d); else groups.push([d]);});
     }
     const height = (small ? 40 : 12) + (groups ? 72 : Math.max(1,ends.length)*55) + 14;
@@ -837,19 +1010,21 @@ function paint() {
   });
   const height = Math.max(240,cursor+20); geometry={width,left,right,plotW,x,height};
   svg.replaceChildren(); svg.setAttribute('viewBox',`0 0 ${width} ${height}`); svg.setAttribute('height',height);
-  el('title',{},svg,'Interactive biblical timeline. Use arrow keys between marks; Enter opens a story.');
-  const desired=Math.max(2,Math.floor(plotW/80)), rough=span/desired, step=[5,10,20,25,50,100,200,400].find(n=>n>=rough)||400;
+  const desired=Math.max(2,Math.floor(plotW/80)), rough=span/desired, step=[5,10,20,25,50,100,200,250,500].find(n=>n>=rough)||500;
   for(let year=Math.ceil(domain[1]/step)*step;year<=domain[0];year+=step){ const xx=x(year); el('line',{x1:xx,x2:xx,y1:42,y2:height-12,stroke:colors('grid'),'stroke-dasharray':'2 5'},svg); el('text',{x:xx,y:28,'text-anchor':'middle'},svg,year); }
   if(!small) el('text',{x:12,y:28},svg,'YEAR BC');
   eventLayouts.forEach(({items,cx,tx,label,row,low,high})=>{
-    const d=items[0], cy=183, g=el('g',{class:d.era==='second-temple'?'historical-event':''},svg);
+    const d=items[0], cy=183, many=items.length>1, undated=Boolean(d.undated), g=el('g',{class:isHistory(d)?'historical-event':''},svg);
     if(row>=0) { const ly=60+row*33; el('rect',{x:tx-3,y:ly-17,width:textWidth(label)+6,height:26,rx:4,class:'label-hit',fill:'transparent'},g); el('path',{d:`M ${cx} ${cy-16} V ${ly+8}`,stroke:colors('line'),fill:'none','pointer-events':'none'},g); el('text',{x:tx,y:ly,class:'event-label'},g,label); }
-    el('circle',{cx,cy,r:items.length>1?15:6,fill:items.length>1?colors('raised'):colors('paper'),stroke:colors(d.era==='second-temple'?'history':'accent'),'stroke-width':1.5},g);
-    if(items.length>1) el('text',{x:cx,y:cy+4,'text-anchor':'middle'},g,items.length);
+    const dot=el('circle',{cx,cy,r:many?15:6,fill:many?colors('raised'):colors('paper'),stroke:colors(isHistory(d)?'history':'accent'),'stroke-width':1.5,class:'anchor'},g);
+    if(undated) dot.setAttribute('stroke-dasharray','3 3');
+    if(many) el('text',{x:cx,y:cy+4,'text-anchor':'middle'},g,items.length);
     el('rect',{x:Math.max(low,cx-22),y:cy-22,width:Math.min(high,cx+22)-Math.max(low,cx-22),height:44,rx:8,class:'hit'},g);
-    const key=items.length===1?d.key:'cluster-'+items.map(d=>d.key).join('_');
-    chartMark(g,key,items.length===1?d.name+', '+dateText(d):items.length+' stories from '+items[0].year+' to '+items.at(-1).year+' BC. Open group.',n=>items.length===1?activate(d):openCluster(items,n));
-    if(items.includes(selected)) el('circle',{cx,cy,r:items.length>1?19:11,class:'selection-ring'},g);
+    const key=many?'cluster-'+items.map(d=>d.key).join('_'):d.key;
+    const spoken=!many?d.name+', '+dateText(d):undated?items.length+' undated stories from '+undatedScope(items)+'. Open group.':items.length+' stories from '+items[0].year+' to '+items.at(-1).year+' BC. Open group.';
+    const peek=!many?[d.name,dateText(d)+' · '+categoryOf(d)]:[items.length+(undated?' undated stories':' stories'),(undated?undatedScope(items):items[0].year+'–'+items.at(-1).year+' BC')+' · select to choose one'];
+    chartMark(g,key,spoken,n=>many?openCluster(items,n):activate(d),peek,items);
+    if(items.includes(selected)) el('circle',{cx,cy,r:many?19:11,class:'selection-ring'},g);
   });
   if (!eventLayouts.length && showEvents) el('text',{x:left,y:100},svg,'No stories in this range. Try another era.');
   layouts.forEach(({lane,top,height,placements,groups})=>{
@@ -857,44 +1032,98 @@ function paint() {
     el('text',{x:small?18:12,y:top+24,class:'lane-title'},svg,small?lane.name:shorten(lane.name,left-22,13));
     const offset=small?46:22;
     if(groups){
+      const endOf=items=>Math.min(...items.map(d=>d.end));
       groups.forEach((items,i)=>{
-        const d=items[0],a=Math.max(left,x(d.start)),b=Math.max(a+6,Math.min(width-right,x(items.at(-1).end))),cy=top+offset+10;
-        const g=el('g',{},svg), label=items.length===1?d.name:items.length+' rulers';
-        el('rect',{x:a,y:cy,width:b-a,height:10,rx:5,fill:colors(items.length > 1 && d.kind === 'king' ? 'neutral' : colorOf(d))},g);
-        const nextA=i+1<groups.length?x(groups[i+1][0].start):width-right;
-        const hitA=i?(x(groups[i-1].at(-1).end)+a)/2:left-8,hitB=(b+nextA)/2;
+        const d=items[0],many=items.length>1,a=Math.max(left,x(d.start)),nextA=i+1<groups.length?Math.max(a+6,x(groups[i+1][0].start)):width-right;
+        // A group's bar stops where the next one starts, so overlapping lives never draw over each other.
+        const b=Math.max(a+6,Math.min(width-right,x(endOf(items)),nextA)),cy=top+offset+10;
+        const g=el('g',{},svg), label=many?items.length+groupNoun(lane.id):d.name;
+        const fill=many&&d.kind==='king'?(kingFilter==='all'?'neutral':kingFilter):colorOf(d);
+        el('rect',{x:a,y:cy,width:b-a,height:10,rx:5,fill:colors(fill),class:'anchor'},g);
+        const hitA=i?(Math.min(a,x(endOf(groups[i-1])))+a)/2:left-8,hitB=(b+nextA)/2;
         el('rect',{x:Math.max(hitA,a-6),y:cy-14,width:Math.max(1,Math.min(hitB,b+6)-Math.max(hitA,a-6)),height:44,rx:5,class:'hit'},g);
         const room=nextA-a-8; if(room>24)el('text',{x:a,y:cy+31},g,shorten(label,room));
-        chartMark(g,items.length===1?d.key:'people-'+lane.id+'-'+i,items.map(d=>d.name).join(', ')+'. Select to explore.',()=>{
-          if(items.length===1)activate(d); else { allDetail=true; setDomain(items[0].start+15,items.at(-1).end-15); announce('Zoomed to '+lane.name+'. Select a ruler to read.'); }
-        });
+        const names=items.map(d=>d.name).join(', ');
+        chartMark(g,many?'people-'+lane.id+'-'+i:d.key,names+'. Select to explore.',()=>{
+          if(!many)activate(d); else { allDetail=true; setDomain(items[0].start+15,endOf(items)-15); announce('Zoomed to '+lane.name+'. Select a name to read.'); }
+        },many?[shorten(names,250,13),Math.round(items[0].start)+'–'+Math.round(endOf(items))+' BC · select to zoom in']:[d.name,dateText(d)+' · '+categoryOf(d)],items);
         if(items.includes(selected))el('rect',{x:a-2,y:cy-3,width:b-a+4,height:16,rx:6,class:'selection-ring'},g);
       });
     } else placements.forEach(({d,a,b,tx,label,row})=>{
       const yy=top+offset+row*55,g=el('g',{},svg);
       el('text',{x:tx,y:yy+1},g,label); const trackW=Math.max(4,b-a);
-      el('rect',{x:a,y:yy+10,width:trackW,height:8,rx:4,fill:colors(colorOf(d))},g);
+      el('rect',{x:a,y:yy+10,width:trackW,height:8,rx:4,fill:colors(colorOf(d)),class:'anchor'},g);
       el('rect',{x:Math.min(tx,a)-3,y:yy-15,width:Math.max(trackW,textWidth(label),24)+6,height:44,rx:6,class:'hit'},g);
-      chartMark(g,d.key,d.name+', '+dateText(d)+'. '+(d.kind==='king'?RATINGS[String(d.rating)].label+'. ':'')+'Select to read.',()=>activate(d));
+      const rating=d.kind==='king'?RATINGS[String(d.rating)].label:'';
+      chartMark(g,d.key,d.name+', '+dateText(d)+'. '+(rating?rating+'. ':'')+'Select to read.',()=>activate(d),[d.name,dateText(d)+' · '+(rating||categoryOf(d))]);
       if(d===selected)el('rect',{x:a-2,y:yy+7,width:trackW+4,height:14,rx:5,class:'selection-ring'},g);
     });
   });
+  if (!layouts.length && kingFilter !== 'all' && !eventLayouts.length) el('text',{x:left,y:130},svg,'No kings with this rating in this range. Choose All to see every ruler.');
   const marks=[...svg.querySelectorAll('.mark')], current=marks.find(n=>n.dataset.focusKey===chartFocusKey)||marks.find(n=>n.dataset.focusKey===selected.key)||marks[0];
   if(current)current.setAttribute('tabindex','0'); if(activeFocus)current?.focus({preventScroll:true});
-  $('chart-help').textContent=overviewMode?'Overview: turning points and kingdoms. Choose an era to reveal prophets and more stories. Numbered circles open groups.':'Select a name or circle to read. Numbered circles group nearby stories. Drag sideways to pan.';
-  paintOverview();
+  $('chart-help').textContent=overviewMode?'Overview: turning points, patriarchs, judges, kingdoms, and empires. Choose an era to reveal prophets and more stories. Numbered circles open groups.':'Select a name or circle to read. Numbered circles group nearby stories. Drag sideways to pan.';
+  paintOverview(); placeCard();
+}
+// Positions the floating card beside the selected mark. It never decides what is selected; it only follows.
+function placeCard() {
+  const card = $('story-card'), arrow = $('card-arrow'), chip = $('card-chip'), wrap = $('chart-wrap');
+  const usable = mode === 'timeline' && !narrow();
+  const marks = usable ? [...$('chart').querySelectorAll('.mark')] : [];
+  const mark = marks.find(n => n.dataset.focusKey === selected.key) || marks.find(n => n.dataset.members?.split(' ').includes(selected.key));
+  // With no mark to point at, the card steps aside for a chip that offers to bring the story back.
+  const show = usable && cardOpen && Boolean(mark), hadFocus = card.contains(document.activeElement);
+  chip.hidden = !usable || show; chip.dataset.reveal = String(usable && !mark);
+  chip.textContent = cardOpen && !mark ? selected.name + ' is outside this view · Show it ▸' : 'Open story: ' + selected.name + ' ▸';
+  if (!show) {
+    card.hidden = true; arrow.hidden = true; wrap.style.minHeight = ''; cardFocus = false; cardReveal = false;
+    if (hadFocus && !chip.hidden) chip.focus({ preventScroll: true });
+    return;
+  }
+  card.hidden = false;
+  const W = wrap.clientWidth, cw = Math.min(380, W - 16); card.style.width = cw + 'px';
+  $('card-status').textContent = mark.dataset.members ? 'Inside this group' : 'Selected · drag to move';
+  const ch = card.offsetHeight, nav = $('overview-wrap'), navH = getComputedStyle(nav).position === 'sticky' ? nav.offsetHeight : 0;
+  const m = (mark.querySelector('.anchor') || mark).getBoundingClientRect(), w = wrap.getBoundingClientRect();
+  const ax = m.left + m.width / 2 - w.left, ay = m.top + m.height / 2 - w.top, gap = 18;
+  // Prefer the roomier side of the mark, so its row stays readable; a mark too wide for either side gets the card below it.
+  const rightOf = m.right - w.left + gap, leftOf = m.left - w.left - gap - cw;
+  const fitsRight = rightOf + cw <= W - 8, fitsLeft = leftOf >= 8;
+  const side = fitsLeft && (ax > W / 2 || !fitsRight) ? 'left' : fitsRight ? 'right' : 'below';
+  let left = side === 'right' ? rightOf : side === 'left' ? leftOf : clamp(ax - 48, 8, Math.max(8, W - cw - 8)), top = m.bottom - w.top + 16;
+  if (side !== 'below') {
+    // Start level with the mark, then stay inside the part of the chart that is on screen above the navigator.
+    const visibleTop = Math.max(0, 8 - w.top), visibleBottom = innerHeight - navH - 8 - w.top;
+    top = clamp(ay - 44, visibleTop, Math.max(visibleTop, visibleBottom - ch));
+  }
+  if (cardShift) { left = clamp(left + cardShift.x, 0, Math.max(0, W - cw)); top = Math.max(0, top + cardShift.y); }
+  card.style.left = left + 'px'; card.style.top = top + 'px';
+  arrow.hidden = Boolean(cardShift);
+  if (!arrow.hidden) {
+    const along = clamp(ay - 6, top + 14, top + ch - 26);
+    const [x, y, turn] = side === 'right' ? [left - 6, along, -45] : side === 'left' ? [left + cw - 7, along, 135] : [clamp(ax - 6, left + 14, left + cw - 26), top - 6, 45];
+    arrow.style.left = x + 'px'; arrow.style.top = y + 'px'; arrow.style.transform = 'rotate(' + turn + 'deg)';
+  }
+  // The chart area grows to hold the card, so it never covers the navigator below.
+  wrap.style.minHeight = Math.ceil(top + ch + 12) + 'px';
+  if (cardFocus) { cardFocus = false; $('detail').querySelector('h2')?.focus({ preventScroll: true }); }
+  // After a new choice, scroll just far enough to bring a cut-off card into view. Panning never scrolls the page.
+  if (cardReveal) {
+    cardReveal = false; card.style.scrollMarginBottom = navH + 12 + 'px';
+    card.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
 }
 function paintOverview() {
   const svg=$('overview'),w=svg.clientWidth,h=76,pad=24; if(!w)return;
   const x=year=>pad+(FIRST_YEAR-year)/FULL_SPAN*(w-pad*2); svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
-  for(let yr=1100;yr>=1;yr-=w<600?300:100)el('text',{x:x(yr),y:14,'text-anchor':'middle'},svg,yr);
+  for(let yr=FIRST_YEAR;yr>=LAST_YEAR;yr-=w<600?500:200)el('text',{x:x(yr),y:14,'text-anchor':'middle'},svg,yr);
   el('rect',{x:pad,y:32,width:w-pad*2,height:24,rx:6,fill:colors('grid')},svg);
-  events.filter(d=>d.major).forEach(d=>el('line',{x1:x(d.year),x2:x(d.year),y1:33,y2:55,stroke:colors(d.era==='second-temple'?'history':'accent'),opacity:.6},svg));
+  events.filter(d=>d.major&&!d.undated).forEach(d=>el('line',{x1:x(d.year),x2:x(d.year),y1:33,y2:55,stroke:colors(isHistory(d)?'history':'accent'),opacity:.6},svg));
   const a=x(domain[0]),b=x(domain[1]);el('rect',{x:a,y:26,width:Math.max(1,b-a),height:36,rx:6,fill:colors('accent-dim'),opacity:.65,stroke:colors('accent'),'data-brush':'window'},svg);
   [a,b].forEach((xx,i)=>{
-    const mode=i?'end':'start',g=el('g',{'data-brush':mode,role:'slider',tabindex:0,'aria-label':(i?'End':'Start')+' year BC','aria-valuemin':i?1:Math.ceil(domain[1]+30),'aria-valuemax':i?Math.floor(domain[0]-30):1100,'aria-valuenow':Math.round(domain[i]),'aria-valuetext':Math.round(domain[i])+' BC'},svg);
+    const mode=i?'end':'start',g=el('g',{'data-brush':mode,role:'slider',tabindex:0,'aria-label':(i?'End':'Start')+' year BC','aria-valuemin':i?LAST_YEAR:Math.ceil(domain[1]+MIN_SPAN),'aria-valuemax':i?Math.floor(domain[0]-MIN_SPAN):FIRST_YEAR,'aria-valuenow':Math.round(domain[i]),'aria-valuetext':Math.round(domain[i])+' BC'},svg);
     el('rect',{x:xx-18,y:22,width:36,height:44,fill:'transparent',class:'overview-handle'},g);el('rect',{x:xx-3,y:26,width:6,height:36,rx:3,fill:colors('accent'),'pointer-events':'none'},g);
-    g.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();e.stopPropagation();let[a,b]=domain,delta=(e.key==='ArrowLeft'?1:-1)*(e.shiftKey?25:5);if(i)b=e.key==='Home'?a-30:e.key==='End'?1:Math.min(a-30,Math.max(1,b+delta));else a=e.key==='Home'?1100:e.key==='End'?b+30:Math.max(b+30,Math.min(1100,a+delta));setDomain(a,b);requestAnimationFrame(()=>$('overview').querySelector('[data-brush="'+mode+'"]').focus({preventScroll:true}));});
+    g.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();e.stopPropagation();let[a,b]=domain,delta=(e.key==='ArrowLeft'?1:-1)*(e.shiftKey?25:5);if(i)b=e.key==='Home'?a-MIN_SPAN:e.key==='End'?LAST_YEAR:Math.min(a-MIN_SPAN,Math.max(LAST_YEAR,b+delta));else a=e.key==='Home'?FIRST_YEAR:e.key==='End'?b+MIN_SPAN:Math.max(b+MIN_SPAN,Math.min(FIRST_YEAR,a+delta));setDomain(a,b);requestAnimationFrame(()=>$('overview').querySelector('[data-brush="'+mode+'"]').focus({preventScroll:true}));});
   });
 }
 function zoom(factor,fraction=.5) { const span=domain[0]-domain[1],next=Math.min(FULL_SPAN,Math.max(MIN_SPAN,span*factor)),focus=domain[0]-span*fraction;setDomain(focus+next*fraction,focus-next*(1-fraction)); }
@@ -903,22 +1132,33 @@ function pan(direction,farther=false){const delta=(domain[0]-domain[1])*(farther
 $('chart').addEventListener('pointerdown',e=>{if(e.button!==0||pinch||!geometry)return;pointer={x:e.clientX,y:e.clientY,domain:domain.slice(),moved:false};});
 $('overview').addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();brush={mode:e.target.closest('[data-brush]')?.dataset.brush||'window',x:e.clientX,domain:domain.slice()};});
 window.addEventListener('pointermove',e=>{
-  if(pointer&&!pinch){const dx=e.clientX-pointer.x;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(e.clientY-pointer.y)){pointer.moved=true;$('chart').classList.add('dragging');const delta=dx/geometry.plotW*(pointer.domain[0]-pointer.domain[1]);setDomain(pointer.domain[0]+delta,pointer.domain[1]+delta);}}
-  if(brush){const delta=(e.clientX-brush.x)/($('overview').clientWidth-48)*FULL_SPAN,[a,b]=brush.domain;if(brush.mode==='start')setDomain(Math.max(b+30,Math.min(1100,a-delta)),b);else if(brush.mode==='end')setDomain(a,Math.min(a-30,Math.max(1,b-delta)));else setDomain(a-delta,b-delta);}
+  if(pointer&&!pinch){const dx=e.clientX-pointer.x;if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(e.clientY-pointer.y)){pointer.moved=true;hidePeek();$('chart').classList.add('dragging');const delta=dx/geometry.plotW*(pointer.domain[0]-pointer.domain[1]);setDomain(pointer.domain[0]+delta,pointer.domain[1]+delta);}}
+  if(brush){const delta=(e.clientX-brush.x)/($('overview').clientWidth-48)*FULL_SPAN,[a,b]=brush.domain;if(brush.mode==='start')setDomain(Math.max(b+MIN_SPAN,Math.min(FIRST_YEAR,a-delta)),b);else if(brush.mode==='end')setDomain(a,Math.min(a-MIN_SPAN,Math.max(LAST_YEAR,b-delta)));else setDomain(a-delta,b-delta);}
+  if(cardDrag){cardShift={x:cardDrag.shift.x+e.clientX-cardDrag.x,y:cardDrag.shift.y+e.clientY-cardDrag.y};placeCard();}
 });
-function finishPointer(){if(pointer?.moved||pinch){suppressClick=true;setTimeout(()=>{suppressClick=false;},200);}pointer=null;brush=null;$('chart').classList.remove('dragging');}
+function finishPointer(){if(pointer?.moved||pinch){suppressClick=true;setTimeout(()=>{suppressClick=false;},200);}pointer=null;brush=null;cardDrag=null;$('chart').classList.remove('dragging');$('story-card').classList.remove('dragging');}
 window.addEventListener('pointerup',finishPointer);window.addEventListener('pointercancel',finishPointer);
 $('chart').addEventListener('wheel',e=>{if(!e.ctrlKey||!geometry)return;e.preventDefault();const fraction=Math.max(0,Math.min(1,(e.clientX-$('chart').getBoundingClientRect().left-geometry.left)/geometry.plotW));zoom(e.deltaY>0?1.12:1/1.12,fraction);},{passive:false});
 $('chart').addEventListener('touchstart',e=>{if(e.touches.length!==2||!geometry)return;const[a,b]=e.touches;pointer=null;pinch={distance:Math.max(10,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)),domain:domain.slice(),middle:(a.clientX+b.clientX)/2};},{passive:true});
-$('chart').addEventListener('touchmove',e=>{if(!pinch||e.touches.length!==2)return;e.preventDefault();const[a,b]=e.touches,dist=Math.max(10,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)),span=pinch.domain[0]-pinch.domain[1],next=Math.max(30,Math.min(FULL_SPAN,span*pinch.distance/dist)),fraction=Math.max(0,Math.min(1,(pinch.middle-$('chart').getBoundingClientRect().left-geometry.left)/geometry.plotW)),focus=pinch.domain[0]-span*fraction,shift=((a.clientX+b.clientX)/2-pinch.middle)/geometry.plotW*next;setDomain(focus+fraction*next+shift,focus-(1-fraction)*next+shift);},{passive:false});
+$('chart').addEventListener('touchmove',e=>{if(!pinch||e.touches.length!==2)return;e.preventDefault();const[a,b]=e.touches,dist=Math.max(10,Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)),span=pinch.domain[0]-pinch.domain[1],next=Math.max(MIN_SPAN,Math.min(FULL_SPAN,span*pinch.distance/dist)),fraction=Math.max(0,Math.min(1,(pinch.middle-$('chart').getBoundingClientRect().left-geometry.left)/geometry.plotW)),focus=pinch.domain[0]-span*fraction,shift=((a.clientX+b.clientX)/2-pinch.middle)/geometry.plotW*next;setDomain(focus+fraction*next+shift,focus-(1-fraction)*next+shift);},{passive:false});
 function finishTouch(e){if(e.touches.length<2){if(pinch){suppressClick=true;setTimeout(()=>{suppressClick=false;},200);}pinch=null;pointer=null;}}
 $('chart').addEventListener('touchend',finishTouch);$('chart').addEventListener('touchcancel',finishTouch);
 // Controls are created once; repainting never removes the focused toolbar button.
 [{id:'events',name:'Stories'},...lanes,{id:'detail',name:'All detail in overview'}].forEach(lane=>{const label=html('label','',undefined,$('layer-menu')),input=html('input','',undefined,label);input.type='checkbox';input.dataset.layer=lane.id;label.append(document.createTextNode(lane.name));input.addEventListener('change',()=>{if(lane.id==='events')showEvents=input.checked;else if(lane.id==='detail')allDetail=input.checked;else if(input.checked)shown.add(lane.id);else shown.delete(lane.id);renderLists();schedulePaint();persist(true);});});
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 document.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',()=>{if(mode==='saved')mode='timeline';$('cluster-panel').hidden=true;setDomain(...RANGES[b.dataset.range]);}));
-$('zoom-in').addEventListener('click',()=>zoom(.7));$('zoom-out').addEventListener('click',()=>zoom(1/.7));$('reset').addEventListener('click',()=>{allDetail=false;query='';$('q').value='';renderSearch();$('cluster-panel').hidden=true;setDomain(...RANGES.full);});
+$('zoom-in').addEventListener('click',()=>zoom(.7));$('zoom-out').addEventListener('click',()=>zoom(1/.7));$('reset').addEventListener('click',()=>{allDetail=false;kingFilter='all';query='';$('q').value='';renderSearch();$('cluster-panel').hidden=true;setDomain(...RANGES.full);});
 $('share-view').addEventListener('click',()=>share(document.querySelector('.controls')));
+document.querySelectorAll('[data-rating]').forEach(b=>b.addEventListener('click',()=>{
+  kingFilter=b.dataset.rating;renderLists();syncControls();schedulePaint();persist(true);
+  const count=kings.filter(d=>passesRating(d)&&inRange(d)).length;
+  announce(kingFilter==='all'?'Showing every king.':'Showing '+count+' '+kingFilter+' '+(count===1?'king':'kings')+' in this range. Other entries are unchanged.');
+}));
+// Floating card controls: hide, reopen, bring the selection back into view, and drag by the top bar.
+$('hide-card').addEventListener('click',()=>{cardOpen=false;placeCard();$('card-chip').focus({preventScroll:true});});
+$('card-chip').addEventListener('click',()=>{cardOpen=true;cardShift=null;cardFocus=true;cardReveal=true;if($('card-chip').dataset.reveal==='true')revealSelected();else placeCard();});
+$('card-bar').addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button'))return;e.preventDefault();cardDrag={x:e.clientX,y:e.clientY,shift:cardShift?{...cardShift}:{x:0,y:0}};$('story-card').classList.add('dragging');});
+$('story-card').addEventListener('toggle',()=>{cardReveal=true;placeCard();},true);
 $('major-only').addEventListener('change',e=>{majorOnly=e.target.checked;renderLists();persist(true);});$('include-people').addEventListener('change',e=>{includePeople=e.target.checked;renderLists();persist(true);});
 $('q').addEventListener('input',e=>{query=e.target.value.slice(0,200);renderSearch();renderLists();schedulePaint();persist();});
 $('q').addEventListener('focus',()=>{if(query.trim())renderSearch();});
@@ -926,10 +1166,16 @@ $('q').addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault()
 $('clear-search').addEventListener('click',()=>{query='';syncControls();renderSearch();renderLists();schedulePaint();persist(true);$('q').focus();});
 $('close-cluster').addEventListener('click',()=>{$('cluster-panel').hidden=true;restoreFocus(returnFocus?.info);if(!document.activeElement.closest('#chart'))document.querySelector('[data-view="timeline"]').focus();});
 $('zoom-cluster').addEventListener('click',()=>{const top=yearOf(clusterItems[0]),bottom=yearOf(clusterItems.at(-1));allDetail=true;$('cluster-panel').hidden=true;setDomain(top+15,bottom-15);($('zoom-in').disabled ? $('reset') : $('zoom-in')).focus();});
-for(const id of ['start-year','end-year'])$(id).addEventListener('change',()=>{const a=Number($('start-year').value),b=Number($('end-year').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a<=b||a-b<MIN_SPAN||a>1100||b<1){announce('Choose BC dates from 1100 to 1, with the start at least 30 years earlier.');syncControls();return;}setDomain(a,b);});
+for(const id of ['start-year','end-year'])$(id).addEventListener('change',()=>{const a=Number($('start-year').value),b=Number($('end-year').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a<=b||a-b<MIN_SPAN||a>FIRST_YEAR||b<LAST_YEAR){announce('Choose BC dates from '+FIRST_YEAR+' to '+LAST_YEAR+', with the start at least '+MIN_SPAN+' years earlier.');syncControls();return;}setDomain(a,b);});
 document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-area'))$('search-results').hidden=true;if(!e.target.closest('.layers'))document.querySelector('.layers').open=false;});
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){if($('reader').open)return;$('search-results').hidden=true;document.querySelector('.layers').open=false;if(!$('cluster-panel').hidden)$('close-cluster').click();return;}
+  if(e.key==='Escape'){
+    if($('reader').open)return;
+    const layers=document.querySelector('.layers'),busy=!$('search-results').hidden||layers.open||!$('cluster-panel').hidden;
+    $('search-results').hidden=true;layers.open=false;if(!$('cluster-panel').hidden)$('close-cluster').click();
+    if(!busy&&document.activeElement?.closest('#story-card'))$('hide-card').click();
+    return;
+  }
   if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable="true"]')||$('reader').open)return;
   if(e.key==='/'){e.preventDefault();$('q').focus();}
   else if(e.key==='?'){e.preventDefault();const help=document.querySelector('.shortcut-help');help.open=!help.open;if(help.open)help.scrollIntoView({block:'nearest'});}
@@ -939,9 +1185,17 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='['||e.key===']'){e.preventDefault();const seq=ordered(events.filter(matches)),i=seq.indexOf(selected),next=seq[Math.max(0,Math.min(seq.length-1,i+(e.key===']'?1:-1)))];if(next)activate(next,{read:false});}
 });
 window.addEventListener('popstate',()=>{readURL();renderDetails();renderLists();syncControls();renderSearch();schedulePaint();});
-window.addEventListener('resize',()=>{if(!narrow()&&$('reader').open)$('reader').close();schedulePaint();});
+let wasNarrow=narrow();
+window.addEventListener('resize',()=>{
+  const nowNarrow=narrow();
+  if(!useReader()&&$('reader').open)$('reader').close();
+  // A card that was open when the window shrank has no room left, so its story moves into the reader.
+  else if(nowNarrow&&!wasNarrow&&cardOpen&&mode==='timeline'&&!$('reader').open){returnFocus={element:document.activeElement,info:captureFocus()};$('reader').showModal();}
+  wasNarrow=nowNarrow;schedulePaint();
+});
 window.addEventListener('pagehide',()=>persist(true));
-new ResizeObserver(schedulePaint).observe($('chart-wrap'));
+// Only a width change needs a repaint; the card changes the wrapper's height on its own.
+new ResizeObserver(()=>{const width=$('chart-wrap').clientWidth;if(width!==lastWidth){lastWidth=width;schedulePaint();}}).observe($('chart-wrap'));
 readURL(); renderDetails(); renderLists(); syncControls(); renderSearch(); if(mode==='timeline')paint();
 if(byKey.has(new URLSearchParams(location.search).get('story'))&&narrow()){$('reader').showModal();}
 </script>
