@@ -972,7 +972,7 @@ function paint() {
   const activeLanes = bands.filter(band => people.some(d => inBand(d, band)));
   const focusItems = events.filter(d => showEvents && inRange(d) && matches(d));
   // Broad views show turning points. Other stories remain available in the list/search.
-  const eventData = ordered(overviewMode ? focusItems.filter(d => d.major || d === selected) : focusItems);
+  const eventData = ordered(overviewMode ? focusItems.filter(d => d.major || d.undated || d === selected) : focusItems);
   // Undated stories never share a bucket with dated ones, so a count on the axis always means real years.
   const minGap = 48, buckets = [];
   eventData.forEach(d => { const last = buckets.at(-1); if (last && Boolean(last[0].undated) === Boolean(d.undated) && x(d.year)-x(last[0].year) < minGap) last.push(d); else buckets.push([d]); });
@@ -1185,7 +1185,14 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='['||e.key===']'){e.preventDefault();const seq=ordered(events.filter(matches)),i=seq.indexOf(selected),next=seq[Math.max(0,Math.min(seq.length-1,i+(e.key===']'?1:-1)))];if(next)activate(next,{read:false});}
 });
 window.addEventListener('popstate',()=>{readURL();renderDetails();renderLists();syncControls();renderSearch();schedulePaint();});
-window.addEventListener('resize',()=>{if(!useReader()&&$('reader').open)$('reader').close();schedulePaint();});
+let wasNarrow=narrow();
+window.addEventListener('resize',()=>{
+  const nowNarrow=narrow();
+  if(!useReader()&&$('reader').open)$('reader').close();
+  // A card that was open when the window shrank has no room left, so its story moves into the reader.
+  else if(nowNarrow&&!wasNarrow&&cardOpen&&mode==='timeline'&&!$('reader').open){returnFocus={element:document.activeElement,info:captureFocus()};$('reader').showModal();}
+  wasNarrow=nowNarrow;schedulePaint();
+});
 window.addEventListener('pagehide',()=>persist(true));
 // Only a width change needs a repaint; the card changes the wrapper's height on its own.
 new ResizeObserver(()=>{const width=$('chart-wrap').clientWidth;if(width!==lastWidth){lastWidth=width;schedulePaint();}}).observe($('chart-wrap'));

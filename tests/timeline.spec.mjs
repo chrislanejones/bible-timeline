@@ -248,7 +248,8 @@ test('the timeline runs from Genesis to the eve of the New Testament', async ({ 
   const beginnings = page.locator('#chart .mark[aria-label*="undated stories"]');
   await expect(beginnings).toHaveCount(1);
   await beginnings.locator('.hit').click();
-  await expect(page.locator('#cluster-title')).toContainText('undated stories');
+  // The whole of Genesis 1–11 and Job stays together in the overview, not just its turning points.
+  await expect(page.locator('#cluster-title')).toContainText('6 undated stories');
   await expect(page.locator('#zoom-cluster')).toBeHidden();
   await page.locator('#cluster-list button').filter({ hasText: 'Noah and the flood' }).click();
   await expect(page.locator('#detail h2')).toHaveText('Noah and the flood');
@@ -381,4 +382,18 @@ test('on a wide screen the story list opens stories in the reader', async ({ pag
   await expect(page.locator('#reader-title')).toHaveText('The burning bush');
   await page.locator('#close-reader').click();
   await expect(story).toBeFocused();
+});
+
+test('shrinking the window moves an open card into the reader', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/?view=timeline&from=1100&to=1');
+  await openCard(page);
+  const title = await page.locator('#detail h2').textContent();
+  await page.setViewportSize({ width: 900, height: 1000 });
+  await expect(page.locator('#reader')).toBeVisible();
+  await expect(page.locator('#reader-title')).toHaveText(title);
+  // Widening again hands the story back to the card.
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await expect(page.locator('#reader')).toBeHidden();
+  await expect(page.locator('#story-card')).toBeVisible();
 });

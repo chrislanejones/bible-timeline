@@ -79,7 +79,7 @@ pnpm run build
 ```
 
 - `check` validates JavaScript syntax, unique HTML IDs, element lookups, token consistency, unique entry IDs and share keys, chronology ordering, date bounds, lanes, ratings, era buttons and their ranges, default stories, undated placement, and source fields.
-- `test` runs 20 Chromium browser regressions covering event targets (including stories sharing a year), keyboard focus, phone search and reading, related stories, bookmarks, URL restoration, fallback states, responsive layouts, emulated touch pan/pinch, standalone offline use, the Genesis-to-Matthew range and undated group, the kings toggle, the floating card, and hover previews. The tests start a local server on port 5174. Touch emulation does not replace testing on physical phones or in Safari.
+- `test` runs 21 Chromium browser regressions covering event targets (including stories sharing a year), keyboard focus, phone search and reading, related stories, bookmarks, URL restoration, fallback states, responsive layouts, emulated touch pan/pinch, standalone offline use, the Genesis-to-Matthew range and undated group, the kings toggle, the floating card (including its hand-off to the reader when the window narrows), and hover previews. The tests start a local server on port 5174. Touch emulation does not replace testing on physical phones or in Safari.
 - `build` runs checks and writes the standalone site to `dist/`. Browser tests are a separate step.
 
 To use an existing Chromium installation instead of Playwright’s downloaded browser:
